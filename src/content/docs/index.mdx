@@ -1,39 +1,112 @@
 ---
-title: Welcome to Starlight
-description: Get started building your docs site with Starlight.
-# template: splash
+title: Software Docs Hub
+description: Personal documentation on software engineering, product docs, and system design.
+template: splash
 hero:
-    tagline: Congrats on setting up a new Starlight project!
-    image:
-        file: ../../assets/houston.webp
+    tagline: A practical, structured knowledge base for building and documenting software.
     actions:
-        - text: Example Guide
-          link: /guides/example/
+        - text: Start here
+          link: /guides/getting-started/
           icon: right-arrow
-        - text: Read the Starlight docs
-          link: https://starlight.astro.build
-          icon: external
+        - text: Browse all docs
+          link: /reference/
+          icon: open-book
           variant: minimal
 ---
 
-import { Card, CardGrid } from "@astrojs/starlight/components";
+import { Card, CardGrid, Aside } from "@astrojs/starlight/components";
 
-## Next steps
+<Aside type="note">This site is a living documentation space. Content is optimized for clarity, reuse, and real-world application.</Aside>
+
+## What you’ll find here
 
 <CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
-	</Card>
-	<Card title="Change page layout" icon="document">
-		Delete `template: splash` in `src/content/docs/index.mdx` to display a sidebar on this page.
-	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
-	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
-	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
-	</Card>
+  <Card title="Software Documentation" icon="document">
+    Templates and best practices for PRD, SRS, user stories, acceptance criteria, and release notes.
+  </Card>
+
+{" "}
+
+<Card title="System Design & Architecture" icon="setting">
+	Practical notes on architectures, integration patterns, API design, data flow, and trade-offs.
+</Card>
+
+{" "}
+
+<Card title="Engineering Playbook" icon="pencil">
+	Coding standards, repo structure, testing strategy, CI/CD basics, and workflow conventions.
+</Card>
+
+  <Card title="Product & Delivery" icon="open-book">
+    Agile rituals, discovery-to-delivery process, stakeholder alignment, and documentation as leverage.
+  </Card>
 </CardGrid>
+
+## Recommended paths
+
+<CardGrid>
+  <Card title="Path 1 — Build solid docs" icon="add-document">
+    Start with the core doc set: PRD → SRS → API Spec → Test Plan → Release Notes.
+    <br /><br />
+    <a href="/guides/doc-stack/">Go to the doc stack guide →</a>
+  </Card>
+
+{" "}
+
+<Card title="Path 2 — Systemize your knowledge" icon="setting">
+	Learn how to structure content so it stays maintainable as the site grows.
+	<br />
+	<br />
+	<a href="/guides/structure/">Go to structure guide →</a>
+</Card>
+
+  <Card title="Path 3 — Engineering execution" icon="pencil">
+    Templates for tickets, estimation, definition of done, and UAT checklists.
+    <br /><br />
+    <a href="/guides/execution/">Go to execution guide →</a>
+  </Card>
+</CardGrid>
+
+## Quick links
+
+<CardGrid>
+  <Card title="PRD Template" icon="document">
+    A practical PRD structure with examples and common pitfalls.
+    <br /><br />
+    <a href="/reference/prd-template/">Open →</a>
+  </Card>
+
+{" "}
+
+<Card title="SRS Template" icon="document">
+	A structured SRS outline, suitable for academic + real product delivery.
+	<br />
+	<br />
+	<a href="/reference/srs-template/">Open →</a>
+</Card>
+
+{" "}
+
+<Card title="API Spec Checklist" icon="setting">
+	What to document for API endpoints (contract, errors, auth, pagination, idempotency).
+	<br />
+	<br />
+	<a href="/reference/api-checklist/">Open →</a>
+</Card>
+
+  <Card title="UAT Test Plan" icon="open-book">
+    A clean, repeatable structure for UAT scenarios and acceptance verification.
+    <br /><br />
+    <a href="/reference/uat-test-plan/">Open →</a>
+  </Card>
+</CardGrid>
+
+## About this site
+
+This site is built for:
+
+-   personal reference (fast recall, consistent templates),
+-   sharing with teammates (clear, linkable standards),
+-   and anyone who wants a practical approach to software documentation.
+
+If you want to reuse any template, feel free to copy and adapt it.

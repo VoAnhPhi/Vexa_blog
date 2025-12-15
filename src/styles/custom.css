@@ -1,13 +1,213 @@
+/* =========================================================
+   1) Brand tokens (your palette)
+   ========================================================= */
 :root {
-	--sl-color-accent: #6366f1;
+	/* Brand palette */
+	--brand-ink: #030302;
+	--brand-green: #4c6851;
+	--brand-red: #550707;
+	--brand-accent: #f0a00a;
+	--brand-paper: #fdfbf0;
+
+	/* Neutrals */
+	--white: #ffffff;
+	--black: #000000;
+
+	/* Gray scale (light) */
+	--gray-50: #fafafa;
+	--gray-100: #f5f5f5;
+	--gray-200: #e5e5e5;
+	--gray-300: #d4d4d4;
+	--gray-400: #a3a3a3;
+	--gray-500: #737373;
+	--gray-600: #525252;
+	--gray-700: #404040;
+	--gray-800: #262626;
+	--gray-900: #171717;
+
+	/* Text tokens */
+	--text-primary: var(--brand-ink);
+	--text-secondary: #2a2a2a;
+	--text-muted: var(--gray-600);
+
+	/* Semantic (optional) */
+	--status-success: var(--brand-green);
+	--status-danger: var(--brand-red);
+	--status-warning: var(--brand-accent);
+
+	/* Surface tokens for "glass" UI */
+	--surface-nav: rgba(253, 251, 240, 0.78);
+	--surface-sidebar: rgba(253, 251, 240, 0.64);
+	--surface-border: rgba(0, 0, 0, 0.06);
+	--surface-blur: 10px;
+}
+
+/* =========================================================
+   2) Starlight token mapping (Light)
+   ========================================================= */
+:root {
+	--sl-color-accent: var(--brand-accent);
+	--sl-color-accent-high: var(--brand-accent);
+
+	--sl-color-bg: var(--brand-paper);
+	--sl-color-bg-nav: var(--brand-paper);
+	--sl-color-bg-sidebar: var(--brand-paper);
+
+	--sl-color-text: var(--text-primary);
+	--sl-color-text-accent: var(--brand-accent);
+
+	--sl-color-hairline: var(--gray-300);
+	--sl-color-hairline-shade: var(--gray-300);
+
+	--sl-color-bg-code: var(--brand-red);
+
 	--sl-font: ui-sans-serif, system-ui, sans-serif;
 }
-
+/* =========================================================
+   3) Starlight token mapping (Dark)
+   ========================================================= */
 :root[data-theme="dark"] {
-	--sl-color-accent: #a78bfa;
+	/* Re-define neutrals for dark */
+	--gray-50: #0b0b0b;
+	--gray-100: #121212;
+	--gray-200: #1a1a1a;
+	--gray-300: #242424;
+	--gray-400: #2f2f2f;
+	--gray-500: #3a3a3a;
+	--gray-600: #555555;
+	--gray-700: #737373;
+	--gray-800: #a3a3a3;
+	--gray-900: #d4d4d4;
+
+	--text-primary: #f2f0e9;
+	--text-secondary: #e3dfd6;
+	--text-muted: #b7b0a3;
+
+	--sl-color-accent: var(--brand-accent);
+	--sl-color-accent-high: var(--brand-accent);
+
+	--sl-color-bg: #0b0b0a;
+	--sl-color-bg-nav: #0b0b0a;
+	--sl-color-bg-sidebar: #0b0b0a;
+
+	--sl-color-text: var(--text-primary);
+	--sl-color-text-accent: var(--brand-accent);
+
+	--sl-color-hairline: var(--gray-400);
+	--sl-color-hairline-shade: var(--gray-400);
+
+	--sl-color-bg-code: var(--brand-red);
+
+	/* Dark glass surfaces */
+	--surface-nav: rgba(11, 11, 10, 0.72);
+	--surface-sidebar: rgba(11, 11, 10, 0.56);
+	--surface-border: rgba(255, 255, 255, 0.1);
 }
 
+/* =========================================================
+   4) Typography tweak
+   ========================================================= */
 .sl-markdown-content h2 {
-	border-bottom: 1px solid var(--sl-color-gray-5);
+	border-bottom: 2px solid var(--sl-color-hairline);
 	padding-bottom: 0.25rem;
+}
+/* =========================================================
+   5) Aurora / Gradient Blobs (HIGHER CONTRAST)
+   - Important: We override background tokens to transparent
+     for BOTH light and dark, so the html background shows through.
+   ========================================================= */
+
+:root,
+:root[data-theme="dark"] {
+	--sl-color-bg: transparent;
+	--sl-color-bg-nav: transparent;
+	--sl-color-bg-sidebar: transparent;
+}
+
+/* Blob palette (LIGHT) */
+:root {
+	--blob-a: rgba(240, 160, 10, 0.13); /* gold */
+	--blob-b: rgba(16, 185, 129, 0.13); /* teal */
+	--blob-c: rgba(139, 92, 246, 0.13); /* violet */
+	--blob-d: rgba(3, 3, 2, 0.05); /* ink haze */
+}
+
+/* Blob palette (DARK) */
+:root[data-theme="dark"] {
+	--blob-a: rgba(240, 160, 10, 0.15);
+	--blob-b: rgba(16, 185, 129, 0.15);
+	--blob-c: rgba(139, 92, 246, 0.15);
+	--blob-d: rgba(255, 255, 255, 0.09);
+}
+
+/* Light background */
+html {
+	background: radial-gradient(720px 720px at 84% 14%, var(--blob-a) 0%, rgba(240, 160, 10, 0) 62%),
+		radial-gradient(860px 860px at 14% 88%, var(--blob-b) 0%, rgba(16, 185, 129, 0) 66%),
+		radial-gradient(620px 620px at 18% 22%, var(--blob-c) 0%, rgba(139, 92, 246, 0) 60%),
+		radial-gradient(980px 980px at 55% 55%, var(--blob-d) 0%, rgba(3, 3, 2, 0) 72%),
+		linear-gradient(180deg, var(--brand-paper) 0%, var(--brand-paper) 100%);
+	background-attachment: fixed;
+}
+
+/* Dark background */
+html[data-theme="dark"] {
+	background: radial-gradient(760px 760px at 84% 12%, var(--blob-a) 0%, rgba(240, 160, 10, 0) 62%),
+		radial-gradient(900px 900px at 16% 92%, var(--blob-b) 0%, rgba(16, 185, 129, 0) 66%),
+		radial-gradient(660px 660px at 18% 24%, var(--blob-c) 0%, rgba(139, 92, 246, 0) 60%),
+		radial-gradient(980px 980px at 55% 55%, var(--blob-d) 0%, rgba(255, 255, 255, 0) 72%), linear-gradient(180deg, #0b0b0a 0%, #0b0b0a 100%);
+	background-attachment: fixed;
+}
+
+html[data-theme="dark"] select,
+:root[data-theme="dark"] select {
+	background-color: rgba(11, 11, 10, 0.75) !important;
+	color: var(--sl-color-text) !important;
+}
+
+body {
+	background: transparent;
+}
+
+/* If some containers still paint opaque bg, force them transparent */
+nav,
+aside,
+main {
+	background: transparent;
+}
+
+header {
+	backdrop-filter: blur(10px);
+	background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* =========================================================
+   Right sidebar ONLY: "On this page" (TOC)
+   ========================================================= */
+
+/* Style only the TOC aside */
+aside[aria-label="Table of contents"] {
+	background: var(--surface-sidebar);
+	backdrop-filter: blur(var(--surface-blur));
+	-webkit-backdrop-filter: blur(var(--surface-blur));
+	border: 1px solid var(--surface-border);
+	border-radius: 14px;
+
+	/* Make it not "too long" */
+	max-height: calc(100vh - 140px);
+	overflow-y: auto;
+
+	/* spacing so it looks like a card, not a full column */
+	margin-top: 16px;
+	padding: 12px;
+}
+
+/* Optional: reduce inner spacing of the list */
+aside[aria-label="Table of contents"] nav {
+	padding: 0;
+}
+
+/* Dark mode: keep the same glass token values (already defined in :root[data-theme="dark"]) */
+html[data-theme="dark"] aside[aria-label="Table of contents"] {
+	/* no extra needed unless you want different opacity */
 }
