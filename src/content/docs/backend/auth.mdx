@@ -1,0 +1,127 @@
+---
+title: Authentication & Authorization
+description: Xác thực và phân quyền người dùng
+---
+
+# Authentication & Authorization
+
+Implement authentication và authorization cho ứng dụng.
+
+## JWT (JSON Web Tokens)
+
+```js
+import jwt from "jsonwebtoken";
+
+// Generate token
+const token = jwt.sign({ userId: 123, email: "phi@example.com" }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+// Verify token
+try {
+	const decoded = jwt.verify(token, process.env.JWT_SECRET);
+	console.log(decoded.userId); // 123
+} catch (error) {
+	console.error("Invalid token");
+}
+```
+
+## Login Flow
+
+```js
+// Login endpoint
+app.post("/api/login", async (req, res) => {
+	const { email, password } = req.body;
+
+	// Find user
+	const user = await db.users.findUnique({ where: { email } });
+	if (!user) {
+		return res.status(401).json({ error: "Invalid credentials" });
+	}
+
+	// Verify password
+	const valid = await bcrypt.compare(password, user.passwordHash);
+	if (!valid) {
+		return res.status(401).json({ error: "Invalid credentials" });
+	}
+
+	// Generate token
+	const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+	res.json({ token, user: { id: user.id, email: user.email } });
+});
+```
+
+## Password Hashing
+
+```js
+import bcrypt from "bcrypt";
+
+// Hash password
+const hash = await bcrypt.hash(password, 10);
+
+// Store in database
+await db.users.create({
+	data: {
+		email,
+		passwordHash: hash,
+	},
+});
+
+// Verify password
+const valid = await bcrypt.compare(inputPassword, storedHash);
+```
+
+## Protected Routes
+
+```js
+function authenticate(req, res, next) {
+	const token = req.headers.authorization?.split(" ")[1];
+
+	if (!token) {
+		return res.status(401).json({ error: "No token provided" });
+	}
+
+	try {
+		const decoded = jwt.verify(token, process.env.JWT_SECRET);
+		req.userId = decoded.userId;
+		next();
+	} catch (error) {
+		res.status(401).json({ error: "Invalid token" });
+	}
+}
+
+// Use middleware
+app.get("/api/profile", authenticate, async (req, res) => {
+	const user = await db.users.findUnique({ where: { id: req.userId } });
+	res.json(user);
+});
+```
+
+## Role-Based Access Control (RBAC)
+
+```js
+function authorize(...allowedRoles) {
+	return async (req, res, next) => {
+		const user = await db.users.findUnique({ where: { id: req.userId } });
+
+		if (!allowedRoles.includes(user.role)) {
+			return res.status(403).json({ error: "Forbidden" });
+		}
+
+		next();
+	};
+}
+
+// Admin only route
+app.delete("/api/users/:id", authenticate, authorize("admin"), async (req, res) => {
+	// Delete user
+});
+```
+
+## Best Practices
+
+1. **Hash passwords** - Never store plain text
+2. **HTTPS only** - Encrypt data in transit
+3. **Secure tokens** - Strong secret, reasonable expiry
+4. **Refresh tokens** - Long-lived, revocable
+5. **Rate limiting** - Prevent brute force
+6. **Input validation** - Sanitize user input

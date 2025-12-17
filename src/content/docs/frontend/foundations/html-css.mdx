@@ -1,0 +1,110 @@
+---
+title: HTML & CSS Foundations
+description: Nền tảng HTML và CSS cho web development
+---
+
+# HTML & CSS Foundations
+
+Nền tảng cơ bản để xây dựng website.
+
+## HTML Semantic
+
+```html
+<!DOCTYPE html>
+<html lang="vi">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>My Website</title>
+	</head>
+	<body>
+		<header>
+			<nav>
+				<ul>
+					<li><a href="/">Home</a></li>
+					<li><a href="/about">About</a></li>
+				</ul>
+			</nav>
+		</header>
+
+		<main>
+			<article>
+				<h1>Article Title</h1>
+				<p>Content...</p>
+			</article>
+		</main>
+
+		<footer>
+			<p>&copy; 2025 Vexa Blog</p>
+		</footer>
+	</body>
+</html>
+```
+
+## CSS Basics
+
+```css
+/* Variables */
+:root {
+	--primary-color: #3498db;
+	--spacing: 1rem;
+}
+
+/* Flexbox */
+.container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: var(--spacing);
+}
+
+/* Grid */
+.grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	gap: 2rem;
+}
+
+/* Modern CSS */
+.card {
+	background: white;
+	border-radius: 8px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	padding: 1.5rem;
+
+	&:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	}
+}
+```
+
+## Box Model
+
+```
+┌─────────────────────────────────┐
+│         Margin                  │
+│  ┌───────────────────────────┐  │
+│  │      Border               │  │
+│  │  ┌─────────────────────┐  │  │
+│  │  │    Padding          │  │  │
+│  │  │  ┌───────────────┐  │  │  │
+│  │  │  │   Content     │  │  │  │
+│  │  │  └───────────────┘  │  │  │
+│  │  └─────────────────────┘  │  │
+│  └───────────────────────────┘  │
+└─────────────────────────────────┘
+```
+
+## Best Practices
+
+1. **Semantic HTML** - Sử dụng đúng tags
+2. **Mobile-first** - Design cho mobile trước
+3. **BEM Naming** - `.block__element--modifier`
+4. **CSS Variables** - Reusable values
+5. **Accessibility** - ARIA labels, alt text
+
+## Next Steps
+
+-   👉 [Responsive Design](/frontend/foundations/responsive/)
+-   📚 [Accessibility](/frontend/foundations/accessibility/)

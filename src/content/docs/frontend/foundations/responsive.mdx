@@ -1,0 +1,120 @@
+---
+title: Responsive Design
+description: Thiết kế website đáp ứng mọi kích thước màn hình
+---
+
+# Responsive Design
+
+Tạo website hoạt động tốt trên mọi thiết bị.
+
+## Mobile-First Approach
+
+```css
+/* Mobile styles first (default) */
+.container {
+	padding: 1rem;
+}
+
+/* Tablet and up */
+@media (min-width: 768px) {
+	.container {
+		padding: 2rem;
+	}
+}
+
+/* Desktop and up */
+@media (min-width: 1024px) {
+	.container {
+		padding: 3rem;
+		max-width: 1200px;
+		margin: 0 auto;
+	}
+}
+```
+
+## Responsive Units
+
+```css
+/* Relative units */
+.text {
+	font-size: 1rem; /* 16px default */
+	padding: 2em; /* Relative to font-size */
+	width: 80%; /* Relative to parent */
+	max-width: 60ch; /* 60 characters wide */
+}
+
+/* Viewport units */
+.hero {
+	height: 100vh; /* 100% viewport height */
+	width: 100vw; /* 100% viewport width */
+}
+
+/* Clamp for fluid typography */
+.title {
+	font-size: clamp(1.5rem, 5vw, 3rem);
+}
+```
+
+## CSS Grid Responsive
+
+```css
+/* Auto-fit columns */
+.grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 1rem;
+}
+```
+
+## Common Breakpoints
+
+```css
+/* Mobile: < 768px (default) */
+/* Tablet: 768px - 1023px */
+@media (min-width: 768px) {
+}
+
+/* Desktop: 1024px+ */
+@media (min-width: 1024px) {
+}
+
+/* Large Desktop: 1280px+ */
+@media (min-width: 1280px) {
+}
+```
+
+## Images
+
+```html
+<!-- Responsive images -->
+<img srcset="small.jpg 500w, medium.jpg 1000w, large.jpg 1500w" sizes="(max-width: 768px) 100vw, 50vw" src="medium.jpg" alt="Description" />
+
+<!-- Picture element -->
+<picture>
+	<source media="(min-width: 1024px)" srcset="desktop.jpg" />
+	<source media="(min-width: 768px)" srcset="tablet.jpg" />
+	<img src="mobile.jpg" alt="Description" />
+</picture>
+```
+
+## Container Queries (Modern)
+
+```css
+.card-container {
+	container-type: inline-size;
+}
+
+@container (min-width: 400px) {
+	.card {
+		display: grid;
+		grid-template-columns: 1fr 2fr;
+	}
+}
+```
+
+## Testing
+
+-   Chrome DevTools Device Mode
+-   Real devices
+-   BrowserStack
+-   Responsive Design Checkertools

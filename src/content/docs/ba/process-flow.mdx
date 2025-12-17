@@ -1,0 +1,74 @@
+---
+title: Process Flow
+description: Vẽ và document business processes
+---
+
+# Process Flow
+
+Visualize và document quy trình nghiệp vụ.
+
+## Flowchart Basics
+
+```
+[Start] → [Process] → {Decision} → [End]
+
+○ Start/End (oval)
+□ Process (rectangle)
+◇ Decision (diamond)
+→ Flow (arrow)
+```
+
+## Example: Login Process
+
+```
+Start
+  ↓
+Enter credentials
+  ↓
+Submit form
+  ↓
+Valid credentials? ───No──→ Show error ──→ End
+  ↓ Yes
+Create session
+  ↓
+Redirect to dashboard
+  ↓
+End
+```
+
+## Swimlane Diagram
+
+Phân chia responsibilities:
+
+```
+User        | System      | Database
+------------|-------------|-------------
+Click login |             |
+Enter info  |             |
+Submit      | →           |
+            | Validate    |
+            | Query       | →
+            |             | Check user
+            |             | Return result
+            | ← Result    |
+Dashboard ← | Redirect    |
+```
+
+## BPMN Notation
+
+Business Process Model and Notation - Standard for drawing processes.
+
+## Tools
+
+-   **Mermaid** - Text-based diagrams
+-   **Lucidchart** - Online diagramming
+-   **Draw.io** - Free tool
+-   **Figma** - Design + flowcharts
+
+## Best Practices
+
+1. **Clear start/end** - Obvious entry and exit points
+2. **Consistent symbols** - Stick to standard notation
+3. **Descriptive labels** - Clear action descriptions
+4. **Not too complex** - Split large flows into sub-processes
+5. **Show exceptions** - Include error paths

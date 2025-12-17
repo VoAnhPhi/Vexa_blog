@@ -1,0 +1,75 @@
+---
+title: Frontend Testing
+description: Testing strategies cho frontend applications
+---
+
+# Frontend Testing
+
+Chiến lược testing cho frontend apps.
+
+## Testing Pyramid
+
+```
+       /\
+      /E2E\      ← Ít tests, chậm, đắt
+     /------\
+    /Integration\ ← Vừa phải
+   /------------\
+  /  Unit Tests  \ ← Nhiều tests, nhanh, rẻ
+ /----------------\
+```
+
+## Unit Tests (Vitest/Jest)
+
+```jsx
+// sum.js
+export function sum(a, b) {
+	return a + b;
+}
+
+// sum.test.js
+import { expect, test } from "vitest";
+import { sum } from "./sum";
+
+test("adds 1 + 2 to equal 3", () => {
+	expect(sum(1, 2)).toBe(3);
+});
+```
+
+## Component Tests (React Testing Library)
+
+```jsx
+import { render, screen, fireEvent } from "@testing-library/react";
+import Counter from "./Counter";
+
+test("increments counter", () => {
+	render(<Counter />);
+
+	const button = screen.getByText(/increment/i);
+	fireEvent.click(button);
+
+	expect(screen.getByText(/count: 1/i)).toBeInTheDocument();
+});
+```
+
+## E2E Tests (Playwright/Cypress)
+
+```js
+// Playwright
+test("user can login", async ({ page }) => {
+	await page.goto("http://localhost:3000");
+	await page.fill('input[name="email"]', "test@example.com");
+	await page.fill('input[name="password"]', "password");
+	await page.click('button[type="submit"]');
+
+	await expect(page.locator("text=Welcome")).toBeVisible();
+});
+```
+
+## Best Practices
+
+1. **Test behavior, not implementation**
+2. **AAA pattern**: Arrange, Act, Assert
+3. **Write meaningful test descriptions**
+4. **Mock external dependencies**
+5. **Keep tests simple and focused**

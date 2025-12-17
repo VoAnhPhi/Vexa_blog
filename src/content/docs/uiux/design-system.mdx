@@ -1,0 +1,162 @@
+---
+title: Design System
+description: Xây dựng design system nhất quán
+---
+
+# Design System
+
+Design system là tập hợp reusable components và standards.
+
+## Components
+
+### Foundations
+
+-   **Colors** - Palette, semantic colors
+-   **Typography** - Font families, sizes, weights
+-   **Spacing** - Consistent spacing scale
+-   **Grid** - Layout system
+
+### Components
+
+-   Buttons
+-   Forms (inputs, selects, checkboxes)
+-   Cards
+-   Modals
+-   Navigation
+-   Tables
+
+## Color System
+
+```css
+/* Brand Colors */
+--color-primary: #3498db;
+--color-secondary: #2ecc71;
+
+/* Semantic Colors */
+--color-success: #27ae60;
+--color-warning: #f39c12;
+--color-error: #e74c3c;
+--color-info: #3498db;
+
+/* Neutral Colors */
+--color-gray-50: #f8f9fa;
+--color-gray-100: #e9ecef;
+--color-gray-900: #212529;
+```
+
+## Typography Scale
+
+```css
+/* Headings */
+--text-h1: 2.5rem; /* 40px */
+--text-h2: 2rem; /* 32px */
+--text-h3: 1.5rem; /* 24px */
+
+/* Body */
+--text-base: 1rem; /* 16px */
+--text-sm: 0.875rem; /* 14px */
+--text-xs: 0.75rem; /* 12px */
+```
+
+## Spacing Scale
+
+```css
+--space-1: 0.25rem; /* 4px */
+--space-2: 0.5rem; /* 8px */
+--space-3: 0.75rem; /* 12px */
+--space-4: 1rem; /* 16px */
+--space-6: 1.5rem; /* 24px */
+--space-8: 2rem; /* 32px */
+```
+
+## Component Example
+
+### Button Component
+
+```jsx
+// React component
+function Button({
+  variant = 'primary',
+  size = 'medium',
+  children
+}) {
+  return (
+    <button className={`btn btn-${variant} btn-${size}`}>
+      {children}
+    </button>
+  );
+}
+
+// CSS
+.btn {
+  font-family: var(--font-sans);
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+}
+
+.btn-medium {
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--text-base);
+}
+```
+
+## Documentation
+
+````markdown
+## Button
+
+### Variants
+
+-   Primary - Main actions
+-   Secondary - Secondary actions
+-   Outline - Tertiary actions
+
+### Sizes
+
+-   Small - Compact spaces
+-   Medium - Default
+-   Large - Prominent actions
+
+### Usage
+
+```jsx
+<Button variant="primary" size="medium">
+	Click me
+</Button>
+```
+````
+
+### Accessibility
+
+-   Use semantic `<button>` elements
+-   Include aria-label for icon-only buttons
+
+```
+
+## Tools
+
+- **Storybook** - Component explorer
+- **Figma** - Design components
+- **Style Dictionary** - Design tokens
+
+## Examples
+
+- [Material Design](https://material.io/)
+- [Ant Design](https://ant.design/)
+- [Chakra UI](https://chakra-ui.com/)
+- [Shadcn UI](https://ui.shadcn.com/)
+
+## Best Practices
+
+1. **Consistent naming** - Clear conventions
+2. **Documentation** - How and when to use
+3. **Accessibility** - WCAG compliance
+4. **Versioning** - Track changes
+5. **Governance** - Who can modify
+```

@@ -1,0 +1,76 @@
+---
+title: TypeScript Type System
+description: Deep dive vào hệ thống types của TypeScript
+---
+
+# TypeScript Type System
+
+Hệ thống types mạnh mẽ của TypeScript giúp code an toàn và dễ maintain hơn.
+
+## Type Inference
+
+TypeScript tự suy luận types:
+
+```typescript
+let x = 3; // number
+let name = "Phi"; // string
+let isActive = true; // boolean
+
+const user = {
+	name: "Phi",
+	age: 25,
+}; // { name: string; age: number }
+```
+
+## Type Assertions
+
+```typescript
+const input = document.getElementById("input") as HTMLInputElement;
+const value = input.value;
+
+// Hoặc
+const input2 = <HTMLInputElement>document.getElementById("input");
+```
+
+## Literal Types
+
+```typescript
+type Direction = "north" | "south" | "east" | "west";
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
+
+let method: HttpMethod = "GET"; // OK
+// method = "PATCH"; // Error
+```
+
+## Utility Types
+
+```typescript
+interface User {
+	id: number;
+	name: string;
+	email: string;
+	password: string;
+}
+
+// Partial - Tất cả optional
+type PartialUser = Partial<User>;
+
+// Required - Tất cả required
+type RequiredUser = Required<User>;
+
+// Pick - Chọn properties
+type UserPreview = Pick<User, "id" | "name">;
+
+// Omit - Loại bỏ properties
+type UserWithoutPassword = Omit<User, "password">;
+
+// Readonly
+type ReadonlyUser = Readonly<User>;
+
+// Record
+type Roles = Record<string, string[]>;
+```
+
+## Learn more
+
+Chi tiết hơn tại [Advanced TypeScript](/languages/typescript/advanced/)

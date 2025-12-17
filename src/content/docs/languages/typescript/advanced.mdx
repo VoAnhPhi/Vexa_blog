@@ -1,0 +1,67 @@
+---
+title: Advanced TypeScript
+description: Advanced patterns và techniques trong TypeScript
+---
+
+# Advanced TypeScript
+
+Các topic nâng cao cho TypeScript power users.
+
+## Mapped Types
+
+```typescript
+type Readonly<T> = {
+	readonly [P in keyof T]: T[P];
+};
+
+type Optional<T> = {
+	[P in keyof T]?: T[P];
+};
+```
+
+## Conditional Types
+
+```typescript
+type IsString<T> = T extends string ? true : false;
+
+type A = IsString<string>; // true
+type B = IsString<number>; // false
+```
+
+## Template Literal Types
+
+```typescript
+type EmailLocale = "en" | "vi";
+type EmailType = "welcome" | "reset";
+
+type EmailTemplate = `${EmailLocale}_${EmailType}`;
+// "en_welcome" | "en_reset" | "vi_welcome" | "vi_reset"
+```
+
+## Decorators (Experimental)
+
+```typescript
+function log(target: any, key: string) {
+	console.log(`${key} was called`);
+}
+
+class MyClass {
+	@log
+	myMethod() {
+		// ...
+	}
+}
+```
+
+## Best Practices
+
+1. **Prefer interfaces over types** cho object shapes
+2. **Use strict mode** trong tsconfig.json
+3. **Avoid `any`** - dùng `unknown` nếu cần
+4. **Enable strictNullChecks**
+5. **Document complex types**
+
+## Resources
+
+-   [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
+-   [TypeScript Deep Dive](https://basarat.gitbook.io/typescript/)

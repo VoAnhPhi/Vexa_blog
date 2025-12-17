@@ -1,0 +1,161 @@
+---
+title: Documentation
+description: Best practices trong việc viết technical docs
+---
+
+# Documentation
+
+Kỹ năng viết tài liệu kỹ thuật hiệu quả.
+
+## Types of Documentation
+
+### 1. Requirements Document (PRD/SRS)
+
+-   Product Requirements Document
+-   Software Requirements Specification
+-   Mô tả chi tiết features và requirements
+
+### 2. Technical Specification
+
+-   Architecture diagrams
+-   Database schema
+-   API documentation
+-   Technology stack
+
+### 3. User Documentation
+
+-   User guides
+-   Help articles
+-   FAQs
+-   Tutorials
+
+### 4. Developer Documentation
+
+-   README files
+-   Code comments
+-   API references
+-   Setup guides
+
+## Document Structure
+
+````markdown
+# Project Name
+
+## Overview
+
+Brief description of the project
+
+## Features
+
+-   Feature 1
+-   Feature 2
+
+## Technical Stack
+
+-   Frontend: React + TypeScript
+-   Backend: Node.js + Express
+-   Database: PostgreSQL
+
+## Setup
+
+1. Clone repo
+2. Install dependencies: `npm install`
+3. Run: `npm run dev`
+
+## API Documentation
+
+### GET /api/users
+
+Returns list of users
+
+**Response:**
+
+```json
+{
+  "data": [...]
+}
+```
+````
+
+## Contributing
+
+Guidelines for contributors
+
+````
+
+## README Template
+
+```markdown
+# Project Name
+
+Brief description
+
+## Features
+- Feature list
+
+## Installation
+```bash
+npm install
+````
+
+## Usage
+
+```bash
+npm run dev
+```
+
+## Environment Variables
+
+```env
+DATABASE_URL=...
+JWT_SECRET=...
+```
+
+## License
+
+MIT
+
+````
+
+## API Documentation
+
+```markdown
+## Login
+`POST /api/login`
+
+**Request:**
+```json
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+````
+
+**Response:**
+
+```json
+{
+	"token": "eyJhbGc...",
+	"user": {
+		"id": 1,
+		"email": "user@example.com"
+	}
+}
+```
+
+**Status Codes:**
+
+-   `200` - Success
+-   `401` - Invalid credentials
+-   `400` - Validation error
+
+```
+
+## Best Practices
+
+1. **Keep it updated** - Sync with code changes
+2. **Be concise** - Clear and to the point
+3. **Use examples** - Show don't just tell
+4. **Proper formatting** - Make it readable
+5. **Version control** - Track documentation changes
+```

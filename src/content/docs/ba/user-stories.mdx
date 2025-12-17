@@ -1,0 +1,84 @@
+---
+title: User Stories
+description: Viết user stories theo format chuẩn
+---
+
+# User Stories
+
+User story là cách describe requirements từ góc nhìn người dùng.
+
+## Format
+
+```
+As a [type of user]
+I want to [action]
+So that [benefit/value]
+```
+
+## Ví dụ
+
+```markdown
+### User Story 1: Login
+
+As a registered user
+I want to login to my account
+So that I can access my private information
+
+**Acceptance Criteria:**
+
+-   User enters valid email and password
+-   System validates credentials
+-   Successful login redirects to dashboard
+-   Failed login shows error message
+-   Account locks after 5 failed attempts
+```
+
+```markdown
+### User Story 2: Password Reset
+
+As a user who forgot password
+I want to reset my password via email
+So that I can regain access to my account
+
+**Acceptance Criteria:**
+
+-   User clicks "Forgot Password"
+-   User enters email address
+-   System sends reset link to email
+-   Link expires after 24 hours
+-   User creates new password
+```
+
+## INVEST Criteria
+
+Good user stories are:
+
+-   **I**ndependent - Không phụ thuộc stories khác
+-   **N**egotiable - Có thể thảo luận, điều chỉnh
+-   **V**aluable - Mang giá trị cho user
+-   **E**stimable - Có thể ước lượng thời gian
+-   **S**mall - Đủ nhỏ để complete trong 1 sprint
+-   **T**estable - Có thể test được
+
+## Acceptance Criteria
+
+-   Specific, measurable conditions
+-   Given/When/Then format
+
+```
+Given I am a logged-in user
+When I click the "Logout" button
+Then I should be redirected to the homepage
+And my session should be terminated
+```
+
+## Common Mistakes
+
+❌ Too technical - "Implement OAuth2 authentication"  
+✅ User-focused - "Login with Google account"
+
+❌ Too vague - "Improve performance"  
+✅ Specific - "Page loads in under 2 seconds"
+
+❌ Too large - "Build e-commerce platform"  
+✅ Small - "Add item to shopping cart"

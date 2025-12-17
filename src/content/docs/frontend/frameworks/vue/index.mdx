@@ -1,0 +1,82 @@
+---
+title: Vue.js
+description: Progressive JavaScript framework
+---
+
+# Vue.js
+
+Vue là progressive framework để xây dựng user interfaces.
+
+## Basic Component
+
+```vue
+<template>
+	<div class="counter">
+		<p>Count: {{ count }}</p>
+		<button @click="increment">Increment</button>
+	</div>
+</template>
+
+<script setup>
+import { ref } from "vue";
+
+const count = ref(0);
+
+function increment() {
+	count.value++;
+}
+</script>
+
+<style scoped>
+.counter {
+	text-align: center;
+}
+</style>
+```
+
+## Reactivity
+
+```vue
+<script setup>
+import { ref, computed, watch } from "vue";
+
+const count = ref(0);
+const doubled = computed(() => count.value * 2);
+
+watch(count, (newValue, oldValue) => {
+	console.log(`Count changed from ${oldValue} to ${newValue}`);
+});
+</script>
+```
+
+## Props & Emit
+
+```vue
+<!-- Child.vue -->
+<template>
+	<button @click="handleClick">{{ label }}</button>
+</template>
+
+<script setup>
+const props = defineProps({
+	label: String,
+});
+
+const emit = defineEmits(["click"]);
+
+function handleClick() {
+	emit("click");
+}
+</script>
+
+<!-- Parent.vue -->
+<template>
+	<Child label="Click me" @click="handleEvent" />
+</template>
+```
+
+## Learn More
+
+-   👉 [Vue Composables](/frontend/frameworks/vue/composables/)
+-   📚 [Vue Router](https://router.vuejs.org/)
+-   🎨 [Pinia](https://pinia.vuejs.org/) - State management

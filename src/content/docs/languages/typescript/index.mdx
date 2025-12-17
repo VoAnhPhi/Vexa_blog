@@ -1,0 +1,187 @@
+---
+title: TypeScript
+description: JavaScript với static typing
+---
+
+# TypeScript
+
+TypeScript là superset của JavaScript, thêm static type checking và các tính năng nâng cao.
+
+## Tại sao dùng TypeScript?
+
+✅ **Catch errors sớm** - Lỗi type được phát hiện lúc compile  
+✅ **Better IDE support** - Autocomplete, refactoring  
+✅ **Self-documenting** - Types là documentation  
+✅ **Safer refactoring** - Thay đổi code tự tin hơn  
+✅ **Better for large codebases** - Scale tốt hơn JavaScript
+
+## Setup
+
+```bash
+npm install -D typescript
+npx tsc --init
+```
+
+## Basic Types
+
+```typescript
+// Primitives
+let name: string = "Phi";
+let age: number = 25;
+let isActive: boolean = true;
+
+// Arrays
+let numbers: number[] = [1, 2, 3];
+let names: Array<string> = ["Phi", "Anh"];
+
+// Tuple
+let tuple: [string, number] = ["Phi", 25];
+
+// Enum
+enum Role {
+	Admin = "ADMIN",
+	User = "USER",
+	Guest = "GUEST",
+}
+
+// Any (tránh dùng!)
+let anything: any = "can be anything";
+
+// Unknown (an toàn hơn any)
+let userInput: unknown;
+userInput = 5;
+userInput = "hello";
+
+// Void
+function log(): void {
+	console.log("No return value");
+}
+
+// Never
+function throwError(): never {
+	throw new Error("Error!");
+}
+```
+
+## Interfaces
+
+```typescript
+interface User {
+	id: number;
+	name: string;
+	email: string;
+	age?: number; // Optional
+	readonly createdAt: Date; // Readonly
+}
+
+const user: User = {
+	id: 1,
+	name: "Phi",
+	email: "phi@example.com",
+	createdAt: new Date(),
+};
+
+// user.createdAt = new Date(); // Error: readonly
+```
+
+## Type Aliases
+
+```typescript
+type ID = string | number;
+type User = {
+	id: ID;
+	name: string;
+};
+
+type Admin = User & {
+	role: "admin";
+	permissions: string[];
+};
+```
+
+## Union và Intersection Types
+
+```typescript
+// Union - một trong các types
+type Status = "pending" | "approved" | "rejected";
+let orderStatus: Status = "pending";
+
+function printId(id: string | number) {
+	if (typeof id === "string") {
+		console.log(id.toUpperCase());
+	} else {
+		console.log(id);
+	}
+}
+
+// Intersection - Kết hợp types
+type Person = {
+	name: string;
+};
+
+type Employee = Person & {
+	employeeId: number;
+};
+```
+
+## Generics
+
+```typescript
+// Generic function
+function identity<T>(arg: T): T {
+	return arg;
+}
+
+const num = identity<number>(5);
+const str = identity<string>("hello");
+
+// Generic interface
+interface Response<T> {
+	data: T;
+	status: number;
+	message: string;
+}
+
+type UserResponse = Response<User>;
+type UsersResponse = Response<User[]>;
+
+// Generic constraints
+interface HasLength {
+	length: number;
+}
+
+function logLength<T extends HasLength>(arg: T): void {
+	console.log(arg.length);
+}
+```
+
+## Classes
+
+```typescript
+class Animal {
+	protected name: string;
+
+	constructor(name: string) {
+		this.name = name;
+	}
+
+	move(distance: number): void {
+		console.log(`${this.name} moved ${distance}m`);
+	}
+}
+
+class Dog extends Animal {
+	bark(): void {
+		console.log("Woof!");
+	}
+}
+
+const dog = new Dog("Buddy");
+dog.bark();
+dog.move(10);
+```
+
+## Bước tiếp theo
+
+-   👉 [Type System chi tiết](/languages/typescript/typing/)
+-   📚 [Advanced TypeScript](/languages/typescript/advanced/)

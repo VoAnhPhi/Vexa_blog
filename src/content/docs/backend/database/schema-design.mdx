@@ -1,0 +1,82 @@
+---
+title: Database Schema Design
+description: Thiết kế database schema hiệu quả
+---
+
+# Database Schema Design
+
+Principles và best practices trong việc thiết kế database schema.
+
+## Normalization
+
+### 1NF (First Normal Form)
+
+-   Atomic values (không có arrays/nested objects)
+-   Mỗi column có unique name
+-   Order không quan trọng
+
+### 2NF (Second Normal Form)
+
+-   Đạt 1NF
+-   Không có partial dependencies
+
+### 3NF (Third Normal Form)
+
+-   Đạt 2NF
+-   Không có transitive dependencies
+
+## Relationships
+
+```sql
+-- One-to-Many
+CREATE TABLE authors (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100)
+);
+
+CREATE TABLE books (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(200),
+  author_id INTEGER REFERENCES authors(id)
+);
+
+-- Many-to-Many
+CREATE TABLE students (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100)
+);
+
+CREATE TABLE courses (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100)
+);
+
+CREATE TABLE enrollments (
+  student_id INTEGER REFERENCES students(id),
+  course_id INTEGER REFERENCES courses(id),
+  PRIMARY KEY (student_id, course_id)
+);
+```
+
+## Indexes
+
+```sql
+-- Single column
+CREATE INDEX idx_users_email ON users(email);
+
+-- Composite index
+CREATE INDEX idx_posts_user_created
+ON posts(user_id, created_at);
+
+-- Unique index
+CREATE UNIQUE INDEX idx_users_username ON users(username);
+```
+
+## Best Practices
+
+1. **Meaningful names** - Rõ ràng, consistent
+2. **Primary keys** - Luôn có
+3. **Foreign keys** - Enforce relationships
+4. **Indexes** - Cho columns thường query
+5. **NOT NULL** - Khi appropriate
+6. **Default values** - Khi hợp lý

@@ -1,0 +1,89 @@
+---
+title: Vue Composables
+description: Reusable logic với Composition API
+---
+
+# Vue Composables
+
+Composables là functions tái sử dụng logic sử dụng Composition API.
+
+## useCounter
+
+```js
+// composables/useCounter.js
+import { ref } from "vue";
+
+export function useCounter(initialValue = 0) {
+	const count = ref(initialValue);
+
+	function increment() {
+		count.value++;
+	}
+
+	function decrement() {
+		count.value--;
+	}
+
+	function reset() {
+		count.value = initialValue;
+	}
+
+	return {
+		count,
+		increment,
+		decrement,
+		reset,
+	};
+}
+```
+
+## useFetch
+
+```js
+import { ref } from "vue";
+
+export function useFetch(url) {
+	const data = ref(null);
+	const error = ref(null);
+	const loading = ref(false);
+
+	async function fetchData() {
+		loading.value = true;
+		try {
+			const response = await fetch(url);
+			data.value = await response.json();
+		} catch (e) {
+			error.value = e;
+		} finally {
+			loading.value = false;
+		}
+	}
+
+	fetchData();
+
+	return { data, error, loading };
+}
+```
+
+## Usage
+
+```vue
+<script setup>
+import { useCounter } from "./composables/useCounter";
+import { useFetch } from "./composables/useFetch";
+
+const { count, increment } = useCounter(10);
+const { data, loading, error } = useFetch("/api/users");
+</script>
+
+<template>
+	<div>
+		<p>Count: {{ count }}</p>
+		<button @click="increment">+</button>
+
+		<div v-if="loading">Loading...</div>
+		<div v-else-if="error">Error: {{ error }}</div>
+		<div v-else>{{ data }}</div>
+	</div>
+</template>
+```

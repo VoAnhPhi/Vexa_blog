@@ -1,0 +1,65 @@
+---
+title: Node.js
+description: JavaScript runtime environment
+---
+
+# Node.js
+
+Node.js là JavaScript runtime được xây dựng trên V8 engine, cho phép chạy JavaScript trên server.
+
+## Basic Server
+
+```js
+const http = require("http");
+
+const server = http.createServer((req, res) => {
+	res.writeHead(200, { "Content-Type": "text/plain" });
+	res.end("Hello World!");
+});
+
+server.listen(3000, () => {
+	console.log("Server running on port 3000");
+});
+```
+
+## Modules
+
+```js
+// ES Modules
+import express from "express";
+import { readFile } from "fs/promises";
+
+// CommonJS
+const express = require("express");
+const fs = require("fs");
+```
+
+## File System
+
+```js
+import { readFile, writeFile } from "fs/promises";
+
+// Read file
+const data = await readFile("file.txt", "utf-8");
+
+// Write file
+await writeFile("output.txt", "Hello World!");
+```
+
+## Environment Variables
+
+```js
+// .env
+PORT=3000
+DATABASE_URL=postgresql://...
+
+// app.js
+import 'dotenv/config';
+
+const port = process.env.PORT || 3000;
+```
+
+## Learn More
+
+-   👉 [Express.js](/backend/nodejs/express/)
+-   📚 [Middleware](/backend/nodejs/middleware/)

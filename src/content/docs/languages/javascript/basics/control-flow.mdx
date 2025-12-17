@@ -1,0 +1,430 @@
+---
+title: Control Flow
+description: If/else, loops, switch statements trong JavaScript
+---
+
+# Control Flow - Luồng điều khiển
+
+Control flow quyết định thứ tự code được thực thi dựa trên điều kiện.
+
+## If / Else Statements
+
+### If cơ bản
+
+```javascript
+const age = 18;
+
+if (age >= 18) {
+	console.log("Đủ tuổi");
+}
+```
+
+### If / Else
+
+```javascript
+const score = 75;
+
+if (score >= 60) {
+	console.log("Đậu");
+} else {
+	console.log("Rớt");
+}
+```
+
+### If / Else If / Else
+
+```javascript
+const score = 85;
+
+if (score >= 90) {
+	console.log("Xuất sắc");
+} else if (score >= 80) {
+	console.log("Giỏi");
+} else if (score >= 60) {
+	console.log("Khá");
+} else {
+	console.log("Trung bình");
+}
+```
+
+## Comparison Operators
+
+```javascript
+// Bằng
+5 == "5"; // ✅ true (chỉ so sánh giá trị)
+5 === "5"; // ❌ false (so sánh cả type)
+
+// Không bằng
+5 != "5"; // ❌ false
+5 !== "5"; // ✅ true
+
+// Lớn hơn, nhỏ hơn
+10 > 5; // ✅ true
+10 < 5; // ❌ false
+10 >= 10; // ✅ true
+10 <= 5; // ❌ false
+```
+
+### Best Practice: Dùng === thay vì ==
+
+```javascript
+// ✅ Good - Strict equality
+if (age === 18) {
+	console.log("Exactly 18");
+}
+
+// ❌ Bad - Loose equality
+if (age == "18") {
+	// true nếu age là 18 hoặc "18"
+	console.log("Maybe 18?");
+}
+```
+
+## Logical Operators
+
+### AND (&&) - Phải cả 2 đúng
+
+```javascript
+const age = 25;
+const hasLicense = true;
+
+if (age >= 18 && hasLicense) {
+	console.log("Được lái xe");
+}
+```
+
+### OR (||) - Một trong hai đúng
+
+```javascript
+const isWeekend = true;
+const isHoliday = false;
+
+if (isWeekend || isHoliday) {
+	console.log("Được nghỉ!");
+}
+```
+
+### NOT (!) - Đảo ngược
+
+```javascript
+const isLoggedIn = false;
+
+if (!isLoggedIn) {
+	console.log("Vui lòng đăng nhập");
+}
+```
+
+## Ternary Operator
+
+Cách viết ngắn gọn của if/else:
+
+```javascript
+// If/else truyền thống
+let message;
+if (age >= 18) {
+	message = "Adult";
+} else {
+	message = "Minor";
+}
+
+// Ternary operator
+const message = age >= 18 ? "Adult" : "Minor";
+
+// Nested ternary (nên tránh vì khó đọc)
+const status = score >= 90 ? "A" : score >= 80 ? "B" : score >= 70 ? "C" : "F";
+```
+
+## Switch Statement
+
+Tốt cho nhiều điều kiện rời rạc:
+
+```javascript
+const day = "Monday";
+
+switch (day) {
+	case "Monday":
+		console.log("Bắt đầu tuần");
+		break;
+	case "Friday":
+		console.log("Sắp cuối tuần");
+		break;
+	case "Saturday":
+	case "Sunday":
+		console.log("Cuối tuần!");
+		break;
+	default:
+		console.log("Ngày thường");
+}
+```
+
+⚠️ **Nhớ thêm `break`!** Nếu không sẽ chạy xuống case tiếp theo.
+
+## For Loops
+
+### For loop cơ bản
+
+```javascript
+for (let i = 0; i < 5; i++) {
+	console.log(i); // 0, 1, 2, 3, 4
+}
+```
+
+### For...of (lặp qua array)
+
+```javascript
+const fruits = ["apple", "banana", "orange"];
+
+for (const fruit of fruits) {
+	console.log(fruit);
+}
+// apple
+// banana
+// orange
+```
+
+### For...in (lặp qua object properties)
+
+```javascript
+const user = {
+	name: "Phi",
+	age: 25,
+	city: "Hanoi",
+};
+
+for (const key in user) {
+	console.log(`${key}: ${user[key]}`);
+}
+// name: Phi
+// age: 25
+// city: Hanoi
+```
+
+## While Loops
+
+```javascript
+let count = 0;
+
+while (count < 5) {
+	console.log(count);
+	count++;
+}
+// 0, 1, 2, 3, 4
+```
+
+### Do...While
+
+Chạy ít nhất 1 lần:
+
+```javascript
+let count = 0;
+
+do {
+	console.log(count);
+	count++;
+} while (count < 5);
+```
+
+## Break và Continue
+
+### Break - Thoát khỏi loop
+
+```javascript
+for (let i = 0; i < 10; i++) {
+	if (i === 5) {
+		break; // Dừng loop khi i = 5
+	}
+	console.log(i);
+}
+// 0, 1, 2, 3, 4
+```
+
+### Continue - Bỏ qua iteration hiện tại
+
+```javascript
+for (let i = 0; i < 5; i++) {
+	if (i === 2) {
+		continue; // Bỏ qua khi i = 2
+	}
+	console.log(i);
+}
+// 0, 1, 3, 4
+```
+
+## Truthy và Falsy Values
+
+### Falsy values (được coi là false):
+
+```javascript
+if (!0) console.log("0 is falsy");
+if (!"") console.log("Empty string is falsy");
+if (!null) console.log("null is falsy");
+if (!undefined) console.log("undefined is falsy");
+if (!NaN) console.log("NaN is falsy");
+if (!false) console.log("false is falsy");
+```
+
+### Truthy values (tất cả còn lại):
+
+```javascript
+if (1) console.log("Numbers are truthy");
+if ("hello") console.log("Non-empty strings are truthy");
+if ([]) console.log("Arrays are truthy");
+if ({}) console.log("Objects are truthy");
+```
+
+## Short-Circuit Evaluation
+
+### && - Trả về giá trị đầu tiên falsy
+
+```javascript
+const user = {
+	name: "Phi",
+};
+
+// Kiểm tra tồn tại trước khi access
+const city = user.address && user.address.city;
+
+// Conditional execution
+isLoggedIn && redirectToProfile();
+```
+
+### || - Trả về giá trị đầu tiên truthy
+
+```javascript
+// Default values
+const username = input || "Guest";
+
+// Fallback chain
+const config = customConfig || defaultConfig || {};
+```
+
+### Nullish Coalescing (??) - Chỉ check null/undefined
+
+```javascript
+const count = 0;
+
+console.log(count || 10); // 10 (0 là falsy)
+console.log(count ?? 10); // 0 (0 không phải null/undefined)
+```
+
+## Optional Chaining (?.)
+
+Truy cập nested properties an toàn:
+
+```javascript
+const user = {
+	name: "Phi",
+	address: {
+		city: "Hanoi",
+	},
+};
+
+// Không có optional chaining
+const city = user && user.address && user.address.city;
+
+// Với optional chaining
+const city = user?.address?.city;
+
+// Array
+const firstFruit = users?.[0]?.favorites?.fruits?.[0];
+
+// Function
+const result = obj.method?.();
+```
+
+## Best Practices
+
+### 1. Early Return
+
+```javascript
+// ✅ Good
+function processUser(user) {
+	if (!user) return;
+	if (!user.isActive) return;
+
+	// Process active user
+}
+
+// ❌ Bad - Nested if
+function processUser(user) {
+	if (user) {
+		if (user.isActive) {
+			// Process active user
+		}
+	}
+}
+```
+
+### 2. Tránh magic numbers
+
+```javascript
+// ✅ Good
+const MIN_AGE = 18;
+if (age >= MIN_AGE) {
+	// ...
+}
+
+// ❌ Bad
+if (age >= 18) {
+	// ...
+}
+```
+
+### 3. Tránh nested ternary
+
+```javascript
+// ✅ Good
+function getGrade(score) {
+	if (score >= 90) return "A";
+	if (score >= 80) return "B";
+	if (score >= 70) return "C";
+	return "F";
+}
+
+// ❌ Bad
+const grade = score >= 90 ? "A" : score >= 80 ? "B" : score >= 70 ? "C" : "F";
+```
+
+## Bài tập
+
+```javascript
+// 1. FizzBuzz
+for (let i = 1; i <= 100; i++) {
+	if (i % 15 === 0) {
+		console.log("FizzBuzz");
+	} else if (i % 3 === 0) {
+		console.log("Fizz");
+	} else if (i % 5 === 0) {
+		console.log("Buzz");
+	} else {
+		console.log(i);
+	}
+}
+
+// 2. Tìm số lớn nhất
+function findMax(numbers) {
+	let max = numbers[0];
+	for (const num of numbers) {
+		if (num > max) {
+			max = num;
+		}
+	}
+	return max;
+}
+
+// 3. Đếm số chẵn
+function countEven(numbers) {
+	let count = 0;
+	for (const num of numbers) {
+		if (num % 2 === 0) {
+			count++;
+		}
+	}
+	return count;
+}
+```
+
+## Bước tiếp theo
+
+-   👉 [Closures](/languages/javascript/advanced/closures/) - Advanced concepts
+-   📚 [Async/Await](/languages/javascript/advanced/async-await/) - Asynchronous programming

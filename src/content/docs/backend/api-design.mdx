@@ -1,0 +1,82 @@
+---
+title: API Design
+description: Thiết kế RESTful APIs
+---
+
+# API Design
+
+Best practices trong việc thiết kế APIs.
+
+## RESTful Principles
+
+```
+GET    /api/users        # List users
+GET    /api/users/123    # Get user 123
+POST   /api/users        # Create user
+PUT    /api/users/123    # Update user 123
+DELETE /api/users/123    # Delete user 123
+```
+
+## HTTP Status Codes
+
+```
+200 OK               # Success
+201 Created          # Resource created
+400 Bad Request      # Invalid input
+401 Unauthorized     # Not authenticated
+403 Forbidden        # Not authorized
+404 Not Found        # Resource not found
+500 Internal Error   # Server error
+```
+
+## Response Format
+
+```js
+// Success response
+{
+  "data": {
+    "id": 1,
+    "name": "Phi"
+  }
+}
+
+// Error response
+{
+  "error": {
+    "message": "User not found",
+    "code": "USER_NOT_FOUND"
+  }
+}
+
+// Pagination
+{
+  "data": [...],
+  "meta": {
+    "page": 1,
+    "perPage": 20,
+    "total": 100
+  }
+}
+```
+
+## Versioning
+
+```
+/api/v1/users
+/api/v2/users
+```
+
+## Authentication
+
+```http
+Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
+```
+
+## Best Practices
+
+1. **Nouns, not verbs** trong URLs
+2. **Plural names** - `/users` not `/user`
+3. **Nested resources** - `/users/123/posts`
+4. **Filtering & Sorting** - `/users?status=active&sort=name`
+5. **Pagination** - `/users?page=2&limit=20`
+6. **Versioning** - `/api/v1/`

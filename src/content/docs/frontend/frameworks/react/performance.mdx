@@ -1,0 +1,63 @@
+---
+title: React Performance
+description: Tối ưu hóa performance cho React apps
+---
+
+# React Performance Optimization
+
+Các techniques để cải thiện performance của React applications.
+
+## React.memo
+
+Prevent unnecessary re-renders:
+
+```jsx
+const ExpensiveComponent = React.memo(({ data }) => {
+	console.log("Rendering...");
+	return <div>{data}</div>;
+});
+
+// Chỉ re-render khi data thay đổi
+```
+
+## useMemo
+
+```jsx
+const expensiveValue = useMemo(() => {
+	return computeExpensiveValue(a, b);
+}, [a, b]);
+```
+
+## useCallback
+
+```jsx
+const memoizedCallback = useCallback(() => {
+	doSomething(a, b);
+}, [a, b]);
+```
+
+## Code Splitting
+
+```jsx
+import { lazy, Suspense } from "react";
+
+const HeavyComponent = lazy(() => import("./HeavyComponent"));
+
+function App() {
+	return (
+		<Suspense fallback={<div>Loading...</div>}>
+			<HeavyComponent />
+		</Suspense>
+	);
+}
+```
+
+## Virtual Lists
+
+Sử dụng `react-window` hoặc `react-virtualized` cho long lists.
+
+## Tools
+
+-   React DevTools Profiler
+-   Chrome DevTools Performance tab
+-   Lighthouse

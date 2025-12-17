@@ -1,0 +1,120 @@
+---
+title: Web Accessibility (a11y)
+description: Xây dựng website accessible cho tất cả mọi người
+---
+
+# Web Accessibility
+
+Đảm bảo website của bạn sử dụng được bởi tất cả mọi người, bao gồm người khuyết tật.
+
+## Semantic HTML
+
+```html
+<!-- ✅ Good - Semantic -->
+<nav>
+	<ul>
+		<li><a href="/">Home</a></li>
+	</ul>
+</nav>
+
+<!-- ❌ Bad - Divitis -->
+<div class="nav">
+	<div class="nav-item">
+		<div onclick="goHome()">Home</div>
+	</div>
+</div>
+```
+
+## ARIA Labels
+
+```html
+<button aria-label="Close modal">
+	<svg><!-- X icon --></svg>
+</button>
+
+<nav aria-label="Main navigation">
+	<!-- nav items -->
+</nav>
+
+<img src="logo.png" alt="Company logo" />
+```
+
+## Keyboard Navigation
+
+```html
+<!-- Focusable elements -->
+<button>Click me</button>
+<a href="/page">Link</a>
+<input type="text" />
+
+<!-- Tab index -->
+<div tabindex="0" role="button">Custom button</div>
+<div tabindex="-1">Programmatically focusable</div>
+```
+
+## Color Contrast
+
+```css
+/* WCAG AA: 4.5:1 for normal text */
+/* WCAG AAA: 7:1 for normal text */
+
+.good-contrast {
+	color: #333;
+	background: #fff; /* 12.6:1 */
+}
+
+.bad-contrast {
+	color: #999;
+	background: #fff; /* 2.8:1 - Fail! */
+}
+```
+
+## Skip Links
+
+```html
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<main id="main-content">
+	<!-- Content -->
+</main>
+
+<style>
+	.skip-link {
+		position: absolute;
+		top: -40px;
+	}
+
+	.skip-link:focus {
+		top: 0;
+	}
+</style>
+```
+
+## Form Accessibility
+
+```html
+<form>
+	<label for="email">Email:</label>
+	<input type="email" id="email" name="email" aria-required="true" aria-describedby="email-error" />
+	<span id="email-error" role="alert">
+		<!-- Error message -->
+	</span>
+</form>
+```
+
+## Testing Tools
+
+-   **axe DevTools** - Browser extension
+-   **Lighthouse** - Chrome DevTools
+-   **Screen readers**: NVDA (Windows), VoiceOver (Mac)
+-   **Keyboard only** - Try navigating without mouse
+
+## Quick Checklist
+
+-   [ ] All images have alt text
+-   [ ] Color contrast meets WCAG AA
+-   [ ] Keyboard navigation works
+-   [ ] Forms have labels
+-   [ ] Focus indicators visible
+-   [ ] Headings in logical order (h1 → h2 → h3)
+-   [ ] ARIA labels where needed

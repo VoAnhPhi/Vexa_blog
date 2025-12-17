@@ -1,0 +1,261 @@
+---
+title: Event Loop
+description: Hiểu cách JavaScript xử lý asynchronous code
+---
+
+# Event Loop
+
+Event Loop là cơ chế JavaScript sử dụng để xử lý asynchronous operations mặc dù JavaScript là single-threaded.
+
+## JavaScript Runtime
+
+```
+┌───────────────────────────┐
+│   Call Stack              │  ← Execution context
+├───────────────────────────┤
+│   Web APIs                │  ← setTimeout, fetch, DOM events
+├───────────────────────────┤
+│   Callback Queue          │  ← Callbacks từ setTimeout, events
+├───────────────────────────┤
+│   Microtask Queue         │  ← Promises, queueMicrotask
+└───────────────────────────┘
+```
+
+## Call Stack
+
+LIFO (Last In, First Out):
+
+```javascript
+function first() {
+	console.log("First");
+	second();
+	console.log("First again");
+}
+
+function second() {
+	console.log("Second");
+}
+
+first();
+
+// Output:
+// "First"
+// "Second"
+// "First again"
+
+// Call Stack flow:
+// 1. first()
+// 2. first() → second()
+// 3. first()
+// 4. (empty)
+```
+
+## Web APIs
+
+Browser cung cấp:
+
+-   `setTimeout`/`setInterval`
+-   `fetch`/`XMLHttpRequest`
+-   DOM events
+-   `requestAnimationFrame`
+
+```javascript
+console.log("Start");
+
+setTimeout(() => {
+	console.log("Timeout");
+}, 0);
+
+console.log("End");
+
+// Output:
+// "Start"
+// "End"
+// "Timeout" ← Chạy sau cùng dù delay = 0!
+```
+
+## Task Queue (Callback Queue)
+
+Chứa callbacks từ:
+
+-   `setTimeout`/`setInterval`
+-   DOM events
+-   I/O operations
+
+## Microtask Queue
+
+**Priority cao hơn Task Queue!**
+
+Chứa:
+
+-   Promise callbacks (`.then`, `.catch`, `.finally`)
+-   `queueMicrotask`
+-   `MutationObserver`
+
+```javascript
+console.log("1");
+
+setTimeout(() => console.log("2"), 0);
+
+Promise.resolve().then(() => console.log("3"));
+
+console.log("4");
+
+// Output:
+// "1"
+// "4"
+// "3" ← Promise (microtask) chạy trước
+// "2" ← setTimeout (task) chạy sau
+```
+
+## Event Loop Flow
+
+```
+while (true) {
+  1. Execute all code in Call Stack
+  2. Execute ALL microtasks (promises, queueMicrotask)
+  3. Render (if needed)
+  4. Execute ONE task from Task Queue
+  5. Repeat
+}
+```
+
+## Ví dụ phức tạp
+
+```javascript
+console.log("Script start");
+
+setTimeout(() => {
+	console.log("setTimeout");
+}, 0);
+
+Promise.resolve()
+	.then(() => {
+		console.log("Promise 1");
+	})
+	.then(() => {
+		console.log("Promise 2");
+	});
+
+queueMicrotask(() => {
+	console.log("queueMicrotask");
+});
+
+console.log("Script end");
+
+// Output:
+// "Script start"
+// "Script end"
+// "Promise 1"
+// "queueMicrotask"
+// "Promise 2"
+// "setTimeout"
+```
+
+## Async/Await và Event Loop
+
+```javascript
+async function example() {
+	console.log("1");
+
+	await Promise.resolve();
+
+	console.log("2"); // Microtask
+}
+
+console.log("Start");
+example();
+console.log("End");
+
+// Output:
+// "Start"
+// "1"
+// "End"
+// "2" ← await tạo microtask
+```
+
+## Blocking vs Non-blocking
+
+### ❌ Blocking Code
+
+```javascript
+// BAD - Freezes browser
+function blockingLoop() {
+	const start = Date.now();
+	while (Date.now() - start < 3000) {
+		// Chặn 3 giây!
+	}
+	console.log("Done");
+}
+```
+
+### ✅ Non-blocking Code
+
+```javascript
+// GOOD - Không chặn
+function nonBlocking() {
+	setTimeout(() => {
+		console.log("Done");
+	}, 3000);
+}
+```
+
+## Bài tập
+
+Đoán output:
+
+```javascript
+// Bài 1
+console.log("A");
+setTimeout(() => console.log("B"), 0);
+Promise.resolve().then(() => console.log("C"));
+console.log("D");
+
+// Answer: A, D, C, B
+
+// Bài 2
+async function async1() {
+	console.log("async1 start");
+	await async2();
+	console.log("async1 end");
+}
+
+async function async2() {
+	console.log("async2");
+}
+
+console.log("script start");
+setTimeout(() => console.log("setTimeout"), 0);
+async1();
+Promise.resolve().then(() => console.log("promise"));
+console.log("script end");
+
+// Answer:
+// script start
+// async1 start
+// async2
+// script end
+// async1 end
+// promise
+// setTimeout
+```
+
+## Best Practices
+
+1. **Tránh blocking operations** trong main thread
+2. **Chia nhỏ heavy tasks** với `setTimeout`
+3. **Ưu tiên microtasks** cho critical updates
+4. **Hiểu priority**: microtasks > tasks
+
+## Tóm tắt
+
+| Queue           | Ví dụ              | Priority |
+| --------------- | ------------------ | -------- |
+| Call Stack      | Synchronous code   | Highest  |
+| Microtask Queue | Promises           | High     |
+| Task Queue      | setTimeout, events | Low      |
+
+## Bước tiếp theo
+
+-   👉 [JavaScript Patterns](/languages/javascript/patterns/)
+-   📚 [React Hooks](/frontend/frameworks/react/hooks/)
