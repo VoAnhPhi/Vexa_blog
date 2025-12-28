@@ -1,0 +1,164 @@
+---
+title: Biến (Variables)
+description: Khai báo biến, hoisting, naming rules và scopes trong JavaScript
+---
+
+# Biến trong JavaScript
+
+## Các Cách Khai Báo Biến
+
+### **[var] keyword**
+
+Lệnh `var` dùng để khai báo một biến có **phạm vi hàm (function scope)** hoặc **phạm vi toàn cục (global scope)**. Biến có thể được khởi tạo (gán giá trị ban đầu) hoặc để trống.
+
+**Đặc điểm chi tiết:**
+
+-   `var` có **hoisting**: nghĩa là biến được khai báo với `var` sẽ được đưa lên đầu phạm vi (scope) của nó, nhưng giá trị thì không được gán sẵn.
+
+```js
+console.log(a); // undefined (không báo lỗi)
+var a = 10;
+```
+
+-   Phạm vi chỉ gói gọn trong **hàm**, không giới hạn trong khối `{}`.
+
+```js
+if (true) {
+	var x = 5;
+}
+console.log(x); // 5
+```
+
+-   Có thể khai báo lại cùng tên trong cùng một phạm vi (không báo lỗi)
+
+### **[let] keyword**
+
+Lệnh `let` dùng để khai báo một biến có **phạm vi khối (block scope)**. Biến có thể được khởi tạo (gán giá trị ban đầu) hoặc để trống.
+
+**Đặc điểm chi tiết:**
+
+-   **Block scope**: chỉ tồn tại bên trong cặp `{}`
+
+```js
+if (true) {
+	let y = 10;
+	console.log(y); // 10
+}
+console.log(y); // ReferenceError: y is not defined
+```
+
+-   Có **hoisting**, nhưng không thể truy cập trước khi khai báo → gọi là **Temporal Dead Zone (TDZ)**
+
+```js
+console.log(z); // ReferenceError
+let z = 20;
+```
+
+-   Không thể khai báo lại cùng tên trong cùng một phạm vi (sẽ báo lỗi)
+
+### **[const] keyword**
+
+Lệnh `const` cũng khai báo một biến có **phạm vi khối (block scope)**. Khác với `let`, giá trị của biến khai báo bằng `const` **không thể gán lại** sau khi đã khởi tạo.
+
+**Đặc điểm chi tiết:**
+
+-   **Bắt buộc phải gán giá trị ban đầu** khi khai báo.
+
+```js
+const pi; // SyntaxError: Missing initializer
+```
+
+-   Không thể gán lại giá trị khác:
+
+```js
+const pi = 3.14;
+pi = 3.14159; // TypeError: Assignment to constant variable
+```
+
+-   Với **object hoặc array**, ta **không thể gán lại cả object/array**, nhưng **có thể thay đổi giá trị bên trong**:
+
+```js
+const arr = [1, 2, 3];
+arr.push(4); // OK
+arr[0] = 10; // OK
+arr = [10, 20]; // TypeError: Assignment to constant variable
+```
+
+### **Bảng so sánh (var | let | const)**
+
+| Từ khóa   | Phạm vi (Scope) | Hoisting | Khai báo lại | Gán lại | Ghi chú                                                    |
+| --------- | --------------- | -------- | ------------ | ------- | ---------------------------------------------------------- |
+| **var**   | Hàm / Toàn cục  | Có       | Có thể       | Có thể  | Không giới hạn trong block `{}`                            |
+| **let**   | Khối `{}`       | Có (TDZ) | Không        | Có thể  | An toàn hơn `var`                                          |
+| **const** | Khối `{}`       | Có (TDZ) | Không        | Không   | Dùng cho hằng số, hoặc object/array cần cố định tham chiếu |
+
+## Hoisting
+
+### **Định nghĩa**
+
+Hoisting là một cơ chế trong JavaScript, trong đó **trình thông dịch (interpreter) sẽ đưa phần khai báo (declaration) của biến, hàm, hoặc class lên đầu phạm vi (scope)** trước khi thực thi code.
+
+### **Điểm quan trọng**
+
+-   **Chỉ khai báo được hoisting**, không phải cả phần gán giá trị.
+-   Nghĩa là bạn có thể gọi hàm hoặc truy cập biến trước khi khai báo chúng, nhưng hành vi sẽ khác nhau tùy thuộc vào bạn dùng `var`, `let`, `const`, hay `function`.
+
+### **Hoisting với Function**
+
+```js
+sayHello(); // "Hello!"
+
+function sayHello() {
+	console.log("Hello!");
+}
+```
+
+-   **Function declaration** được hoisting toàn bộ (bao gồm cả phần thân hàm).
+-   Do đó có thể gọi hàm trước khi khai báo.
+
+### **Tổng kết**
+
+-   **var** → hoisting biến, giá trị mặc định `undefined`.
+-   **let, const** → hoisting nhưng rơi vào **TDZ (Temporal Dead Zone)**, không thể truy cập trước khi khai báo.
+-   **function declaration** → hoisting cả hàm.
+-   **function expression & arrow function** → hoisting biến thôi, chưa gán giá trị nên không gọi được sớm.
+
+## Nguyên Tắc Đặt Tên Biến
+
+Tên biến nên mô tả chính xác biến của bạn. Khi bạn tạo tên biến tốt, code JavaScript của bạn sẽ dễ hiểu và dễ làm việc hơn. Đặt tên biến đúng cách rất quan trọng.
+
+### **Các Quy Ước Đặt Tên**
+
+-   **camelCasing**: chữ cái đầu của mỗi từ được viết hoa ngoại trừ từ đầu tiên. Camel casing là chuẩn được sử dụng trong JavaScript.
+
+    -   Ví dụ: `indexOf`, `getElementById`, `querySelectorAll`
+
+-   **PascalCasing**: chữ cái đầu của mỗi từ đều được viết hoa. Thường dùng cho tên class/constructor.
+
+    -   Ví dụ: `WriteLine`, `ReadLine`, `GetType`
+
+-   **snake_casing**: mỗi từ đều viết thường và được phân tách bằng ký tự `_` (underscore).
+
+    -   Ví dụ: `array_push`, `mysqli_connect`, `str_split`
+
+-   **SCREAMING_SNAKE_CASING**: mỗi từ đều viết hoa và được phân tách bằng ký tự `_` (underscore). Thường được sử dụng để biểu thị hằng số trong nhiều ngôn ngữ lập trình, bao gồm JavaScript.
+    -   Ví dụ: `MAX_VALUE`, `MAX_SAFE_INTEGER`
+
+## **Scopes (Phạm Vi)**
+
+### **3 Phạm Vi Chính**
+
+-   **Global** (toàn cục) → thấy ở mọi nơi trong cùng file/chương trình
+-   **Function** (hàm) → thấy bên trong chính hàm đó
+-   **Block** (`{}`) → thấy bên trong cặp ngoặc khối (chỉ với `let`/`const`)
+
+### **Gợi Ý**
+
+-   `var` không có block scope, còn `let`/`const` thì có.
+-   Biến nằm _ngoài_ block chỉ dùng được nếu nó **không** bị giới hạn bởi block scope.
+-   Biến khai báo với `var` thuộc global/function scope
+-   Biến khai báo với `let`/`const` bị "nhốt" trong `{}`
+
+## Tiếp Theo
+
+👉 Tìm hiểu về [Kiểu Dữ Liệu (Data Types)](/languages/javascript/3-data-types/)

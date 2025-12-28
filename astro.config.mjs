@@ -6,6 +6,12 @@ import starlight from "@astrojs/starlight";
 export default defineConfig({
 	integrations: [
 		starlight({
+			head: [
+				{
+					tag: "script",
+					attrs: { src: "/scripts/sidebar-lock.js", defer: true },
+				},
+			],
 			title: "Vexa Blog - Vo Anh Phi",
 			social: [{ icon: "github", label: "GitHub", href: "https://github.com/VoAnhPhi" }],
 			customCss: ["./src/styles/custom.css"],

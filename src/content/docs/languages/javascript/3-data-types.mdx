@@ -1,0 +1,239 @@
+---
+title: Kiểu Dữ Liệu (Data Types)
+description: Primitive types, Objects, Prototypes và Built-in Objects trong JavaScript
+---
+
+# Kiểu Dữ Liệu trong JavaScript
+
+## Primitive Types (7 loại)
+
+Đây là các kiểu dữ liệu cơ bản trong JavaScript:
+
+| **number**  | **null**      |
+| ----------- | ------------- |
+| **bigint**  | **undefined** |
+| **string**  | **symbol**    |
+| **boolean** |               |
+
+### **Đặc điểm Primitive Types**
+
+-   **Bất biến** (immutable) - không thể thay đổi giá trị
+-   **So sánh theo giá trị** - hai biến có cùng giá trị sẽ bằng nhau
+-   **Copy giá trị** - khi gán là copy giá trị, không phải tham chiếu
+
+### **Chi tiết từng loại**
+
+#### `number`
+
+-   Gồm cả `NaN`, `Infinity`, `0`
+-   Integer an toàn: ±(2⁵³-1)
+
+```js
+let age = 25;
+let pi = 3.14;
+let notANumber = NaN;
+let infinity = Infinity;
+```
+
+#### `bigint`
+
+-   Số nguyên rất lớn
+-   Viết với hậu tố `n`
+-   **Không** trộn trực tiếp với `number`
+
+```js
+let bigNumber = 123n;
+let veryBig = 9007199254740991n;
+```
+
+#### `string`
+
+-   Chuỗi UTF-16
+-   Bất biến (immutable)
+
+```js
+let name = "JavaScript";
+let greeting = "Hello World";
+let template = `Hello ${name}`;
+```
+
+#### `boolean`
+
+-   Chỉ có hai giá trị: `true` hoặc `false`
+
+```js
+let isActive = true;
+let isComplete = false;
+```
+
+#### `null`
+
+-   "Cố ý vắng mặt giá trị"
+-   Thường được gán để chỉ "không có gì"
+
+```js
+let emptyValue = null;
+```
+
+#### `undefined`
+
+-   "Chưa được gán"
+-   Giá trị mặc định của biến chưa khởi tạo
+
+```js
+let notAssigned;
+console.log(notAssigned); // undefined
+```
+
+#### `symbol`
+
+-   Giá trị **duy nhất** (unique)
+-   Thường dùng làm key ẩn trong object
+
+```js
+let id = Symbol("id");
+let anotherId = Symbol("id");
+console.log(id === anotherId); // false
+```
+
+### **Kiểm tra kiểu với `typeof`**
+
+```js
+typeof 42; // 'number'
+typeof 123n; // 'bigint'
+typeof "hello"; // 'string'
+typeof true; // 'boolean'
+typeof undefined; // 'undefined'
+typeof Symbol("id"); // 'symbol'
+typeof null; // 'object' (quirk lịch sử - BUG!)
+```
+
+## Non-primitive Types (Objects)
+
+### **Non-primitive là gì?**
+
+Trong JavaScript, **Non-primitive** (hay **Reference types**) bao gồm **Objects**, **Arrays**, **Functions**, **Date**, v.v. Các kiểu dữ liệu này được lưu trữ dưới dạng **tham chiếu** thay vì giá trị trực tiếp.
+
+### **Object**
+
+Object là một kiểu dữ liệu dùng để lưu trữ một tập hợp các giá trị dưới dạng các cặp **key-value** (khóa-giá trị).
+
+#### **Cách tạo Object**
+
+```js
+// Cách 1: Object literal (khuyến nghị)
+let person = {
+	name: "Alice",
+	age: 25,
+};
+
+// Cách 2: Sử dụng new Object()
+let person2 = new Object();
+person2.name = "Alice";
+person2.age = 25;
+```
+
+#### **Truy cập thuộc tính**
+
+```js
+// Dot notation
+console.log(person.name); // "Alice"
+
+// Bracket notation
+console.log(person["age"]); // 25
+```
+
+#### **Các thao tác phổ biến**
+
+-   **Tạo & clone/merge**: literal `{}`, `Object.assign`, spread `{...a}`, `structuredClone`
+-   **Đọc/ghi/xoá thuộc tính**: dot `obj.x`, bracket `obj['x']`, gán, `delete`
+-   **Duyệt**: `for...in`, `Object.keys/values/entries`
+-   **Bất biến**: `Object.freeze/seal`
+-   **Kiểm tra**: `in`, `hasOwnProperty`, `?.` (optional chaining), `??` (nullish)
+
+## Prototype
+
+**Prototype** là một đối tượng ẩn mà mỗi đối tượng trong JavaScript kế thừa từ đó. Khi bạn truy cập một thuộc tính hoặc phương thức của đối tượng, JavaScript sẽ tìm kiếm trong chính đối tượng, nếu không tìm thấy, nó sẽ tìm trong **prototype** của đối tượng đó.
+
+### **Ví dụ về Prototype**
+
+```js
+function Person(name) {
+	this.name = name;
+}
+
+Person.prototype.sayHello = function () {
+	console.log("Hello, " + this.name);
+};
+
+let john = new Person("John");
+john.sayHello(); // "Hello, John"
+```
+
+-   **Prototype của `Person`** có một phương thức `sayHello`
+-   Khi gọi `john.sayHello()`, JavaScript tìm trong `john`, không thấy, sau đó tìm trong **prototype** của `Person`
+
+## Prototype Chain
+
+**Prototypal Inheritance** cho phép đối tượng kế thừa các thuộc tính và phương thức từ một đối tượng khác thông qua prototype.
+
+### **Ví dụ về Prototypal Inheritance**
+
+```js
+function Animal(name) {
+	this.name = name;
+}
+
+Animal.prototype.speak = function () {
+	console.log(this.name + " makes a sound");
+};
+
+function Dog(name, breed) {
+	Animal.call(this, name); // Gọi constructor của Animal
+	this.breed = breed;
+}
+
+// Kế thừa từ Animal
+Dog.prototype = Object.create(Animal.prototype);
+Dog.prototype.constructor = Dog;
+
+Dog.prototype.bark = function () {
+	console.log(this.name + " barks");
+};
+
+let dog1 = new Dog("Buddy", "Golden Retriever");
+dog1.speak(); // "Buddy makes a sound" (Kế thừa từ Animal)
+dog1.bark(); // "Buddy barks" (Phương thức riêng của Dog)
+```
+
+## Built-in Objects
+
+Built-in objects (còn gọi là global objects) trong JavaScript là những đối tượng được tích hợp sẵn trong ngôn ngữ, có thể sử dụng ở mọi nơi trong chương trình mà không cần phải khai báo hoặc import thêm.
+
+### **Định nghĩa**
+
+> Built-in objects là các đối tượng có sẵn trong JavaScript, được định nghĩa bởi chính ngôn ngữ để giúp lập trình viên xử lý các kiểu dữ liệu và thao tác phổ biến.
+
+### **Một số Built-in Objects phổ biến**
+
+| Đối tượng   | Chức năng chính                                                                       |
+| ----------- | ------------------------------------------------------------------------------------- |
+| **Number**  | Làm việc với số: `toFixed()`, `toPrecision()`, `isNaN()`, `isFinite()`                |
+| **Math**    | Toán học: `Math.PI`, `Math.sqrt()`, `Math.pow()`, `Math.floor()`, `Math.random()`     |
+| **Date**    | Thời gian: `getFullYear()`, `getMonth()`, `getDate()`, `toDateString()`               |
+| **String**  | Chuỗi: `length`, `toUpperCase()`, `toLowerCase()`, `substring()`, `split()`, `trim()` |
+| **Boolean** | Logic: `valueOf()`, `toString()`                                                      |
+| **Array**   | Mảng: `push()`, `pop()`, `map()`, `filter()`, `reduce()`, `forEach()`, `find()`       |
+| **Object**  | Đối tượng: `keys()`, `values()`, `entries()`, `assign()`, `hasOwnProperty()`          |
+| **Map**     | Bản đồ: `set()`, `get()`, `has()`, `delete()`, `clear()`                              |
+| **Set**     | Tập hợp: `add()`, `delete()`, `has()`, `clear()`                                      |
+
+### **Ghi nhớ**
+
+-   Các **built-in objects** luôn có sẵn trong **global scope**
+-   Bạn có thể dùng chúng **trực tiếp mà không cần import**
+-   Một số khác như `RegExp`, `Promise`, `Error` cũng là **built-in objects**
+
+## Tiếp Theo
+
+👉 Tìm hiểu về [Type Casting (Ép Kiểu)](/languages/javascript/4-type-casting/)

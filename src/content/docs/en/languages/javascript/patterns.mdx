@@ -1,0 +1,743 @@
+---
+title: JavaScript Patterns
+description: Design patterns and best practices in modern JavaScript
+---
+
+# JavaScript Patterns
+
+Essential design patterns and best practices for writing clean, maintainable JavaScript code.
+
+---
+
+## 📦 Module Pattern
+
+Organize code into reusable, encapsulated modules.
+
+### ES6 Modules (Recommended)
+
+> [!TIP] > **Modern Standard**
+> ES6 modules are the current standard for JavaScript module systems. They're supported in all modern browsers and Node.js.
+
+```js
+// utils.js - Export module
+export const API_URL = "https://api.example.com";
+
+export function formatDate(date) {
+	return date.toLocaleDateString();
+}
+
+export class User {
+	constructor(name) {
+		this.name = name;
+	}
+}
+
+// main.js - Import module
+import { API_URL, formatDate, User } from "./utils.js";
+
+console.log(API_URL);
+const today = formatDate(new Date());
+const user = new User("Alice");
+```
+
+### IIFE Module (Legacy)
+
+Immediately Invoked Function Expression for encapsulation.
+
+```js
+const MyModule = (function () {
+	// Private variables and functions
+	const privateVar = "secret";
+
+	function privateMethod() {
+		return "private";
+	}
+
+	// Public API
+	return {
+		publicMethod() {
+			return privateMethod() + " public";
+		},
+		publicVar: "public",
+	};
+})();
+
+console.log(MyModule.publicMethod()); // "private public"
+console.log(MyModule.privateVar); // undefined (private!)
+```
+
+---
+
+## 🎯 Singleton Pattern
+
+Ensure only one instance of a class exists.
+
+> [!NOTE] > **Use Case**
+> Singletons are useful for managing global state, configuration objects, or connections (e.g., database connections).
+
+```js
+const Singleton = (function () {
+	let instance;
+
+	function createInstance() {
+		return {
+			config: {},
+			init() {
+				console.log("Initialized");
+			},
+		};
+	}
+
+	return {
+		getInstance() {
+			if (!instance) {
+				instance = createInstance();
+			}
+			return instance;
+		},
+	};
+})();
+
+const app1 = Singleton.getInstance();
+const app2 = Singleton.getInstance();
+console.log(app1 === app2); // true (same instance!)
+```
+
+### Modern Class Singleton
+
+```js
+class Database {
+	constructor() {
+		if (Database.instance) {
+			return Database.instance;
+		}
+		this.connection = null;
+		Database.instance = this;
+	}
+
+	connect() {
+		console.log("Connected to database");
+	}
+}
+
+const db1 = new Database();
+const db2 = new Database();
+console.log(db1 === db2); // true
+```
+
+---
+
+## 🏭 Factory Pattern
+
+Create objects without specifying exact classes.
+
+```js
+class Car {
+	constructor(model) {
+		this.model = model;
+		this.type = "car";
+	}
+
+	start() {
+		console.log(`${this.model} car started`);
+	}
+}
+
+class Bike {
+	constructor(model) {
+		this.model = model;
+		this.type = "bike";
+	}
+
+	start() {
+		console.log(`${this.model} bike started`);
+	}
+}
+
+class VehicleFactory {
+	createVehicle(type, model) {
+		switch (type) {
+			case "car":
+				return new Car(model);
+			case "bike":
+				return new Bike(model);
+			default:
+				throw new Error(`Unknown vehicle type: ${type}`);
+		}
+	}
+}
+
+const factory = new VehicleFactory();
+const car = factory.createVehicle("car", "Tesla");
+const bike = factory.createVehicle("bike", "Yamaha");
+
+car.start(); // "Tesla car started"
+bike.start(); // "Yamaha bike started"
+```
+
+> [!TIP] > **When to Use Factory Pattern**
+>
+> -   Object creation logic is complex
+> -   Need to create different objects based on conditions
+> -   Want to hide creation details from client code
+
+---
+
+## 👁️ Observer Pattern
+
+Subscribe to and get notified of events.
+
+```js
+class EventEmitter {
+	constructor() {
+		this.events = {};
+	}
+
+	// Subscribe to event
+	on(event, callback) {
+		if (!this.events[event]) {
+			this.events[event] = [];
+		}
+		this.events[event].push(callback);
+	}
+
+	// Trigger event
+	emit(event, data) {
+		if (this.events[event]) {
+			this.events[event].forEach((callback) => callback(data));
+		}
+	}
+
+	// Unsubscribe from event
+	off(event, callback) {
+		if (this.events[event]) {
+			this.events[event] = this.events[event].filter((cb) => cb !== callback);
+		}
+	}
+}
+
+// Usage
+const emitter = new EventEmitter();
+
+emitter.on("userLogin", (user) => console.log(`${user} logged in`));
+emitter.on("userLogin", (user) => console.log(`Welcome, ${user}!`));
+
+emitter.emit("userLogin", "Alice");
+// Output:
+// "Alice logged in"
+// "Welcome, Alice!"
+```
+
+> [!NOTE] > **Real-World Use**
+> This pattern is heavily used in Node.js EventEmitter, DOM events, and state management libraries like Redux.
+
+---
+
+## 🎮 Strategy Pattern
+
+Swap algorithms/behaviors at runtime.
+
+```js
+// Payment strategies
+class PaymentStrategy {
+	pay(amount) {
+		throw new Error("Must implement pay() method");
+	}
+}
+
+class CreditCardStrategy extends PaymentStrategy {
+	constructor(cardNumber) {
+		super();
+		this.cardNumber = cardNumber;
+	}
+
+	pay(amount) {
+		console.log(`Paid $${amount} with card ****${this.cardNumber.slice(-4)}`);
+	}
+}
+
+class PayPalStrategy extends PaymentStrategy {
+	constructor(email) {
+		super();
+		this.email = email;
+	}
+
+	pay(amount) {
+		console.log(`Paid $${amount} via PayPal (${this.email})`);
+	}
+}
+
+class CryptoStrategy extends PaymentStrategy {
+	constructor(wallet) {
+		super();
+		this.wallet = wallet;
+	}
+
+	pay(amount) {
+		console.log(`Paid $${amount} with crypto wallet ${this.wallet}`);
+	}
+}
+
+// Context
+class ShoppingCart {
+	constructor(strategy) {
+		this.strategy = strategy;
+	}
+
+	setPaymentStrategy(strategy) {
+		this.strategy = strategy;
+	}
+
+	checkout(amount) {
+		this.strategy.pay(amount);
+	}
+}
+
+// Usage
+const cart = new ShoppingCart(new CreditCardStrategy("1234567890123456"));
+cart.checkout(100); // Credit card payment
+
+cart.setPaymentStrategy(new PayPalStrategy("user@example.com"));
+cart.checkout(50); // PayPal payment
+```
+
+---
+
+## 🎨 Decorator Pattern
+
+Add functionality to objects dynamically.
+
+```js
+// Base component
+class Coffee {
+	cost() {
+		return 5;
+	}
+
+	description() {
+		return "Simple coffee";
+	}
+}
+
+// Decorators
+class MilkDecorator {
+	constructor(coffee) {
+		this.coffee = coffee;
+	}
+
+	cost() {
+		return this.coffee.cost() + 1;
+	}
+
+	description() {
+		return this.coffee.description() + ", milk";
+	}
+}
+
+class SugarDecorator {
+	constructor(coffee) {
+		this.coffee = coffee;
+	}
+
+	cost() {
+		return this.coffee.cost() + 0.5;
+	}
+
+	description() {
+		return this.coffee.description() + ", sugar";
+	}
+}
+
+class WhipDecorator {
+	constructor(coffee) {
+		this.coffee = coffee;
+	}
+
+	cost() {
+		return this.coffee.cost() + 1.5;
+	}
+
+	description() {
+		return this.coffee.description() + ", whipped cream";
+	}
+}
+
+// Usage
+let myCoffee = new Coffee();
+console.log(myCoffee.description(), `$${myCoffee.cost()}`);
+// "Simple coffee $5"
+
+myCoffee = new MilkDecorator(myCoffee);
+myCoffee = new SugarDecorator(myCoffee);
+myCoffee = new WhipDecorator(myCoffee);
+
+console.log(myCoffee.description(), `$${myCoffee.cost()}`);
+// "Simple coffee, milk, sugar, whipped cream $8"
+```
+
+---
+
+## ⚡ Functional Patterns
+
+### Composition
+
+Combine simple functions to create complex ones.
+
+```js
+const add = (x) => (y) => x + y;
+const multiply = (x) => (y) => x * y;
+const subtract = (x) => (y) => y - x;
+
+// Pipe: left to right
+const pipe =
+	(...fns) =>
+	(x) =>
+		fns.reduce((v, f) => f(v), x);
+
+const calculate = pipe(add(5), multiply(2), subtract(3));
+
+console.log(calculate(10)); // ((10 + 5) * 2) - 3 = 27
+```
+
+> [!TIP] > **compose vs pipe**
+>
+> -   `pipe`: applies functions left-to-right
+> -   `compose`: applies functions right-to-left
+
+```js
+const compose =
+	(...fns) =>
+	(x) =>
+		fns.reduceRight((v, f) => f(v), x);
+```
+
+### Currying
+
+Transform a function with multiple arguments into a sequence of functions.
+
+```js
+// Regular function
+function add(a, b, c) {
+	return a + b + c;
+}
+
+// Curried function
+const curriedAdd = (a) => (b) => (c) => a + b + c;
+
+// Partial application
+const add5 = curriedAdd(5);
+const add5and3 = add5(3);
+console.log(add5and3(2)); // 10
+
+// Or all at once
+console.log(curriedAdd(5)(3)(2)); // 10
+```
+
+### Partial Application
+
+Pre-fill some arguments of a function.
+
+```js
+function multiply(a, b, c) {
+	return a * b * c;
+}
+
+function partial(fn, ...args) {
+	return function (...laterArgs) {
+		return fn(...args, ...laterArgs);
+	};
+}
+
+const multiplyBy2 = partial(multiply, 2);
+console.log(multiplyBy2(3, 4)); // 2 * 3 * 4 = 24
+
+const multiplyBy2And3 = partial(multiply, 2, 3);
+console.log(multiplyBy2And3(4)); // 2 * 3 * 4 = 24
+```
+
+---
+
+## ✅ Best Practices
+
+### 1. DRY (Don't Repeat Yourself)
+
+> [!IMPORTANT] > **Avoid Code Duplication**
+> If you find yourself writing the same code twice, extract it into a reusable function or module.
+
+```js
+// ❌ BAD - Code duplication
+function getUserEmail() {
+	return fetch("/api/user")
+		.then((r) => r.json())
+		.then((data) => data.email);
+}
+
+function getUserName() {
+	return fetch("/api/user")
+		.then((r) => r.json())
+		.then((data) => data.name);
+}
+
+// ✅ GOOD - Reusable function
+async function getUser() {
+	const response = await fetch("/api/user");
+	return response.json();
+}
+
+async function getUserEmail() {
+	const user = await getUser();
+	return user.email;
+}
+
+async function getUserName() {
+	const user = await getUser();
+	return user.name;
+}
+```
+
+### 2. Single Responsibility Principle
+
+Each function/class should have one job.
+
+```js
+// ✅ GOOD - Each function has one responsibility
+function validateEmail(email) {
+	return email.includes("@") && email.includes(".");
+}
+
+function saveUser(user) {
+	localStorage.setItem("user", JSON.stringify(user));
+}
+
+function notifyUser(message) {
+	alert(message);
+}
+
+function registerUser(userData) {
+	if (!validateEmail(userData.email)) {
+		notifyUser("Invalid email");
+		return;
+	}
+
+	saveUser(userData);
+	notifyUser("Registration successful!");
+}
+```
+
+### 3. Composition Over Inheritance
+
+> [!TIP] > **Prefer Composition**
+> Composing small behaviors is more flexible than deep inheritance hierarchies.
+
+```js
+// Behaviors (composable functions)
+const canEat = (state) => ({
+	eat(food) {
+		console.log(`Eating ${food}`);
+		state.energy += 10;
+	},
+});
+
+const canWalk = (state) => ({
+	walk() {
+		console.log("Walking");
+		state.energy -= 5;
+	},
+});
+
+const canSwim = (state) => ({
+	swim() {
+		console.log("Swimming");
+		state.energy -= 10;
+	},
+});
+
+const canFly = (state) => ({
+	fly() {
+		console.log("Flying");
+		state.energy -= 15;
+	},
+});
+
+// Compose different objects with different abilities
+const createDog = (name) => {
+	const state = { name, energy: 100 };
+	return Object.assign({}, state, canEat(state), canWalk(state), canSwim(state));
+};
+
+const createBird = (name) => {
+	const state = { name, energy: 100 };
+	return Object.assign({}, state, canEat(state), canWalk(state), canFly(state));
+};
+
+const dog = createDog("Buddy");
+dog.eat("bone");
+dog.walk();
+dog.swim();
+// dog.fly();  // Error: dog doesn't have fly()
+
+const bird = createBird("Tweety");
+bird.eat("seeds");
+bird.fly();
+// bird.swim();  // Error: bird doesn't have swim()
+```
+
+### 4. Immutability
+
+Avoid mutating data; create new copies instead.
+
+```js
+// ❌ BAD - Mutating original
+const user = { name: "Alice", age: 25 };
+function updateAge(user, newAge) {
+	user.age = newAge; // Mutates original!
+	return user;
+}
+
+// ✅ GOOD - Return new object
+const user = { name: "Alice", age: 25 };
+function updateAge(user, newAge) {
+	return { ...user, age: newAge }; // New object
+}
+
+// Arrays
+const numbers = [1, 2, 3];
+
+// ❌ BAD
+numbers.push(4); // Mutates original
+
+// ✅ GOOD
+const newNumbers = [...numbers, 4]; // New array
+```
+
+---
+
+## ⚠️ Anti-Patterns (Avoid These!)
+
+### 1. Callback Hell
+
+> [!WARNING] > **Pyramid of Doom**
+> Deeply nested callbacks make code hard to read and maintain.
+
+```js
+// ❌ BAD - Callback hell
+getData(function (a) {
+	getMoreData(a, function (b) {
+		getMoreData(b, function (c) {
+			getMoreData(c, function (d) {
+				console.log(d);
+			});
+		});
+	});
+});
+
+// ✅ GOOD - Use async/await
+async function fetchData() {
+	const a = await getData();
+	const b = await getMoreData(a);
+	const c = await getMoreData(b);
+	const d = await getMoreData(c);
+	console.log(d);
+}
+```
+
+### 2. Global Variables
+
+```js
+// ❌ BAD - Polluting global scope
+var globalUser = "Alice";
+var globalConfig = {};
+
+// ✅ GOOD - Use modules or IIFE
+const AppModule = (function () {
+	const user = "Alice";
+	const config = {};
+
+	return {
+		getUser: () => user,
+		getConfig: () => config,
+	};
+})();
+```
+
+### 3. Ignoring Errors
+
+```js
+// ❌ BAD - Silent failures
+fetch("/api/data")
+	.then((res) => res.json())
+	.then((data) => console.log(data));
+
+// ✅ GOOD - Handle errors
+fetch("/api/data")
+	.then((res) => {
+		if (!res.ok) throw new Error("Network response was not ok");
+		return res.json();
+	})
+	.then((data) => console.log(data))
+	.catch((error) => console.error("Fetch error:", error));
+
+// Even better with async/await
+async function fetchData() {
+	try {
+		const res = await fetch("/api/data");
+		if (!res.ok) throw new Error("Network response was not ok");
+		const data = await res.json();
+		console.log(data);
+	} catch (error) {
+		console.error("Fetch error:", error);
+	}
+}
+```
+
+### 4. Magic Numbers
+
+```js
+// ❌ BAD - What is 86400000?
+setTimeout(() => {
+	console.log("One day passed");
+}, 86400000);
+
+// ✅ GOOD - Named constants
+const ONE_DAY_MS = 24 * 60 * 60 * 1000; // 86400000
+setTimeout(() => {
+	console.log("One day passed");
+}, ONE_DAY_MS);
+```
+
+---
+
+## 🎓 Summary
+
+| Pattern         | Use Case                                     |
+| --------------- | -------------------------------------------- |
+| **Module**      | Organize and encapsulate code                |
+| **Singleton**   | Ensure single instance (config, connections) |
+| **Factory**     | Create objects without specifying classes    |
+| **Observer**    | Event subscription and notification          |
+| **Strategy**    | Swap algorithms/behaviors at runtime         |
+| **Decorator**   | Add functionality dynamically                |
+| **Composition** | Build complex functions from simple ones     |
+
+### Key Principles
+
+> [!IMPORTANT] > **Remember SOLID**
+>
+> -   **S**ingle Responsibility
+> -   **O**pen/Closed
+> -   **L**iskov Substitution
+> -   **I**nterface Segregation
+> -   **D**ependency Inversion
+
+---
+
+## 🚀 Next Steps
+
+-   📘 **Learn TypeScript**: Add static typing to JavaScript → [TypeScript](/languages/typescript/)
+-   ⚛️ **Frameworks**: Apply patterns in React, Vue, or Angular → [Frontend](/frontend/)
+-   🧪 **Testing**: Write testable code using patterns → [Testing](/frontend/testing/)
+
+---
+
+> [!TIP] > **Practice Makes Perfect**
+> The best way to master these patterns is to use them in real projects. Start small and gradually apply more advanced patterns as needed.
