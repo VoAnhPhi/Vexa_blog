@@ -3,118 +3,134 @@ title: Introduction to JavaScript
 description: Learn about JavaScript, its history, and versions
 ---
 
-# Introduction to JavaScript
+import { Card, CardGrid, Aside, Steps, Tabs, TabItem } from '@astrojs/starlight/components';
 
-## 💡 What is JavaScript?
+## What is JavaScript?
 
 JavaScript, often abbreviated as **JS**, is a programming language that is one of the core technologies of the World Wide Web, alongside HTML and CSS. JavaScript allows us to add interactivity to web pages - you might have seen sliders, alerts, click interactions, popups, and more on different websites. All of that is built using JavaScript!
 
-> [!NOTE] > **Beyond the Browser**
-> JavaScript isn't limited to web browsers. It's also used in various non-browser environments.
+<Aside type="note" title="Beyond the Browser">
+JavaScript isn't limited to web browsers. It's also used in various non-browser environments.
+</Aside>
 
 ### JavaScript Environments
 
-| Environment         | Purpose                     | Examples                       |
-| ------------------- | --------------------------- | ------------------------------ |
-| 🌐 **Browser**      | Client-side web development | Interactive websites, web apps |
-| 🖥️ **Node.js**      | Server-side JavaScript      | REST APIs, backend services    |
-| 💻 **Electron**     | Desktop applications        | VS Code, Slack, Discord        |
-| 📱 **React Native** | Mobile applications         | iOS and Android apps           |
+<CardGrid>
+  <Card title="Browser" icon="globe">
+    Client-side web development — Interactive websites, web apps
+  </Card>
+  <Card title="Node.js" icon="node">
+    Server-side JavaScript — REST APIs, backend services
+  </Card>
+  <Card title="Electron" icon="laptop">
+    Desktop applications — VS Code, Slack, Discord
+  </Card>
+  <Card title="React Native" icon="phone">
+    Mobile applications — iOS and Android apps
+  </Card>
+</CardGrid>
 
 ---
 
-## 📜 History of JavaScript
+## History of JavaScript
 
 JavaScript was initially created by **Brendan Eich** at Netscape and was first announced in a press release in **1995**. It has a rather unusual naming history!
 
 ### The Naming Journey
 
-```mermaid
-graph LR
-    A[Mocha<br/>Original Name] --> B[LiveScript<br/>Renamed]
-    B --> C[JavaScript<br/>1996 Final Name]
-    style A fill:#ff9999
-    style B fill:#ffcc99
-    style C fill:#99ff99
-```
-
-> [!TIP] > **Fun Fact**: Despite the name, JavaScript has **no relationship with Java**! The name was chosen to capitalize on Java's popularity at the time.
-
-**Timeline:**
-
+<Steps>
 1. **Mocha** - The original name by creator Brendan Eich
 2. **LiveScript** - First renamed version
-3. **JavaScript** (1996) - About a year after release, Netscape renamed it to JavaScript, hoping to capitalize on the Java community's popularity
+3. **JavaScript** (1996) - About a year after release, Netscape renamed it to JavaScript
+</Steps>
+
+<Aside type="tip" title="Fun Fact">
+Despite the name, JavaScript has **no relationship with Java**! The name was chosen to capitalize on Java's popularity at the time.
+</Aside>
 
 Netscape 2.0 was released with official JavaScript support.
 
 ---
 
-## 🔢 JavaScript Versions
+## JavaScript Versions
 
 JavaScript, invented by Brendan Eich, achieved the status of an **ECMA standard** in 1997 and adopted the official name **ECMAScript**.
 
 ### Version History
 
-| Version          | Year         | Key Features                                           | Impact                  |
-| ---------------- | ------------ | ------------------------------------------------------ | ----------------------- |
-| **ES1**          | 1997         | First edition                                          | 🟢 Foundation           |
-| **ES2**          | 1998         | Minor improvements                                     | 🟢 Refinement           |
-| **ES3**          | 1999         | Regular expressions, try/catch                         | 🟡 Enhanced             |
-| **ES5**          | 2009         | Strict mode, JSON support, Array methods               | 🟡 Modernized           |
-| **ES6 (ES2015)** | 2015         | Arrow functions, classes, modules, promises, let/const | 🔴 **Transformative!**  |
-| **ES2016+**      | 2016-present | Yearly updates with new features                       | 🟢 Continuous evolution |
+| Version          | Year         | Key Features                                           |
+| ---------------- | ------------ | ------------------------------------------------------ |
+| **ES1**          | 1997         | First edition                                          |
+| **ES2**          | 1998         | Minor improvements                                     |
+| **ES3**          | 1999         | Regular expressions, try/catch                         |
+| **ES5**          | 2009         | Strict mode, JSON support, Array methods               |
+| **ES6 (ES2015)** | 2015         | Arrow functions, classes, modules, promises, let/const |
+| **ES2016+**      | 2016-present | Yearly updates with new features                       |
 
-> [!IMPORTANT] > **ES6: The Game Changer**
-> ES6 (also known as ES2015) is considered the most significant update in JavaScript's history. It brought massive improvements that made JavaScript a modern, powerful language suitable for large-scale applications.
+<Aside type="caution" title="ES6: The Game Changer">
+ES6 (also known as ES2015) is considered the most significant update in JavaScript's history. It brought massive improvements that made JavaScript a modern, powerful language suitable for large-scale applications.
+</Aside>
 
 ### ES6 Highlights
 
+<Tabs>
+  <TabItem label="Before ES6">
 ```js
-// Before ES6
-var greeting = function (name) {
-	return "Hello, " + name;
+var greeting = function(name) {
+    return 'Hello, ' + name;
 };
-
-// After ES6
+```
+  </TabItem>
+  <TabItem label="After ES6">
+```js
 const greeting = (name) => `Hello, ${name}`;
 ```
+  </TabItem>
+</Tabs>
 
 ---
 
-## 🎯 Why Learn JavaScript?
+## Why Learn JavaScript?
 
-### Top Reasons
+<CardGrid stagger>
+  <Card title="Universal Language" icon="globe">
+    Runs on browsers, servers (Node.js), mobile (React Native), and desktop (Electron)
+  </Card>
+  <Card title="Huge Ecosystem" icon="open-book">
+    npm has millions of packages, countless frameworks and libraries
+  </Card>
+  <Card title="High Demand" icon="star">
+    Most sought-after skill in the IT industry
+  </Card>
+  <Card title="Beginner Friendly" icon="approve-check">
+    Easy syntax to learn, immediate feedback in the browser
+  </Card>
+</CardGrid>
 
-| Reason                    | Description                                                                        |
-| ------------------------- | ---------------------------------------------------------------------------------- |
-| 🌍 **Universal Language** | Runs on browsers, servers (Node.js), mobile (React Native), and desktop (Electron) |
-| 📦 **Huge Ecosystem**     | npm has millions of packages, countless frameworks and libraries                   |
-| 💼 **High Demand**        | Most sought-after skill in the IT industry                                         |
-| 🎓 **Beginner Friendly**  | Easy syntax to learn, immediate feedback in the browser                            |
-
-> [!TIP] > **Career Opportunity**
-> JavaScript developers are among the most in-demand professionals in tech. Learning JavaScript opens doors to frontend, backend, mobile, and full-stack development roles.
-
----
-
-## 📋 Prerequisites
-
-Before diving into JavaScript, you should have:
-
--   ✅ Basic understanding of HTML/CSS
--   ✅ Basic logical thinking skills
--   ✅ No prior programming experience required!
-
-> [!NOTE] > **Complete Beginners Welcome**
-> JavaScript is beginner-friendly and often recommended as a first programming language. You can start learning even without any coding background!
+<Aside type="tip" title="Career Opportunity">
+JavaScript developers are among the most in-demand professionals in tech. Learning JavaScript opens doors to frontend, backend, mobile, and full-stack development roles.
+</Aside>
 
 ---
 
-## 🚀 Next Steps
+## Prerequisites
 
+<Steps>
+1. Basic understanding of HTML/CSS
+2. Basic logical thinking skills
+3. No prior programming experience required!
+</Steps>
+
+<Aside type="note" title="Complete Beginners Welcome">
+JavaScript is beginner-friendly and often recommended as a first programming language. You can start learning even without any coding background!
+</Aside>
+
+---
+
+## Next Steps
+
+<Aside type="tip" title="Continue Learning">
 Ready to begin your JavaScript journey?
 
-👉 **Continue to:** [Variables](/en/languages/javascript/2-variables/)
-
-Learn about declaring variables using `var`, `let`, and `const`.
+👉 Continue to [Variables](/en/languages/javascript/2-variables/) — Learn about declaring variables using `var`, `let`, and `const`.
+</Aside>

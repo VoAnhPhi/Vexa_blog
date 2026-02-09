@@ -3,159 +3,141 @@ title: Variables in JavaScript
 description: Variable declarations, hoisting, naming rules, and scopes
 ---
 
-# Variables in JavaScript
+import { Card, CardGrid, Aside, Tabs, TabItem, Steps } from '@astrojs/starlight/components';
 
-## 📌 Variable Declaration Keywords
+## Variable Declaration Keywords
 
 JavaScript provides three keywords for declaring variables: `var`, `let`, and `const`. Each has different characteristics and use cases.
 
 ---
 
-## 🔸 The `var` Keyword
+<Tabs>
+  <TabItem label="var">
+    The `var` statement declares a variable with **function scope** or **global scope**. Variables can be initialized with a value or left undefined.
 
-The `var` statement declares a variable with **function scope** or **global scope**. Variables can be initialized with a value or left undefined.
+    <Aside type="caution" title="Legacy Keyword">
+    `var` is considered outdated. Modern JavaScript prefers `let` and `const` for better scoping and fewer bugs.
+    </Aside>
 
-### Key Characteristics
+    **1. Hoisting Behavior** — Variables declared with `var` are hoisted to the top of their scope, but their value is not assigned until execution reaches the assignment.
 
-> [!WARNING] > **Legacy Keyword** > `var` is considered outdated. Modern JavaScript prefers `let` and `const` for better scoping and fewer bugs.
+    ```js
+    console.log(a); // undefined (no error!)
+    var a = 10;
+    console.log(a); // 10
+    ```
 
-#### 1. Hoisting Behavior
+    **2. Function Scope (Not Block Scope)** — `var` is only limited to function scope, **not** block scope.
 
-Variables declared with `var` are hoisted to the top of their scope, but their value is not assigned until the code execution reaches the assignment.
+    ```js
+    if (true) {
+        var x = 5;
+    }
+    console.log(x); // 5 (accessible outside the block!)
+    ```
 
-```js
-console.log(a); // undefined (no error!)
-var a = 10;
-console.log(a); // 10
-```
+    **3. Can Be Re-declared**
 
-#### 2. Function Scope (Not Block Scope)
+    ```js
+    var name = "Alice";
+    var name = "Bob"; // No error
+    console.log(name); // "Bob"
+    ```
+  </TabItem>
+  <TabItem label="let">
+    The `let` statement declares a variable with **block scope**. Variables can be initialized or left undefined.
 
-`var` is only limited to function scope, **not** block scope (`{}`).
+    <Aside type="tip" title="Modern Choice">
+    Use `let` when you need a variable whose value will change. It's safer than `var` because it respects block scope.
+    </Aside>
 
-```js
-if (true) {
-	var x = 5;
-}
-console.log(x); // 5 (accessible outside the block!)
-```
+    **1. Block Scope** — `let` variables only exist within the block `{}` where they're declared.
 
-#### 3. Can Be Re-declared
+    ```js
+    if (true) {
+        let y = 10;
+        console.log(y); // 10
+    }
+    console.log(y); // ReferenceError: y is not defined
+    ```
 
-```js
-var name = "Alice";
-var name = "Bob"; // No error
-console.log(name); // "Bob"
-```
+    **2. Temporal Dead Zone (TDZ)** — While `let` variables are hoisted, they cannot be accessed before declaration.
 
----
+    ```js
+    console.log(z); // ReferenceError
+    let z = 20;
+    ```
 
-## 🔹 The `let` Keyword
+    **3. Cannot Be Re-declared**
 
-The `let` statement declares a variable with **block scope**. Variables can be initialized or left undefined.
+    ```js
+    let name = "Alice";
+    let name = "Bob"; // SyntaxError: Identifier 'name' has already been declared
+    ```
+  </TabItem>
+  <TabItem label="const">
+    The `const` statement declares a variable with **block scope** that **cannot be reassigned** after initialization.
 
-### Key Characteristics
+    <Aside type="caution" title="Must Be Initialized">
+    `const` variables must be assigned a value when declared. You cannot declare a `const` without an initial value.
+    </Aside>
 
-> [!TIP] > **Modern Choice**
-> Use `let` when you need a variable whose value will change. It's safer than `var` because it respects block scope.
+    **1. Must Be Initialized**
 
-#### 1. Block Scope
+    ```js
+    const pi; // SyntaxError: Missing initializer in const declaration
+    const pi = 3.14; // Correct
+    ```
 
-`let` variables only exist within the block `{}` where they're declared.
+    **2. Cannot Be Reassigned**
 
-```js
-if (true) {
-	let y = 10;
-	console.log(y); // 10
-}
-console.log(y); // ReferenceError: y is not defined
-```
+    ```js
+    const pi = 3.14;
+    pi = 3.14159; // TypeError: Assignment to constant variable
+    ```
 
-#### 2. Temporal Dead Zone (TDZ)
+    **3. Objects and Arrays Are Mutable** — you cannot reassign the variable itself, but you **can modify the contents** of objects and arrays.
 
-While `let` variables are hoisted, they cannot be accessed before declaration.
+    ```js
+    const arr = [1, 2, 3];
+    arr.push(4);      // OK - modifying contents
+    arr[0] = 10;      // OK - modifying contents
+    arr = [10, 20];   // TypeError
 
-```js
-console.log(z); // ReferenceError
-let z = 20;
-```
-
-> [!NOTE] > **Temporal Dead Zone (TDZ)**
-> The period between entering a scope and the variable declaration is called the TDZ. Accessing the variable during this time throws an error.
-
-#### 3. Cannot Be Re-declared
-
-```js
-let name = "Alice";
-let name = "Bob"; // SyntaxError: Identifier 'name' has already been declared
-```
-
----
-
-## 🔷 The `const` Keyword
-
-The `const` statement declares a variable with **block scope** that **cannot be reassigned** after initialization.
-
-### Key Characteristics
-
-> [!IMPORTANT] > **Must Be Initialized** > `const` variables must be assigned a value when declared. You cannot declare a `const` without an initial value.
-
-#### 1. Must Be Initialized
-
-```js
-const pi; // SyntaxError: Missing initializer in const declaration
-const pi = 3.14; // Correct
-```
-
-#### 2. Cannot Be Reassigned
-
-```js
-const pi = 3.14;
-pi = 3.14159; // TypeError: Assignment to constant variable
-```
-
-#### 3. Objects and Arrays Are Mutable
-
-> [!WARNING] > **Reference vs Value**
-> With `const`, you cannot reassign the **variable itself**, but you **can modify the contents** of objects and arrays.
-
-```js
-const arr = [1, 2, 3];
-arr.push(4); // ✅ OK - modifying contents
-arr[0] = 10; // ✅ OK - modifying contents
-arr = [10, 20]; // ❌ TypeError: Assignment to constant variable
-
-const person = { name: "Alice" };
-person.name = "Bob"; // ✅ OK - modifying property
-person = {}; // ❌ TypeError: Assignment to constant variable
-```
+    const person = { name: "Alice" };
+    person.name = "Bob"; // OK - modifying property
+    person = {};         // TypeError
+    ```
+  </TabItem>
+</Tabs>
 
 ---
 
-## 📊 Comparison Table
+### Comparison Table
 
 | Keyword   | Scope           | Hoisting        | Re-declaration | Reassignment   | Notes                                 |
 | --------- | --------------- | --------------- | -------------- | -------------- | ------------------------------------- |
-| **var**   | Function/Global | Yes (undefined) | ✅ Allowed     | ✅ Allowed     | Not limited to block `{}`             |
-| **let**   | Block `{}`      | Yes (TDZ)       | ❌ Not allowed | ✅ Allowed     | Safer than `var`                      |
-| **const** | Block `{}`      | Yes (TDZ)       | ❌ Not allowed | ❌ Not allowed | Use for constants or fixed references |
+| **var**   | Function/Global | Yes (undefined) | Allowed        | Allowed        | Not limited to block `{}`             |
+| **let**   | Block `{}`      | Yes (TDZ)       | Not allowed    | Allowed        | Safer than `var`                      |
+| **const** | Block `{}`      | Yes (TDZ)       | Not allowed    | Not allowed    | Use for constants or fixed references |
 
-> [!TIP] > **Best Practice**
->
-> -   Use `const` by default
-> -   Use `let` if you need to reassign the variable
-> -   Avoid `var` in modern JavaScript
+<Aside type="tip" title="Best Practice">
+- Use `const` by default
+- Use `let` if you need to reassign the variable
+- Avoid `var` in modern JavaScript
+</Aside>
 
 ---
 
-## 🏗️ Hoisting
+## Hoisting
 
 ### What is Hoisting?
 
 **Hoisting** is a JavaScript mechanism where variable and function **declarations** are moved to the top of their scope during the compilation phase, before code execution.
 
-> [!NOTE] > **Only Declarations Are Hoisted**
-> Only the declaration is hoisted, **not the initialization**. The value assignment stays in place.
+<Aside type="note" title="Only Declarations Are Hoisted">
+Only the declaration is hoisted, **not the initialization**. The value assignment stays in place.
+</Aside>
 
 ### Hoisting with `var`
 
@@ -174,7 +156,7 @@ console.log(myVar); // 5
 ### Hoisting with `let` and `const` (TDZ)
 
 ```js
-console.log(myLet); // ReferenceError
+console.log(myLet);   // ReferenceError
 let myLet = 10;
 
 console.log(myConst); // ReferenceError
@@ -189,158 +171,131 @@ const myConst = 20;
 sayHello(); // "Hello!" - works!
 
 function sayHello() {
-	console.log("Hello!");
+    console.log("Hello!");
 }
 ```
 
-> [!TIP] > **Function Expressions Are Not Fully Hoisted**
-> If you assign a function to a variable, only the variable declaration is hoisted, not the function itself.
+<Aside type="tip" title="Function Expressions Are Not Fully Hoisted">
+If you assign a function to a variable, only the variable declaration is hoisted, not the function itself.
+</Aside>
 
 ```js
 greet(); // TypeError: greet is not a function
 
-var greet = function () {
-	console.log("Hi!");
+var greet = function() {
+    console.log("Hi!");
 };
 ```
 
 ### Summary
 
-| Type                     | Hoisting Behavior                                                  |
-| ------------------------ | ------------------------------------------------------------------ |
-| **var**                  | Declaration hoisted, value is `undefined`                          |
-| **let, const**           | Declaration hoisted, but in TDZ (cannot access before declaration) |
-| **function declaration** | Fully hoisted (including body)                                     |
-| **function expression**  | Only variable declaration hoisted                                  |
+<CardGrid>
+  <Card title="var" icon="warning">
+    Declaration hoisted, value is `undefined`
+  </Card>
+  <Card title="let, const" icon="error">
+    Declaration hoisted, but in TDZ (cannot access before declaration)
+  </Card>
+  <Card title="function declaration" icon="approve-check">
+    Fully hoisted (including body)
+  </Card>
+  <Card title="function expression" icon="warning">
+    Only variable declaration hoisted
+  </Card>
+</CardGrid>
 
 ---
 
-## 📝 Variable Naming Rules
+## Variable Naming Rules
 
 Choosing good variable names makes your code more readable and maintainable.
 
 ### JavaScript Naming Conventions
 
-> [!TIP] > **Follow Conventions**
-> Consistent naming conventions make your code easier to read and understand, especially when working in teams.
-
-#### 1. **camelCase** (Recommended for JavaScript)
-
-First word lowercase, subsequent words capitalized.
-
-```js
-let firstName = "John";
-let userAge = 25;
-let isLoggedIn = true;
-
-// Built-in examples
-getElementById;
-querySelector;
-addEventListener;
-```
-
-#### 2. **PascalCase** (For Classes/Constructors)
-
-All words capitalized, including the first.
-
-```js
-class UserProfile {}
-class ShoppingCart {}
-
-function Person(name) {
-	this.name = name;
-}
-```
-
-#### 3. **snake_case** (Not common in JavaScript)
-
-All lowercase with underscores.
-
-```js
-let first_name = "John"; // Not typical in JS
-let user_age = 25;
-```
-
-#### 4. **SCREAMING_SNAKE_CASE** (For Constants)
-
-All uppercase with underscores, typically for true constants.
-
-```js
-const MAX_VALUE = 100;
-const API_KEY = "abc123";
-const DEFAULT_TIMEOUT = 5000;
-```
+| Convention | Usage | Example |
+| ---------- | ----- | ------- |
+| **camelCase** | Standard for JS variables/functions | `firstName`, `userAge`, `isLoggedIn` |
+| **PascalCase** | Classes/Constructors | `UserProfile`, `ShoppingCart` |
+| **snake_case** | Not common in JS | `first_name`, `user_age` |
+| **SCREAMING_SNAKE_CASE** | True constants | `MAX_VALUE`, `API_KEY`, `DEFAULT_TIMEOUT` |
 
 ---
 
-## 🌍 Scopes (Variable Visibility)
+## Scopes (Variable Visibility)
 
 **Scope** determines where variables are accessible in your code.
 
 ### Three Main Scopes
 
-| Scope Type   | Description                               | Keywords              |
-| ------------ | ----------------------------------------- | --------------------- |
-| **Global**   | Accessible everywhere in the file/program | `var`, `let`, `const` |
-| **Function** | Accessible only inside the function       | `var`, `let`, `const` |
-| **Block**    | Accessible only inside `{}`               | `let`, `const` only   |
+<CardGrid stagger>
+  <Card title="Global Scope" icon="globe">
+    Accessible everywhere in the file/program — `var`, `let`, `const`
+  </Card>
+  <Card title="Function Scope" icon="seti:javascript">
+    Accessible only inside the function — `var`, `let`, `const`
+  </Card>
+  <Card title="Block Scope" icon="seti:folder">
+    Accessible only inside `{}` — `let`, `const` only
+  </Card>
+</CardGrid>
 
 ### Examples
 
-#### Global Scope
+<Tabs>
+  <TabItem label="Global Scope">
+    ```js
+    let globalVar = "I'm global";
 
-```js
-let globalVar = "I'm global";
+    function test() {
+        console.log(globalVar); // Accessible
+    }
 
-function test() {
-	console.log(globalVar); // Accessible
-}
+    test();                    // "I'm global"
+    console.log(globalVar);    // "I'm global"
+    ```
+  </TabItem>
+  <TabItem label="Function Scope">
+    ```js
+    function myFunction() {
+        var functionVar = "I'm in a function";
+        console.log(functionVar); // Accessible
+    }
 
-test(); // "I'm global"
-console.log(globalVar); // "I'm global"
-```
+    myFunction();
+    console.log(functionVar); // ReferenceError
+    ```
+  </TabItem>
+  <TabItem label="Block Scope">
+    ```js
+    if (true) {
+        let blockVar = "I'm in a block";
+        const blockConst = "I'm also in a block";
+        console.log(blockVar); // Accessible
+    }
 
-#### Function Scope
+    console.log(blockVar);   // ReferenceError
+    console.log(blockConst); // ReferenceError
+    ```
+  </TabItem>
+</Tabs>
 
-```js
-function myFunction() {
-	var functionVar = "I'm in a function";
-	console.log(functionVar); // Accessible
-}
-
-myFunction();
-console.log(functionVar); // ReferenceError
-```
-
-#### Block Scope
+<Aside type="caution" title="var Does Not Respect Block Scope">
+This is one of the main reasons to avoid `var` in modern JavaScript.
 
 ```js
 if (true) {
-	let blockVar = "I'm in a block";
-	const blockConst = "I'm also in a block";
-	console.log(blockVar); // Accessible
-}
-
-console.log(blockVar); // ReferenceError
-console.log(blockConst); // ReferenceError
-```
-
-> [!IMPORTANT] > **var Does Not Respect Block Scope**
-> This is one of the main reasons to avoid `var` in modern JavaScript.
-
-```js
-if (true) {
-	var leakyVar = "I leak out!";
+    var leakyVar = "I leak out!";
 }
 console.log(leakyVar); // "I leak out!" (not recommended!)
 ```
+</Aside>
 
 ---
 
-## 🚀 Next Steps
+## Next Steps
 
+<Aside type="tip" title="Continue Learning">
 Now that you understand variables, continue to:
 
-👉 **Next:** [Data Types](/en/languages/javascript/3-data-types/)
-
-Learn about primitive and non-primitive data types in JavaScript.
+👉 [Data Types](/en/languages/javascript/3-data-types/) — Learn about primitive and non-primitive data types in JavaScript.
+</Aside>

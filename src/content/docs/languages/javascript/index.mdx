@@ -3,37 +3,68 @@ title: JavaScript
 description: Ngôn ngữ lập trình cho web development
 ---
 
-# JavaScript
+import { Card, CardGrid, LinkCard, Steps, Aside } from '@astrojs/starlight/components';
 
 JavaScript là ngôn ngữ lập trình phổ biến nhất thế giới, được sử dụng để tạo ra các website và ứng dụng web tương tác.
 
-## 📖 Nội dung học
+---
 
-### 🌟 Các Chủ Đề Chính
+## Nội dung học
 
--   **[Giới Thiệu JavaScript](/languages/javascript/1-introduction/)** - JavaScript là gì, lịch sử, và các phiên bản
+<CardGrid>
+  <LinkCard
+    title="Giới Thiệu JavaScript"
+    description="JavaScript là gì, lịch sử, và các phiên bản"
+    href="/languages/javascript/1-introduction/"
+  />
+  <LinkCard
+    title="Biến (Variables)"
+    description="Khai báo biến: var, let, const, hoisting, naming rules, scopes"
+    href="/languages/javascript/2-variables/"
+  />
+  <LinkCard
+    title="Kiểu Dữ Liệu (Data Types)"
+    description="Primitive types, Objects, Prototypes, Built-in Objects"
+    href="/languages/javascript/3-data-types/"
+  />
+  <LinkCard
+    title="Type Casting (Ép Kiểu)"
+    description="Implicit và Explicit Type Conversion"
+    href="/languages/javascript/4-type-casting/"
+  />
+</CardGrid>
 
--   **[Biến (Variables)](/languages/javascript/2-variables/)** - Khai báo biến: var, let, const, hoisting, naming rules, scopes
-
--   **[Kiểu Dữ Liệu (Data Types)](/languages/javascript/3-data-types/)** - Primitive types, Objects, Prototypes, Built-in Objects
-
--   **[Type Casting (Ép Kiểu)](/languages/javascript/4-type-casting/)** - Implicit và Explicit Type Conversion
-
--   **[JavaScript Patterns](/languages/javascript/patterns/)** - Design patterns và best practices
+---
 
 ## Tại sao học JavaScript?
 
-1. **Universal Language** - Chạy trên browser, server (Node.js), mobile (React Native)
-2. **Huge Ecosystem** - npm, frameworks, libraries vô số
-3. **High Demand** - Skill được tìm kiếm nhất trong ngành IT
-4. **Beginner Friendly** - Cú pháp dễ học, feedback ngay lập tức
+<CardGrid>
+  <Card title="Universal Language" icon="globe">
+    Chạy trên browser, server (Node.js), mobile (React Native)
+  </Card>
+  <Card title="Huge Ecosystem" icon="open-book">
+    npm, frameworks, libraries vô số
+  </Card>
+  <Card title="High Demand" icon="star">
+    Skill được tìm kiếm nhất trong ngành IT
+  </Card>
+  <Card title="Beginner Friendly" icon="approve-check">
+    Cú pháp dễ học, feedback ngay lập tức
+  </Card>
+</CardGrid>
+
+---
 
 ## Yêu cầu tiên quyết
 
--   Hiểu biết cơ bản về HTML/CSS
--   Logic tư duy cơ bản
--   Không cần kinh nghiệm lập trình trước đó
+<Steps>
+1. Hiểu biết cơ bản về HTML/CSS
+2. Logic tư duy cơ bản
+3. Không cần kinh nghiệm lập trình trước đó
+</Steps>
 
-## Bắt đầu ngay!
-
-👉 [Giới Thiệu JavaScript - Bài học đầu tiên](/languages/javascript/1-introduction/)
+<Aside type="tip" title="Bắt đầu ngay!">
+  Sẵn sàng học JavaScript? Hãy bắt đầu với bài học đầu tiên!
+  
+  👉 [Giới Thiệu JavaScript](/languages/javascript/1-introduction/)
+</Aside>

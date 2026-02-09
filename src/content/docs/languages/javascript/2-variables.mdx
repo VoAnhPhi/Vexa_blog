@@ -3,88 +3,74 @@ title: Biến (Variables)
 description: Khai báo biến, hoisting, naming rules và scopes trong JavaScript
 ---
 
-# Biến trong JavaScript
+import { Card, CardGrid, Aside, Tabs, TabItem, Badge } from '@astrojs/starlight/components';
 
 ## Các Cách Khai Báo Biến
 
-### **[var] keyword**
+<Tabs>
+  <TabItem label="var">
+    Lệnh `var` dùng để khai báo một biến có **phạm vi hàm (function scope)** hoặc **phạm vi toàn cục (global scope)**. Biến có thể được khởi tạo hoặc để trống.
 
-Lệnh `var` dùng để khai báo một biến có **phạm vi hàm (function scope)** hoặc **phạm vi toàn cục (global scope)**. Biến có thể được khởi tạo (gán giá trị ban đầu) hoặc để trống.
+    **Đặc điểm chi tiết:**
 
-**Đặc điểm chi tiết:**
+    - `var` có **hoisting**: biến được đưa lên đầu phạm vi, nhưng giá trị thì không được gán sẵn
+    - Phạm vi chỉ gói gọn trong **hàm**, không giới hạn trong khối `{}`
+    - Có thể khai báo lại cùng tên trong cùng một phạm vi
 
--   `var` có **hoisting**: nghĩa là biến được khai báo với `var` sẽ được đưa lên đầu phạm vi (scope) của nó, nhưng giá trị thì không được gán sẵn.
+    ```js
+    console.log(a); // undefined (không báo lỗi)
+    var a = 10;
 
-```js
-console.log(a); // undefined (không báo lỗi)
-var a = 10;
-```
+    if (true) {
+        var x = 5;
+    }
+    console.log(x); // 5
+    ```
+  </TabItem>
+  <TabItem label="let">
+    Lệnh `let` dùng để khai báo một biến có **phạm vi khối (block scope)**. Biến có thể được khởi tạo hoặc để trống.
 
--   Phạm vi chỉ gói gọn trong **hàm**, không giới hạn trong khối `{}`.
+    **Đặc điểm chi tiết:**
 
-```js
-if (true) {
-	var x = 5;
-}
-console.log(x); // 5
-```
+    - **Block scope**: chỉ tồn tại bên trong cặp `{}`
+    - Có **hoisting**, nhưng không thể truy cập trước khi khai báo → **Temporal Dead Zone (TDZ)**
+    - Không thể khai báo lại cùng tên trong cùng một phạm vi
 
--   Có thể khai báo lại cùng tên trong cùng một phạm vi (không báo lỗi)
+    ```js
+    if (true) {
+        let y = 10;
+        console.log(y); // 10
+    }
+    console.log(y); // ReferenceError: y is not defined
 
-### **[let] keyword**
+    console.log(z); // ReferenceError (TDZ)
+    let z = 20;
+    ```
+  </TabItem>
+  <TabItem label="const">
+    Lệnh `const` cũng khai báo một biến có **phạm vi khối (block scope)**. Khác với `let`, giá trị **không thể gán lại** sau khi đã khởi tạo.
 
-Lệnh `let` dùng để khai báo một biến có **phạm vi khối (block scope)**. Biến có thể được khởi tạo (gán giá trị ban đầu) hoặc để trống.
+    **Đặc điểm chi tiết:**
 
-**Đặc điểm chi tiết:**
+    - **Bắt buộc phải gán giá trị ban đầu** khi khai báo
+    - Không thể gán lại giá trị khác
+    - Với **object hoặc array**, có thể thay đổi giá trị bên trong
 
--   **Block scope**: chỉ tồn tại bên trong cặp `{}`
+    ```js
+    const pi = 3.14;
+    pi = 3.14159; // TypeError: Assignment to constant variable
 
-```js
-if (true) {
-	let y = 10;
-	console.log(y); // 10
-}
-console.log(y); // ReferenceError: y is not defined
-```
+    const arr = [1, 2, 3];
+    arr.push(4);    // OK
+    arr[0] = 10;    // OK
+    arr = [10, 20]; // TypeError
+    ```
+  </TabItem>
+</Tabs>
 
--   Có **hoisting**, nhưng không thể truy cập trước khi khai báo → gọi là **Temporal Dead Zone (TDZ)**
+---
 
-```js
-console.log(z); // ReferenceError
-let z = 20;
-```
-
--   Không thể khai báo lại cùng tên trong cùng một phạm vi (sẽ báo lỗi)
-
-### **[const] keyword**
-
-Lệnh `const` cũng khai báo một biến có **phạm vi khối (block scope)**. Khác với `let`, giá trị của biến khai báo bằng `const` **không thể gán lại** sau khi đã khởi tạo.
-
-**Đặc điểm chi tiết:**
-
--   **Bắt buộc phải gán giá trị ban đầu** khi khai báo.
-
-```js
-const pi; // SyntaxError: Missing initializer
-```
-
--   Không thể gán lại giá trị khác:
-
-```js
-const pi = 3.14;
-pi = 3.14159; // TypeError: Assignment to constant variable
-```
-
--   Với **object hoặc array**, ta **không thể gán lại cả object/array**, nhưng **có thể thay đổi giá trị bên trong**:
-
-```js
-const arr = [1, 2, 3];
-arr.push(4); // OK
-arr[0] = 10; // OK
-arr = [10, 20]; // TypeError: Assignment to constant variable
-```
-
-### **Bảng so sánh (var | let | const)**
+### Bảng so sánh var | let | const
 
 | Từ khóa   | Phạm vi (Scope) | Hoisting | Khai báo lại | Gán lại | Ghi chú                                                    |
 | --------- | --------------- | -------- | ------------ | ------- | ---------------------------------------------------------- |
@@ -92,73 +78,96 @@ arr = [10, 20]; // TypeError: Assignment to constant variable
 | **let**   | Khối `{}`       | Có (TDZ) | Không        | Có thể  | An toàn hơn `var`                                          |
 | **const** | Khối `{}`       | Có (TDZ) | Không        | Không   | Dùng cho hằng số, hoặc object/array cần cố định tham chiếu |
 
+<Aside type="tip" title="Khuyến nghị">
+Ưu tiên sử dụng `const` cho các giá trị không đổi, `let` cho các biến cần thay đổi. Tránh dùng `var` trong code hiện đại!
+</Aside>
+
+---
+
 ## Hoisting
 
-### **Định nghĩa**
+### Định nghĩa
 
 Hoisting là một cơ chế trong JavaScript, trong đó **trình thông dịch (interpreter) sẽ đưa phần khai báo (declaration) của biến, hàm, hoặc class lên đầu phạm vi (scope)** trước khi thực thi code.
 
-### **Điểm quan trọng**
+<Aside type="caution" title="Điểm quan trọng">
+**Chỉ khai báo được hoisting**, không phải cả phần gán giá trị. Hành vi sẽ khác nhau tùy thuộc vào bạn dùng `var`, `let`, `const`, hay `function`.
+</Aside>
 
--   **Chỉ khai báo được hoisting**, không phải cả phần gán giá trị.
--   Nghĩa là bạn có thể gọi hàm hoặc truy cập biến trước khi khai báo chúng, nhưng hành vi sẽ khác nhau tùy thuộc vào bạn dùng `var`, `let`, `const`, hay `function`.
-
-### **Hoisting với Function**
+### Hoisting với Function
 
 ```js
 sayHello(); // "Hello!"
 
 function sayHello() {
-	console.log("Hello!");
+    console.log("Hello!");
 }
 ```
 
--   **Function declaration** được hoisting toàn bộ (bao gồm cả phần thân hàm).
--   Do đó có thể gọi hàm trước khi khai báo.
+**Function declaration** được hoisting toàn bộ (bao gồm cả phần thân hàm), do đó có thể gọi hàm trước khi khai báo.
 
-### **Tổng kết**
+### Tổng kết Hoisting
 
--   **var** → hoisting biến, giá trị mặc định `undefined`.
--   **let, const** → hoisting nhưng rơi vào **TDZ (Temporal Dead Zone)**, không thể truy cập trước khi khai báo.
--   **function declaration** → hoisting cả hàm.
--   **function expression & arrow function** → hoisting biến thôi, chưa gán giá trị nên không gọi được sớm.
+<CardGrid>
+  <Card title="var" icon="warning">
+    Hoisting biến, giá trị mặc định `undefined`
+  </Card>
+  <Card title="let, const" icon="error">
+    Hoisting nhưng rơi vào **TDZ**, không thể truy cập trước khi khai báo
+  </Card>
+  <Card title="function declaration" icon="approve-check">
+    Hoisting cả hàm (toàn bộ thân hàm)
+  </Card>
+  <Card title="function expression" icon="warning">
+    Hoisting biến thôi, chưa gán giá trị nên không gọi được sớm
+  </Card>
+</CardGrid>
+
+---
 
 ## Nguyên Tắc Đặt Tên Biến
 
-Tên biến nên mô tả chính xác biến của bạn. Khi bạn tạo tên biến tốt, code JavaScript của bạn sẽ dễ hiểu và dễ làm việc hơn. Đặt tên biến đúng cách rất quan trọng.
+Tên biến nên mô tả chính xác biến của bạn. Khi bạn tạo tên biến tốt, code JavaScript của bạn sẽ dễ hiểu và dễ làm việc hơn.
 
-### **Các Quy Ước Đặt Tên**
+### Các Quy Ước Đặt Tên
 
--   **camelCasing**: chữ cái đầu của mỗi từ được viết hoa ngoại trừ từ đầu tiên. Camel casing là chuẩn được sử dụng trong JavaScript.
+| Quy ước | Mô tả | Ví dụ | Sử dụng trong JS |
+| ------- | ----- | ----- | ---------------- |
+| **camelCase** | Chữ cái đầu của mỗi từ viết hoa (trừ từ đầu) | `indexOf`, `getElementById` | ✅ Tiêu chuẩn |
+| **PascalCase** | Chữ cái đầu của mỗi từ đều viết hoa | `WriteLine`, `MyClass` | Class/Constructor |
+| **snake_case** | Mỗi từ viết thường, phân tách bằng `_` | `array_push`, `str_split` | Ít dùng |
+| **SCREAMING_SNAKE** | Mỗi từ viết hoa, phân tách bằng `_` | `MAX_VALUE`, `API_KEY` | Hằng số |
 
-    -   Ví dụ: `indexOf`, `getElementById`, `querySelectorAll`
+---
 
--   **PascalCasing**: chữ cái đầu của mỗi từ đều được viết hoa. Thường dùng cho tên class/constructor.
+## Scopes (Phạm Vi)
 
-    -   Ví dụ: `WriteLine`, `ReadLine`, `GetType`
+### 3 Phạm Vi Chính
 
--   **snake_casing**: mỗi từ đều viết thường và được phân tách bằng ký tự `_` (underscore).
+<CardGrid stagger>
+  <Card title="Global Scope" icon="globe">
+    Thấy ở mọi nơi trong cùng file/chương trình
+  </Card>
+  <Card title="Function Scope" icon="seti:javascript">
+    Thấy bên trong chính hàm đó
+  </Card>
+  <Card title="Block Scope" icon="seti:folder">
+    Thấy bên trong cặp ngoặc khối `{}` (chỉ với `let`/`const`)
+  </Card>
+</CardGrid>
 
-    -   Ví dụ: `array_push`, `mysqli_connect`, `str_split`
+### Gợi Ý
 
--   **SCREAMING_SNAKE_CASING**: mỗi từ đều viết hoa và được phân tách bằng ký tự `_` (underscore). Thường được sử dụng để biểu thị hằng số trong nhiều ngôn ngữ lập trình, bao gồm JavaScript.
-    -   Ví dụ: `MAX_VALUE`, `MAX_SAFE_INTEGER`
+<Aside type="note" title="Lưu ý về Scope">
+- `var` không có block scope, còn `let`/`const` thì có
+- Biến khai báo với `var` thuộc global/function scope
+- Biến khai báo với `let`/`const` bị "nhốt" trong `{}`
+</Aside>
 
-## **Scopes (Phạm Vi)**
-
-### **3 Phạm Vi Chính**
-
--   **Global** (toàn cục) → thấy ở mọi nơi trong cùng file/chương trình
--   **Function** (hàm) → thấy bên trong chính hàm đó
--   **Block** (`{}`) → thấy bên trong cặp ngoặc khối (chỉ với `let`/`const`)
-
-### **Gợi Ý**
-
--   `var` không có block scope, còn `let`/`const` thì có.
--   Biến nằm _ngoài_ block chỉ dùng được nếu nó **không** bị giới hạn bởi block scope.
--   Biến khai báo với `var` thuộc global/function scope
--   Biến khai báo với `let`/`const` bị "nhốt" trong `{}`
+---
 
 ## Tiếp Theo
 
-👉 Tìm hiểu về [Kiểu Dữ Liệu (Data Types)](/languages/javascript/3-data-types/)
+<Aside type="tip" title="Bài tiếp theo">
+Tìm hiểu về [Kiểu Dữ Liệu (Data Types)](/languages/javascript/3-data-types/)
+</Aside>

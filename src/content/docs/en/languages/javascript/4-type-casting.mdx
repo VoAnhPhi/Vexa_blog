@@ -3,434 +3,358 @@ title: Type Casting in JavaScript
 description: Implicit and Explicit Type Conversion, coercion, and best practices
 ---
 
-# Type Casting in JavaScript
+import { Card, CardGrid, Aside, Tabs, TabItem, Steps } from '@astrojs/starlight/components';
 
 **Type casting** (also called **type conversion**) is the process of converting a value from one data type to another.
 
 ---
 
-## 🎯 Type Conversion vs Type Coercion
+## Type Conversion vs Type Coercion
 
-### Definitions
+<CardGrid>
+  <Card title="Type Conversion" icon="right-arrow">
+    Converting a value from one type to another. General term (implicit or explicit).
+  </Card>
+  <Card title="Type Coercion" icon="random">
+    **Automatic** type conversion by JavaScript engine (implicit).
+  </Card>
+  <Card title="Type Casting" icon="setting">
+    **Manual** type conversion by the programmer (explicit).
+  </Card>
+</CardGrid>
 
-| Term                | Meaning                                      | Who Controls It?                    |
-| ------------------- | -------------------------------------------- | ----------------------------------- |
-| **Type Conversion** | Converting a value from one type to another  | General term (implicit or explicit) |
-| **Type Coercion**   | **Automatic** type conversion by JavaScript  | JavaScript engine (implicit)        |
-| **Type Casting**    | **Manual** type conversion by the programmer | Developer (explicit)                |
-
-> [!NOTE] > **The Relationship**
-> Type coercion is a **subset** of type conversion. All coercion is conversion, but not all conversion is coercion!
+<Aside type="note" title="The Relationship">
+Type coercion is a **subset** of type conversion. All coercion is conversion, but not all conversion is coercion!
 
 ```
 Type Conversion = Implicit (Coercion) + Explicit (Casting)
 ```
+</Aside>
 
 ---
 
-## ⚡ Implicit Type Casting (Type Coercion)
+## Implicit Type Casting (Type Coercion)
 
 JavaScript automatically converts types to make operations work. This can be helpful but also cause bugs!
 
-### 1️⃣ Arithmetic Operators (Auto-convert to Number)
+### 1. Arithmetic Operators (Auto-convert to Number)
 
 Operations like `-`, `*`, `/`, `%` convert strings to numbers.
 
 ```js
-"5" * 2; // 10   → "5" converted to 5
-"10" - 1; // 9    → "10" converted to 10
-"6" / "3"; // 2    → both converted to numbers
-"15" % 4; // 3    → "15" converted to 15
+"5" * 2;    // 10   → "5" converted to 5
+"10" - 1;   // 9    → "10" converted to 10
+"6" / "3";  // 2    → both converted to numbers
+"15" % 4;   // 3    → "15" converted to 15
 ```
 
-> [!TIP] > **Quick Number Conversion Trick**
-> Multiply by 1 or subtract 0 to convert strings to numbers quickly:
+<Aside type="tip" title="Quick Number Conversion Trick">
+Multiply by 1 or subtract 0 to convert strings to numbers quickly:
 
 ```js
-"42" * 1; // 42
-"42" - 0; // 42
+"42" * 1;  // 42
+"42" - 0;  // 42
 ```
+</Aside>
 
 ---
 
-### 2️⃣ The `+` Operator (Special Case!)
+### 2. The `+` Operator (Special Case!)
 
 The `+` operator behaves differently: **if any operand is a string, it concatenates**!
 
 ```js
 // String concatenation
-1 + "2"; // "12"  → number 1 becomes string "1"
-"2" + 1; // "21"  → number 1 becomes string "1"
-"Hello" + 5; // "Hello5"
+1 + "2";       // "12"  → number 1 becomes string "1"
+"2" + 1;       // "21"
+"Hello" + 5;   // "Hello5"
 
 // Numeric addition
-1 + 2; // 3
+1 + 2;         // 3
 ```
 
-> [!WARNING] > **Common Gotcha**
-> This can lead to unexpected results:
-
+<Aside type="caution" title="Common Gotcha">
 ```js
 let result = "5" + 3 - 2;
-console.log(result); // "53" - 2 = 51 (not 6!)
+console.log(result); // 51 (not 6!)
 
 // Breakdown:
 // "5" + 3    →  "53" (string concatenation)
 // "53" - 2   →  51   (string to number conversion)
 ```
+</Aside>
 
 ---
 
-### 3️⃣ Loose Equality `==` (Auto Type Conversion)
+### 3. Loose Equality `==` (Auto Type Conversion)
 
 The `==` operator performs type coercion before comparison.
 
 ```js
-0 == false; // true  (0 and false both become falsy)
-"" == 0; // true  (both become 0)
-null == undefined; // true  (special rule)
-"5" == 5; // true  ("5" converted to 5)
+0 == false;          // true  (both become falsy)
+"" == 0;             // true  (both become 0)
+null == undefined;   // true  (special rule)
+"5" == 5;            // true  ("5" converted to 5)
 ```
 
-> [!CAUTION] > **Use Strict Equality!**
-> The `==` operator can cause subtle bugs. **Always use `===`** (strict equality) to avoid type coercion.
-
-```js
-// BAD
-if (value == 0) {
-}
-
-// GOOD
-if (value === 0) {
-}
-```
-
-**Comparison:**
+<Aside type="danger" title="Use Strict Equality!">
+The `==` operator can cause subtle bugs. **Always use `===`** (strict equality) to avoid type coercion.
+</Aside>
 
 | Operator | Type Conversion | Recommended |
 | -------- | --------------- | ----------- |
-| `==`     | ✅ Yes          | ❌ Avoid    |
-| `===`    | ❌ No           | ✅ Use this |
+| `==`     | Yes             | Avoid       |
+| `===`    | No              | Use this    |
 
 ---
 
-### 4️⃣ Boolean Context (Truthy/Falsy)
+### 4. Boolean Context (Truthy/Falsy)
 
 In conditions, JavaScript converts values to boolean.
 
 ```js
-if ("hello") {
-	// truthy
-	console.log("Runs!");
+if ("hello") { // truthy
+    console.log("Runs!");
 }
 
-if (0) {
-	// falsy
-	console.log("Doesn't run");
+if (0) { // falsy
+    console.log("Doesn't run");
 }
 
-// Double NOT (!!) converts to boolean explicitly
-!!"hello"; // true
-!!0; // false
-!![]; // true (empty array is truthy!)
-!!{}; // true (empty object is truthy!)
+// Double NOT (!!) converts to boolean
+!!"hello";  // true
+!!0;        // false
+!![];       // true (empty array is truthy!)
+!!{};       // true (empty object is truthy!)
 ```
 
-> [!IMPORTANT] > **The 7 Falsy Values**
-> Only these values are falsy in JavaScript. Everything else is truthy!
+**The 7 Falsy Values:**
+
+| Value | Description |
+| ----- | ----------- |
+| `false` | Boolean false |
+| `0`, `-0` | Zero |
+| `""` | Empty string |
+| `null` | Null |
+| `undefined` | Undefined |
+| `NaN` | Not a Number |
+
+---
+
+### 5. Other Coercion Examples
 
 ```js
-Boolean(false); // false
-Boolean(0); // false
-Boolean(-0); // false
-Boolean(""); // false (empty string)
-Boolean(null); // false
-Boolean(undefined); // false
-Boolean(NaN); // false
+// Unary Plus
++"42";         // 42
++true;         // 1
++null;         // 0
++undefined;    // NaN
+
+// Bitwise (converts to 32-bit integer)
+3.9 | 0;       // 3
+~~4.8;         // 4 (double bitwise NOT)
+
+// Comparison < , >
+"2" > "12";    // true (lexicographic comparison)
+"2" > 12;      // false (converted to numbers)
 ```
 
 ---
 
-### 5️⃣ Other Coercion Examples
-
-#### Unary Plus `+`
-
-```js
-+"42" + // 42
-	"3.14" + // 3.14
-	true + // 1
-	false + // 0
-	null + // 0
-	undefined; // NaN
-```
-
-#### Bitwise Operators
-
-```js
-3.9 | 0; // 3 (converts to 32-bit integer)
-5.7 >> 0; // 5
-~~4.8; // 4 (double bitwise NOT)
-```
-
-#### Comparison Operators `<`, `>`
-
-```js
-// Both strings → lexicographic comparison
-"2" > "12"; // true ("2" comes after "12" alphabetically)
-
-// Mixed types → convert to numbers
-"2" > 12; // false (2 > 12)
-10 > "5"; // true (10 > 5)
-```
-
----
-
-## 🎨 Explicit Type Casting
+## Explicit Type Casting
 
 You **manually specify** the target type. This is clearer and safer!
 
-### 1️⃣ String → Number
+<Tabs>
+  <TabItem label="String → Number">
+    **`Number()`** — Most explicit and clear.
 
-#### Using `Number()`
+    ```js
+    Number("3.14");   // 3.14
+    Number("42");     // 42
+    Number("42px");   // NaN (fails gracefully)
+    Number("");       // 0
+    ```
 
-```js
-Number("3.14"); // 3.14
-Number("42"); // 42
-Number("42px"); // NaN (fails gracefully)
-Number(""); // 0
-Number(" "); // 0
-```
+    **`parseInt()`** — For integers (always specify radix!).
 
-> [!TIP] > **Recommended Method** > `Number()` is the most explicit and clear way to convert strings to numbers.
+    ```js
+    parseInt("08", 10);    // 8
+    parseInt("42px", 10);  // 42 (stops at first non-digit)
+    parseInt("3.14", 10);  // 3 (discards decimals)
+    ```
 
-#### Using `parseInt()` (For Integers)
+    **`parseFloat()`** — For decimals.
 
-```js
-parseInt("08", 10); // 8
-parseInt("42px", 10); // 42 (stops at first non-digit)
-parseInt("3.14", 10); // 3 (discards decimals)
-parseInt("abc", 10); // NaN
-```
+    ```js
+    parseFloat("2.5px");  // 2.5
+    parseFloat("3.14");   // 3.14
+    ```
 
-> [!WARNING] > **Always Specify Radix (Base)**
-> Always provide the second parameter (radix) to avoid unexpected results:
+    | Method         | Handles Decimals | Stops at Non-Digits | Recommended           |
+    | -------------- | ---------------- | ------------------- | --------------------- |
+    | `Number()`     | Yes              | No (returns NaN)    | Most cases            |
+    | `parseInt()`   | No               | Yes                 | Integer extraction    |
+    | `parseFloat()` | Yes              | Yes                 | Decimal extraction    |
+    | `+value`       | Yes              | No                  | Quick but unclear     |
+  </TabItem>
+  <TabItem label="Number → String">
+    ```js
+    String(123);         // "123"
+    (123).toString();    // "123"
+    123 + "";            // "123" (implicit coercion)
+    ```
 
-```js
-parseInt("08"); // 8 (modern browsers)
-parseInt("08", 10); // 8 (explicit, safer)
-parseInt("08", 8); // 0 (octal interpretation)
-```
+    <Aside type="tip" title="Best Practice">
+    Use `String()` or `.toString()` for clarity.
+    </Aside>
+  </TabItem>
+  <TabItem label="Any → Boolean">
+    ```js
+    Boolean(0);      // false
+    Boolean(1);      // true
+    Boolean("hi");   // true
+    Boolean("");     // false
+    Boolean(null);   // false
 
-#### Using `parseFloat()` (For Decimals)
+    // Shorthand: Double NOT
+    !!"hello";   // true
+    !!0;         // false
+    ```
+  </TabItem>
+  <TabItem label="Object → Primitive">
+    JavaScript calls `valueOf()` then `toString()` on objects. You can override these methods!
 
-```js
-parseFloat("2.5px"); // 2.5
-parseFloat("3.14"); // 3.14
-parseFloat("abc"); // NaN
-```
+    ```js
+    const money = {
+        amount: 1000,
+        valueOf() { return this.amount; }
+    };
 
-#### Using Unary Plus `+` (Quick but Less Clear)
-
-```js
-+"42" + // 42
-	"3.14"; // 3.14
-```
-
-### Comparison
-
-| Method         | Handles Decimals | Stops at Non-Digits | Recommended           |
-| -------------- | ---------------- | ------------------- | --------------------- |
-| `Number()`     | ✅ Yes           | ❌ No (returns NaN) | ✅ Most cases         |
-| `parseInt()`   | ❌ No            | ✅ Yes              | ✅ Integer extraction |
-| `parseFloat()` | ✅ Yes           | ✅ Yes              | ✅ Decimal extraction |
-| `+value`       | ✅ Yes           | ❌ No               | ⚠️ Quick but unclear  |
-
----
-
-### 2️⃣ Number → String
-
-```js
-String(123)(
-	// "123"
-	123
-).toString(); // "123"
-123 + ""; // "123" (implicit coercion)
-```
-
-> [!TIP] > **Best Practice**
-> Use `String()` or `.toString()` for clarity.
-
----
-
-### 3️⃣ Any → Boolean
-
-```js
-Boolean(0); // false
-Boolean(1); // true
-Boolean("hi"); // true
-Boolean(""); // false
-Boolean(null); // false
-
-// Shorthand: Double NOT
-!!value; // Converts to boolean
-!!"hello"; // true
-!!0; // false
-```
+    money + 500;      // 1500 (uses valueOf)
+    String(money);    // "1000"
+    ```
+  </TabItem>
+</Tabs>
 
 ---
 
-### 4️⃣ Object → Primitive
+## Quick Comparison Table
 
-JavaScript calls `valueOf()` then `toString()` on objects. You can override these methods!
-
-```js
-const money = {
-	amount: 1000,
-	valueOf() {
-		return this.amount;
-	},
-};
-
-money + 500; // 1500 (uses valueOf)
-String(money); // "1000"
-```
+| Concept | Definition | Who triggers? | Example |
+| ------- | ---------- | ------------- | ------- |
+| **Type Coercion** | Automatic type conversion | JavaScript engine | `"5" * 2 → 10` |
+| **Implicit Conversion** | Same as coercion | JavaScript engine | `0 == false → true` |
+| **Explicit Casting** | Manual type conversion | Developer | `Number("3.14")`, `String(123)` |
 
 ---
 
-## 📊 Quick Comparison Table
+## Best Practices
 
-| Concept                 | Definition                | Who triggers?     | Example                         |
-| ----------------------- | ------------------------- | ----------------- | ------------------------------- |
-| **Type Coercion**       | Automatic type conversion | JavaScript engine | `"5" * 2 → 10`                  |
-| **Implicit Conversion** | Same as coercion          | JavaScript engine | `0 == false → true`             |
-| **Explicit Casting**    | Manual type conversion    | Developer         | `Number("3.14")`, `String(123)` |
+<Steps>
+1. **Always Use `===` Instead of `==`**
 
----
+   ```js
+   // BAD
+   if (value == null) { }
 
-## ✅ Best Practices
+   // GOOD
+   if (value === null || value === undefined) { }
+   ```
 
-### 1. Always Use `===` Instead of `==`
+2. **Explicit Conversion at Boundaries** — Convert types explicitly when receiving data from user input, APIs, or files.
 
-```js
-// ❌ BAD
-if (value == null) {
-}
+   ```js
+   const userInput = document.getElementById("age").value;
+   const age = Number(userInput);
 
-// ✅ GOOD
-if (value === null || value === undefined) {
-}
-```
+   if (isNaN(age)) {
+       console.error("Invalid age");
+   }
+   ```
 
-### 2. Explicit Conversion at Boundaries
+3. **Use `Number()` for Decimals, `parseInt()` for Integers**
 
-Convert types explicitly when receiving data from:
+   ```js
+   const price = Number("19.99");      // 19.99
+   const quantity = parseInt("5", 10); // 5
+   ```
 
--   User input (forms)
--   APIs
--   Files
+4. **Avoid Mixing BigInt and Number**
 
-```js
-// User input
-const userInput = document.getElementById("age").value;
-const age = Number(userInput); // Explicit conversion
-
-if (isNaN(age)) {
-	console.error("Invalid age");
-}
-```
-
-### 3. Use `Number()` for Decimals, `parseInt()` for Integers
-
-```js
-const price = Number("19.99"); // 19.99
-const quantity = parseInt("5", 10); // 5
-```
-
-### 4. Avoid Mixing BigInt and Number
-
-```js
-// ❌ BAD
-1n + 1; // TypeError
-
-// ✅ GOOD
-1n + BigInt(1); // 2n
-```
+   ```js
+   1n + 1;         // TypeError
+   1n + BigInt(1); // 2n
+   ```
+</Steps>
 
 ---
 
-## 🔥 Real-World Examples
+## Real-World Examples
 
-### Example 1: Form Validation
+<Tabs>
+  <TabItem label="Form Validation">
+    ```js
+    function validateAge(input) {
+        const age = Number(input);
 
-```js
-function validateAge(input) {
-	const age = Number(input);
+        if (isNaN(age)) {
+            return "Please enter a valid number";
+        }
 
-	if (isNaN(age)) {
-		return "Please enter a valid number";
-	}
+        if (age < 0 || age > 150) {
+            return "Invalid age range";
+        }
 
-	if (age < 0 || age > 150) {
-		return "Invalid age range";
-	}
+        return "Valid";
+    }
+    ```
+  </TabItem>
+  <TabItem label="Safe Comparison">
+    ```js
+    // BAD - implicit coercion
+    if (userInput == 0) {
+        // Matches 0, "0", false, "", []
+    }
 
-	return "Valid";
-}
-```
+    // GOOD - explicit check
+    if (Number(userInput) === 0) {
+        // Only matches the number 0
+    }
+    ```
+  </TabItem>
+  <TabItem label="API Data Conversion">
+    ```js
+    // API returns strings
+    const apiResponse = {
+        price: "19.99",
+        quantity: "5"
+    };
 
-### Example 2: Safe Comparison
-
-```js
-// ❌ BAD - implicit coercion
-if (userInput == 0) {
-	// Matches 0, "0", false, "", []
-}
-
-// ✅ GOOD - explicit check
-if (Number(userInput) === 0) {
-	// Only matches the number 0
-}
-```
-
-### Example 3: API Data Conversion
-
-```js
-// API returns strings
-const apiResponse = {
-	price: "19.99",
-	quantity: "5",
-};
-
-// Explicit conversion
-const total = Number(apiResponse.price) * Number(apiResponse.quantity);
-console.log(total); // 99.95
-```
-
----
-
-## 🎓 Summary
-
-| Type                    | Behavior                       | Recommendation                |
-| ----------------------- | ------------------------------ | ----------------------------- |
-| **Implicit (Coercion)** | JavaScript auto-converts types | ⚠️ Be aware, can cause bugs   |
-| **Explicit (Casting)**  | Developer manually converts    | ✅ Preferred, code is clearer |
-
-### Key Takeaways
-
-> [!IMPORTANT] > **Golden Rules**
->
-> 1. Always use `===` instead of `==`
-> 2. Convert types explicitly when working with external data
-> 3. Know the 7 falsy values
-> 4. Don't mix `BigInt` and `Number`
-> 5. Use `Number()`, `parseInt()`, `parseFloat()` intentionally
+    // Explicit conversion
+    const total = Number(apiResponse.price) * Number(apiResponse.quantity);
+    console.log(total); // 99.95
+    ```
+  </TabItem>
+</Tabs>
 
 ---
 
-## 🚀 Next Steps
+## Summary
 
-Congratulations on completing the core JavaScript fundamentals!
+<CardGrid>
+  <Card title="Implicit (Coercion)" icon="warning">
+    JavaScript auto-converts types. Be aware, can cause bugs!
+  </Card>
+  <Card title="Explicit (Casting)" icon="approve-check">
+    Developer manually converts. Preferred, code is clearer.
+  </Card>
+</CardGrid>
 
-👉 **Next:** [JavaScript Patterns](/en/languages/javascript/patterns/)
-
-Learn design patterns and best practices for writing clean, maintainable JavaScript code.
+<Aside type="caution" title="Golden Rules">
+1. Always use `===` instead of `==`
+2. Convert types explicitly when working with external data
+3. Know the 7 falsy values
+4. Don't mix `BigInt` and `Number`
+5. Use `Number()`, `parseInt()`, `parseFloat()` intentionally
+</Aside>
