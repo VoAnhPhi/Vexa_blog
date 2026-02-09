@@ -1,0 +1,91 @@
+---
+title: Quy Tắc Đặt Tên
+description: Các quy ước đặt tên biến trong JavaScript — camelCase, PascalCase, snake_case
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## Nguyên Tắc Đặt Tên Biến
+
+Tên biến nên mô tả chính xác biến của bạn. Khi bạn tạo tên biến tốt, code JavaScript của bạn sẽ dễ hiểu và dễ làm việc hơn.
+
+---
+
+## Các Quy Ước Đặt Tên
+
+| Quy ước | Mô tả | Ví dụ | Sử dụng trong JS |
+| ------- | ----- | ----- | ---------------- |
+| **camelCase** | Chữ cái đầu của mỗi từ viết hoa (trừ từ đầu) | `indexOf`, `getElementById` | ✅ Tiêu chuẩn |
+| **PascalCase** | Chữ cái đầu của mỗi từ đều viết hoa | `WriteLine`, `MyClass` | Class/Constructor |
+| **snake_case** | Mỗi từ viết thường, phân tách bằng `_` | `array_push`, `str_split` | Ít dùng |
+| **SCREAMING_SNAKE** | Mỗi từ viết hoa, phân tách bằng `_` | `MAX_VALUE`, `API_KEY` | Hằng số |
+
+---
+
+### camelCase — Tiêu chuẩn JavaScript
+
+Chữ cái đầu của mỗi từ được viết hoa ngoại trừ từ đầu tiên. Đây là chuẩn được sử dụng phổ biến nhất trong JavaScript.
+
+```js
+let firstName = "John";
+let userAge = 25;
+let isLoggedIn = true;
+
+// Built-in examples
+getElementById;
+querySelector;
+addEventListener;
+```
+
+---
+
+### PascalCase — Class/Constructor
+
+Chữ cái đầu của mỗi từ đều được viết hoa. Thường dùng cho tên class/constructor.
+
+```js
+class UserProfile {}
+class ShoppingCart {}
+
+function Person(name) {
+    this.name = name;
+}
+```
+
+---
+
+### snake_case — Ít dùng trong JS
+
+Mỗi từ đều viết thường và được phân tách bằng ký tự `_` (underscore).
+
+```js
+let first_name = "John";   // Không phổ biến trong JS
+let user_age = 25;
+```
+
+---
+
+### SCREAMING_SNAKE_CASE — Hằng số
+
+Mỗi từ đều viết hoa và được phân tách bằng ký tự `_`. Thường được sử dụng để biểu thị hằng số.
+
+```js
+const MAX_VALUE = 100;
+const API_KEY = "abc123";
+const DEFAULT_TIMEOUT = 5000;
+```
+
+<Aside type="tip" title="Mẹo nhớ">
+- Biến thường → `camelCase`
+- Class → `PascalCase`  
+- Hằng số → `SCREAMING_SNAKE_CASE`
+- Tránh dùng `snake_case` trong JS
+</Aside>
+
+---
+
+## Tiếp Theo
+
+<Aside type="tip" title="Bài tiếp theo">
+Tìm hiểu về [Phạm Vi (Scopes)](/languages/javascript/2-variables/4-scopes/) — nơi biến có thể được truy cập.
+</Aside>

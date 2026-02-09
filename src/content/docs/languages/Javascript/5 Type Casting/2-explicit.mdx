@@ -1,103 +1,22 @@
 ---
-title: Type Casting (Ép Kiểu)
-description: Implicit và Explicit Type Casting trong JavaScript
+title: Explicit Type Casting (Ép Kiểu Tường Minh)
+description: Chỉ định rõ kiểu đích — Number(), parseInt(), String(), Boolean()
 ---
 
 import { Card, CardGrid, Aside, Tabs, TabItem, Steps } from '@astrojs/starlight/components';
 
-## Type Conversion/Coercion - Bức Tranh Tổng Quát
+## Explicit Type Casting là gì?
 
-<CardGrid>
-  <Card title="Type Conversion" icon="right-arrow">
-    Đổi giá trị từ kiểu này sang kiểu khác. Có thể **implicit** (ngầm) hoặc **explicit** (tường minh).
-  </Card>
-  <Card title="Type Coercion" icon="random">
-    Type conversion nhưng ngầm định (tự động), xảy ra khi ngữ cảnh/toán tử yêu cầu.
-  </Card>
-</CardGrid>
-
-<Aside type="note" title="Quan hệ">
-**Coercion ⊂ Conversion**. Conversion là khái niệm rộng; coercion nhấn mạnh "tự động".
-</Aside>
+Bạn **chỉ định rõ** muốn đổi sang kiểu gì — code rõ ràng, dễ bảo trì và ít bug hơn coercion ngầm.
 
 ---
 
-## Implicit Type Casting (Ép Kiểu Ngầm)
-
-JavaScript sẽ tự đổi kiểu để "làm vừa" toán tử/ngữ cảnh:
-
-### 1. Toán tử số học (trừ, nhân, chia…) ép về Number
-
-```js
-"5" * 2;    // 10   -> "5" bị ép thành 5
-"10" - 1;   // 9
-"6" / "3";  // 2
-```
-
-### 2. Toán tử `+` đặc biệt: nếu có string → nối chuỗi
-
-```js
-1 + "2";   // "12" (số → chuỗi)
-"2" + 1;   // "21"
-```
-
-### 3. So sánh lỏng `==` tự ép kiểu
-
-```js
-0 == false;          // true (đã coercion)
-"" == 0;             // true
-null == undefined;   // true
-```
-
-<Aside type="caution" title="Khuyến nghị">
-Dùng `===` để không ép kiểu ngầm, tránh bug khó debug!
-</Aside>
-
-### 4. Ép sang Boolean trong điều kiện (truthy/falsy)
-
-```js
-if ("hello") { /* chạy vì truthy */ }
-!!"hello";  // true
-!!0;        // false
-!![];       // true
-!!{};       // true
-```
-
-**Các giá trị falsy trong JavaScript:**
-
-| Giá trị | Mô tả |
-| ------- | ----- |
-| `false` | Boolean false |
-| `0`, `-0` | Số 0 |
-| `""` | Empty string |
-| `null` | Null |
-| `undefined` | Undefined |
-| `NaN` | Not a Number |
-
-### 5. Một số toán tử/ngữ cảnh khác gây coercion
-
-```js
-// Unary plus
-+"42";           // 42
-
-// Bitwise (ép về 32-bit int)
-3.9 | 0;         // 3
-
-// So sánh < , >
-"2" > "12";      // true (so sánh chuỗi theo từ vựng)
-"2" > 12;        // false (đã ép về số)
-```
-
----
-
-## Explicit Type Casting (Ép Kiểu Tường Minh)
-
-Bạn **chỉ định rõ** muốn đổi sang kiểu gì:
+## Các phương thức chuyển đổi
 
 <Tabs>
   <TabItem label="String → Number">
     ```js
-    Number("3.14");         // 3.14 (chuẩn, fail -> NaN)
+    Number("3.14");         // 3.14 (chuẩn, fail → NaN)
     parseInt("08", 10);     // 8 (NHỚ truyền radix)
     parseFloat("2.5px");    // 2.5 (dừng ở chỗ không phải số)
     +"42";                  // 42 (nhanh nhưng kém rõ ràng)
@@ -106,6 +25,13 @@ Bạn **chỉ định rõ** muốn đổi sang kiểu gì:
     <Aside type="tip" title="Lưu ý">
     `Number("42px")` → `NaN`, trong khi `parseInt("42px", 10)` → `42`
     </Aside>
+
+    | Phương thức | Xử lý thập phân | Dừng ở ký tự không phải số | Khuyến nghị |
+    | ----------- | --------------- | ------------------------- | ----------- |
+    | `Number()` | Có | Không (trả về NaN) | Hầu hết trường hợp |
+    | `parseInt()` | Không | Có | Lấy số nguyên |
+    | `parseFloat()` | Có | Có | Lấy số thập phân |
+    | `+value` | Có | Không | Nhanh nhưng kém rõ |
   </TabItem>
   <TabItem label="Number → String">
     ```js
@@ -136,17 +62,7 @@ Bạn **chỉ định rõ** muốn đổi sang kiểu gì:
 
 ---
 
-## So Sánh Nhanh 3 Khái Niệm
-
-| Khái niệm | Định nghĩa | Ai kích hoạt? | Ví dụ JS |
-| --------- | ---------- | ------------- | -------- |
-| **Type coercion** | Chuyển kiểu **ngầm** | JS/ngữ cảnh tự làm | `"5"*2 → 10`, `0 == false → true` |
-| **Implicit conversion** | Từ đồng nghĩa của coercion | JS/ngữ cảnh tự làm | `if("hi"){}`, `+"42" // 42` |
-| **Explicit casting** | Bạn **chỉ định** kiểu đích | Lập trình viên | `Number("3.14")`, `parseInt("08",10)` |
-
----
-
-## Best Practices (Tránh Bug)
+## Best Practices
 
 <Steps>
 1. **Dùng `===` thay cho `==`** để tránh coercion ngoài ý muốn
@@ -162,18 +78,15 @@ Bạn **chỉ định rõ** muốn đổi sang kiểu gì:
 2. **Khi cần số thực**, ưu tiên `Number()`; khi cần **nguyên** từ chuỗi, dùng `parseInt(str, 10)`
 
    ```js
-   // Số thập phân
-   const price = Number("19.99");
-
-   // Số nguyên
-   const age = parseInt("25", 10);
+   const price = Number("19.99");     // 19.99
+   const age = parseInt("25", 10);    // 25
    ```
 
 3. **Ép tường minh** ở rìa hệ thống (input UI/API/file) thay vì trông chờ JS ép hộ
 
    ```js
    const userInput = document.getElementById("age").value;
-   const age = Number(userInput); // Ép tường minh
+   const age = Number(userInput);
 
    if (isNaN(age)) {
        console.error("Invalid age");

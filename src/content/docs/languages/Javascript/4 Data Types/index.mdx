@@ -1,0 +1,53 @@
+---
+title: 1 Kiểu Dữ Liệu (Data Types)
+sidebar:
+  order: 5
+description: Tổng quan về Primitive types, Non-primitive (Objects), Prototypes và Built-in Objects trong JavaScript
+---
+
+import { Card, CardGrid, LinkCard, Aside } from "@astrojs/starlight/components";
+
+JavaScript có hai nhóm kiểu dữ liệu chính: **Primitive** (nguyên thủy) và **Non-primitive** (tham chiếu / Objects).
+
+---
+
+## Nội dung
+
+<CardGrid>
+	<LinkCard
+		title="Primitive Types (7 loại)"
+		description="number, bigint, string, boolean, null, undefined, symbol"
+		href="/languages/javascript/4-data-types/1-primitive/"
+	/>
+	<LinkCard
+		title="Non-primitive (Objects)"
+		description="Object là gì, cách tạo, truy cập thuộc tính và các thao tác phổ biến"
+		href="/languages/javascript/4-data-types/2-objects/"
+	/>
+	<LinkCard
+		title="Prototype & Prototype Chain"
+		description="Cơ chế kế thừa trong JavaScript — prototype, prototype chain, prototypal inheritance"
+		href="/languages/javascript/4-data-types/3-prototype/"
+	/>
+	<LinkCard
+		title="Built-in Objects"
+		description="Number, Math, Date, String, Array, Object, Map, Set và các global objects khác"
+		href="/languages/javascript/4-data-types/4-built-in-objects/"
+	/>
+</CardGrid>
+
+---
+
+## So sánh nhanh
+
+| Đặc điểm      | Primitive       | Non-primitive (Object)       |
+| ------------- | --------------- | ---------------------------- |
+| **Bất biến?** | ✅ Immutable    | ❌ Mutable                   |
+| **So sánh**   | Theo giá trị    | Theo tham chiếu              |
+| **Copy**      | Copy giá trị    | Copy tham chiếu              |
+| **typeof**    | Trả về tên kiểu | `"object"` hoặc `"function"` |
+
+<Aside type="tip" title="Ghi nhớ">
+	- **7 Primitive types**: `number`, `bigint`, `string`, `boolean`, `null`, `undefined`, `symbol` - **Non-primitive**: Mọi thứ còn lại — Objects,
+	Arrays, Functions, Date, Map, Set, …
+</Aside>

@@ -1,0 +1,108 @@
+---
+title: 1 Non-primitive (Objects)
+description: Object trong JavaScript — cách tạo, truy cập thuộc tính, phương thức và các thao tác phổ biến
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Non-primitive là gì?
+
+Trong JavaScript, **Non-primitive** (hay **Reference types**) bao gồm **Objects**, **Arrays**, **Functions**, **Date**, v.v. Các kiểu dữ liệu này được lưu trữ dưới dạng **tham chiếu** thay vì giá trị trực tiếp.
+
+<CardGrid>
+  <Card title="Mutable" icon="pencil">
+    Có thể thay đổi giá trị bên trong sau khi tạo
+  </Card>
+  <Card title="So sánh tham chiếu" icon="random">
+    Hai object giống nhau nhưng khác tham chiếu → KHÔNG bằng nhau
+  </Card>
+  <Card title="Copy tham chiếu" icon="forward-slash">
+    Khi gán, chỉ copy tham chiếu (cùng trỏ tới 1 object)
+  </Card>
+</CardGrid>
+
+---
+
+## Object
+
+Object là kiểu dữ liệu dùng để lưu trữ tập hợp các giá trị dưới dạng cặp **key-value** (khóa-giá trị). Mỗi đối tượng có thể chứa nhiều **thuộc tính** (properties) và **phương thức** (methods).
+
+### Các cách tạo Object
+
+<Tabs>
+  <TabItem label="Object Literal (khuyến nghị)">
+    ```js
+    let person = {
+        name: "Alice",
+        age: 25,
+        greet: function() {
+            console.log("Hello, " + this.name);
+        }
+    };
+    ```
+  </TabItem>
+  <TabItem label="new Object()">
+    ```js
+    let person = new Object();
+    person.name = "Alice";
+    person.age = 25;
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+### Truy cập thuộc tính và phương thức
+
+<Tabs>
+  <TabItem label="Dot Notation">
+    ```js
+    console.log(person.name);   // "Alice"
+    console.log(person.age);    // 25
+    ```
+  </TabItem>
+  <TabItem label="Bracket Notation">
+    ```js
+    console.log(person["name"]); // "Alice"
+    console.log(person["age"]);  // 25
+    ```
+  </TabItem>
+  <TabItem label="Phương thức">
+    ```js
+    person.greet(); // "Hello, Alice"
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+### Tính chất của Object
+
+<Aside type="note" title="Đặc điểm">
+- Object có thể chứa thuộc tính là **bất kỳ kiểu dữ liệu** nào (chuỗi, số, mảng, hàm, v.v.)
+- Các đối tượng có thể **lồng vào nhau**, tạo thành cấu trúc dữ liệu phức tạp
+- Object rất hữu ích để mô hình hóa đối tượng thực tế: người dùng, sản phẩm, bài viết, …
+</Aside>
+
+---
+
+## Bản đồ thao tác Object
+
+| Nhóm thao tác | Phương thức / Cú pháp |
+| -------------- | --------------------- |
+| **Tạo & clone/merge** | Literal `{}`, `Object.assign`, spread `{...a}`, `structuredClone` |
+| **Đọc/ghi/xoá thuộc tính** | Dot `obj.x`, bracket `obj['x']`, gán, `delete` |
+| **Duyệt** | `for...in`, `Object.keys/values/entries` |
+| **Biến đổi nâng cao** | Destructuring, rest/spread, computed key `[expr]` |
+| **Bất biến & cấu hình** | `Object.freeze/seal`, property descriptors (`Object.defineProperty`) |
+| **Kiểm tra & an toàn** | `in`, `hasOwn`, `?.` (optional chaining), `??` (nullish) |
+| **Prototype & kế thừa** | `Object.create`, `Object.getPrototypeOf`, `isPrototypeOf` |
+| **JSON serialize** | `JSON.stringify/parse` |
+
+---
+
+## Tiếp Theo
+
+<Aside type="tip" title="Bài tiếp theo">
+Tìm hiểu về [Prototype & Prototype Chain](/languages/javascript/4-data-types/3-prototype/) — cơ chế kế thừa cốt lõi trong JavaScript.
+</Aside>

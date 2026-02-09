@@ -1,0 +1,149 @@
+---
+title: 2 Prototype & Prototype Chain
+description: Cơ chế kế thừa trong JavaScript — Prototype, Prototype Chain và Prototypal Inheritance
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Prototype là gì?
+
+**Prototype** là một đối tượng ẩn mà mỗi đối tượng trong JavaScript kế thừa từ đó. Khi bạn truy cập một thuộc tính hoặc phương thức của đối tượng, JavaScript sẽ:
+
+1. Tìm trong chính đối tượng
+2. Nếu không thấy → tìm trong **prototype** của đối tượng đó
+3. Tiếp tục đi qua **prototype chain** cho đến khi tìm thấy hoặc gặp `null`
+
+<Aside type="note" title="__proto__">
+Mỗi đối tượng có thuộc tính đặc biệt `__proto__`, đó là prototype của nó. Bạn có thể truy cập qua `Object.getPrototypeOf(obj)`.
+</Aside>
+
+---
+
+## Prototype của một Object
+
+```js
+function Person(name) {
+    this.name = name;
+}
+
+Person.prototype.sayHello = function() {
+    console.log("Hello, " + this.name);
+};
+
+let john = new Person("John");
+john.sayHello(); // "Hello, John"
+```
+
+<CardGrid>
+  <Card title="Tìm trong john" icon="magnifier">
+    `sayHello` không có trong `john` trực tiếp
+  </Card>
+  <Card title="Tìm trong Prototype" icon="right-arrow">
+    JavaScript tìm thấy `sayHello` trong `Person.prototype`
+  </Card>
+</CardGrid>
+
+---
+
+## Prototype Chain (cốt lõi)
+
+**Prototypal Inheritance** cho phép đối tượng kế thừa thuộc tính và phương thức từ đối tượng khác thông qua prototype. Thay vì tạo lại phương thức trong mỗi đối tượng, bạn tạo chúng một lần trong prototype và tất cả đối tượng kế thừa sẽ sử dụng được.
+
+### Ví dụ: Kế thừa từ Animal
+
+<Tabs>
+  <TabItem label="Constructor Functions">
+    ```js
+    function Animal(name) {
+        this.name = name;
+    }
+
+    Animal.prototype.speak = function() {
+        console.log(this.name + " makes a sound");
+    };
+
+    function Dog(name, breed) {
+        Animal.call(this, name); // Gọi constructor của Animal
+        this.breed = breed;
+    }
+
+    // Kế thừa từ Animal
+    Dog.prototype = Object.create(Animal.prototype);
+    Dog.prototype.constructor = Dog;
+
+    Dog.prototype.bark = function() {
+        console.log(this.name + " barks");
+    };
+
+    let dog1 = new Dog("Buddy", "Golden Retriever");
+    dog1.speak(); // "Buddy makes a sound" (kế thừa từ Animal)
+    dog1.bark();  // "Buddy barks" (phương thức riêng của Dog)
+    ```
+  </TabItem>
+  <TabItem label="ES6 Classes">
+    ```js
+    class Animal {
+        constructor(name) {
+            this.name = name;
+        }
+        speak() {
+            console.log(`${this.name} makes a sound`);
+        }
+    }
+
+    class Dog extends Animal {
+        constructor(name, breed) {
+            super(name);
+            this.breed = breed;
+        }
+        bark() {
+            console.log(`${this.name} barks`);
+        }
+    }
+
+    let dog1 = new Dog("Buddy", "Golden Retriever");
+    dog1.speak(); // "Buddy makes a sound"
+    dog1.bark();  // "Buddy barks"
+    ```
+
+    <Aside type="tip" title="Cú pháp hiện đại">
+    ES6 `class` là **syntactic sugar** trên nền prototype — dễ đọc và viết hơn, bản chất vẫn dùng prototype chain.
+    </Aside>
+  </TabItem>
+</Tabs>
+
+---
+
+## Chuỗi Prototype Chain
+
+Khi truy cập `dog1.speak()`:
+
+```
+dog1 → Dog.prototype → Animal.prototype → Object.prototype → null
+```
+
+<CardGrid>
+  <Card title="Bước 1" icon="magnifier">
+    Tìm `speak` trong `dog1` → không có
+  </Card>
+  <Card title="Bước 2" icon="right-arrow">
+    Tìm trong `Dog.prototype` → không có
+  </Card>
+  <Card title="Bước 3" icon="approve-check">
+    Tìm trong `Animal.prototype` → **tìm thấy!**
+  </Card>
+</CardGrid>
+
+<Aside type="caution" title="Lưu ý">
+- Nếu đi hết chain mà không tìm thấy → trả về `undefined`
+- Chain luôn kết thúc ở `Object.prototype` → `null`
+- Không nên sửa `Object.prototype` vì ảnh hưởng tất cả object
+</Aside>
+
+---
+
+## Tiếp Theo
+
+<Aside type="tip" title="Bài tiếp theo">
+Tìm hiểu về [Built-in Objects](/languages/javascript/4-data-types/4-built-in-objects/) — các đối tượng tích hợp sẵn trong JavaScript.
+</Aside>

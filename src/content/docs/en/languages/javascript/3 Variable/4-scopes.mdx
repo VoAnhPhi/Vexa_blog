@@ -1,0 +1,101 @@
+---
+title: Scopes
+description: Global, Function and Block scope in JavaScript
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## What are Scopes?
+
+**Scope** determines where a variable can be accessed in your code.
+
+---
+
+## 3 Main Scopes
+
+<CardGrid stagger>
+  <Card title="Global Scope" icon="globe">
+    Visible everywhere in the same file/program
+  </Card>
+  <Card title="Function Scope" icon="seti:javascript">
+    Visible only inside the function itself
+  </Card>
+  <Card title="Block Scope" icon="seti:folder">
+    Visible only inside `{}` blocks (only with `let`/`const`)
+  </Card>
+</CardGrid>
+
+---
+
+## Examples
+
+<Tabs>
+  <TabItem label="Global Scope">
+    ```js
+    let globalVar = "I'm global";
+
+    function test() {
+        console.log(globalVar); // Accessible
+    }
+
+    test();                    // "I'm global"
+    console.log(globalVar);    // "I'm global"
+    ```
+  </TabItem>
+  <TabItem label="Function Scope">
+    ```js
+    function myFunction() {
+        var functionVar = "I'm inside a function";
+        console.log(functionVar); // Accessible
+    }
+
+    myFunction();
+    console.log(functionVar); // ReferenceError
+    ```
+  </TabItem>
+  <TabItem label="Block Scope">
+    ```js
+    if (true) {
+        let blockVar = "I'm inside a block";
+        const blockConst = "I'm also inside a block";
+        console.log(blockVar); // Accessible
+    }
+
+    console.log(blockVar);   // ReferenceError
+    console.log(blockConst); // ReferenceError
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## `var` Does Not Have Block Scope
+
+<Aside type="caution" title="Important Warning">
+`var` is not limited to block `{}` — this is the main reason to avoid using `var` in modern code.
+
+```js
+if (true) {
+    var leakyVar = "I leaked out!";
+}
+console.log(leakyVar); // "I leaked out!" (not recommended!)
+```
+</Aside>
+
+---
+
+## Key Takeaways
+
+<Aside type="note" title="Remember">
+- `var` does not have block scope, but `let`/`const` do
+- Variables declared with `var` belong to global/function scope
+- Variables declared with `let`/`const` are confined within `{}`
+</Aside>
+
+---
+
+## Next Steps
+
+<Aside type="tip" title="Next topic">
+Learn about [Data Types](/en/languages/javascript/4-data-types/) — the different types of data in JavaScript.
+</Aside>

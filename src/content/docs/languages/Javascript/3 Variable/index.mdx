@@ -1,0 +1,51 @@
+---
+title: Biến (Variables)
+sidebar:
+  order: 4
+description: Tổng quan về biến trong JavaScript - Khai báo, Hoisting, Quy tắc đặt tên và Phạm vi
+---
+
+import { Card, CardGrid, LinkCard, Aside } from '@astrojs/starlight/components';
+
+Biến là một trong những khái niệm cơ bản nhất trong JavaScript. Hiểu rõ cách khai báo, phạm vi và quy tắc đặt tên sẽ giúp bạn viết code sạch và ít lỗi hơn.
+
+---
+
+## Nội dung
+
+<CardGrid>
+  <LinkCard
+    title="Các Kiểu Khai Báo"
+    description="var, let, const — đặc điểm, so sánh và best practices"
+    href="/languages/javascript/2-variables/1-declarations/"
+  />
+  <LinkCard
+    title="Hoisting"
+    description="Cơ chế đưa khai báo lên đầu phạm vi, TDZ và hành vi với function"
+    href="/languages/javascript/2-variables/2-hoisting/"
+  />
+  <LinkCard
+    title="Quy Tắc Đặt Tên"
+    description="camelCase, PascalCase, snake_case và SCREAMING_SNAKE_CASE"
+    href="/languages/javascript/2-variables/3-naming-rules/"
+  />
+  <LinkCard
+    title="Phạm Vi (Scopes)"
+    description="Global, Function và Block scope — nơi biến có thể truy cập"
+    href="/languages/javascript/2-variables/4-scopes/"
+  />
+</CardGrid>
+
+---
+
+## Tổng quan nhanh
+
+| Từ khóa   | Phạm vi (Scope) | Hoisting | Khai báo lại | Gán lại | Ghi chú                                                    |
+| --------- | --------------- | -------- | ------------ | ------- | ---------------------------------------------------------- |
+| **var**   | Hàm / Toàn cục  | Có       | Có thể       | Có thể  | Không giới hạn trong block `{}`                            |
+| **let**   | Khối `{}`       | Có (TDZ) | Không        | Có thể  | An toàn hơn `var`                                          |
+| **const** | Khối `{}`       | Có (TDZ) | Không        | Không   | Dùng cho hằng số, hoặc object/array cần cố định tham chiếu |
+
+<Aside type="tip" title="Khuyến nghị">
+Ưu tiên sử dụng `const` cho các giá trị không đổi, `let` cho các biến cần thay đổi. Tránh dùng `var` trong code hiện đại!
+</Aside>

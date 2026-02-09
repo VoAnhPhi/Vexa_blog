@@ -1,0 +1,80 @@
+---
+title: Type Casting
+sidebar:
+  order: 7
+description: Overview of Type Conversion, Coercion and Casting in JavaScript
+---
+
+import { Card, CardGrid, LinkCard, Aside } from '@astrojs/starlight/components';
+
+**Type casting** (also called **type conversion**) is the process of converting a value from one data type to another.
+
+---
+
+## Contents
+
+<CardGrid>
+  <LinkCard
+    title="Implicit Type Casting (Coercion)"
+    description="JavaScript automatically converts types when operators/context require it"
+    href="/en/languages/javascript/5-type-casting/1-implicit/"
+  />
+  <LinkCard
+    title="Explicit Type Casting"
+    description="Manually specify target type: Number(), parseInt(), String(), Boolean()"
+    href="/en/languages/javascript/5-type-casting/2-explicit/"
+  />
+</CardGrid>
+
+---
+
+## Type Conversion vs Type Coercion
+
+<CardGrid>
+  <Card title="Type Conversion" icon="right-arrow">
+    Converting a value from one type to another. General term — can be **implicit** or **explicit**.
+  </Card>
+  <Card title="Type Coercion" icon="random">
+    **Automatic** type conversion by JavaScript engine (implicit).
+  </Card>
+  <Card title="Type Casting" icon="setting">
+    **Manual** type conversion by the programmer (explicit).
+  </Card>
+</CardGrid>
+
+<Aside type="note" title="The Relationship">
+Type coercion is a **subset** of type conversion. All coercion is conversion, but not all conversion is coercion!
+
+```
+Type Conversion = Implicit (Coercion) + Explicit (Casting)
+```
+</Aside>
+
+---
+
+## Quick Comparison
+
+| Concept | Definition | Who triggers? | Example |
+| ------- | ---------- | ------------- | ------- |
+| **Type Coercion** | Automatic type conversion | JavaScript engine | `"5" * 2 → 10` |
+| **Implicit Conversion** | Same as coercion | JavaScript engine | `0 == false → true` |
+| **Explicit Casting** | Manual type conversion | Developer | `Number("3.14")`, `String(123)` |
+
+---
+
+## Best Practices
+
+<CardGrid>
+  <Card title="Use ===" icon="approve-check">
+    Always use `===` instead of `==` to avoid unintended coercion
+  </Card>
+  <Card title="Explicit Conversion" icon="setting">
+    Convert types explicitly at system boundaries (UI input/API/files)
+  </Card>
+  <Card title="Number() vs parseInt()" icon="seti:javascript">
+    Need **decimals** → `Number()`; need **integers** → `parseInt(str, 10)`
+  </Card>
+  <Card title="Don't Mix BigInt" icon="warning">
+    Avoid mixing `BigInt` with `Number` in expressions: `1n + 1 // TypeError`
+  </Card>
+</CardGrid>

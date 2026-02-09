@@ -1,0 +1,53 @@
+---
+title: 1 Data Types
+sidebar:
+  order: 5
+description: Overview of Primitive types, Non-primitive (Objects), Prototypes and Built-in Objects in JavaScript
+---
+
+import { Card, CardGrid, LinkCard, Aside } from '@astrojs/starlight/components';
+
+JavaScript has two main categories of data types: **Primitive types** and **Non-primitive types** (Objects).
+
+---
+
+## Contents
+
+<CardGrid>
+  <LinkCard
+    title="Primitive Types (7 types)"
+    description="number, bigint, string, boolean, null, undefined, symbol"
+    href="/en/languages/javascript/4-data-types/1-primitive/"
+  />
+  <LinkCard
+    title="Non-primitive (Objects)"
+    description="What Objects are, creating, accessing properties and common operations"
+    href="/en/languages/javascript/4-data-types/2-objects/"
+  />
+  <LinkCard
+    title="Prototype & Prototype Chain"
+    description="Inheritance mechanism in JavaScript — prototype, prototype chain, prototypal inheritance"
+    href="/en/languages/javascript/4-data-types/3-prototype/"
+  />
+  <LinkCard
+    title="Built-in Objects"
+    description="Number, Math, Date, String, Array, Object, Map, Set and other global objects"
+    href="/en/languages/javascript/4-data-types/4-built-in-objects/"
+  />
+</CardGrid>
+
+---
+
+## Quick Comparison
+
+| Property | Primitive | Non-primitive (Object) |
+| -------- | --------- | ---------------------- |
+| **Mutable?** | ❌ Immutable | ✅ Mutable |
+| **Comparison** | By value | By reference |
+| **Copy** | Copies value | Copies reference |
+| **typeof** | Returns type name | `"object"` or `"function"` |
+
+<Aside type="tip" title="Remember">
+- **7 Primitive types**: `number`, `bigint`, `string`, `boolean`, `null`, `undefined`, `symbol`
+- **Non-primitive**: Everything else — Objects, Arrays, Functions, Date, Map, Set, …
+</Aside>

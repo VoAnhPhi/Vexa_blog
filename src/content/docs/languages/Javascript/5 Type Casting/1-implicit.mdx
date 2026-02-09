@@ -1,0 +1,127 @@
+---
+title: Implicit Type Casting (Ép Kiểu Ngầm)
+description: JavaScript tự động chuyển kiểu khi toán tử/ngữ cảnh yêu cầu — coercion
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Implicit Type Casting là gì?
+
+JavaScript sẽ **tự đổi kiểu** để "làm vừa" toán tử/ngữ cảnh. Đây là hành vi ngầm — có thể tiện lợi nhưng cũng dễ gây bug!
+
+---
+
+## 1. Toán tử số học (trừ, nhân, chia…) ép về Number
+
+```js
+"5" * 2;    // 10   → "5" bị ép thành 5
+"10" - 1;   // 9
+"6" / "3";  // 2
+```
+
+<Aside type="tip" title="Trick chuyển nhanh">
+Nhân với 1 hoặc trừ 0 để chuyển string → number:
+```js
+"42" * 1;  // 42
+"42" - 0;  // 42
+```
+</Aside>
+
+---
+
+## 2. Toán tử `+` đặc biệt: nếu có string → nối chuỗi
+
+```js
+1 + "2";   // "12" (số → chuỗi)
+"2" + 1;   // "21"
+```
+
+<Aside type="caution" title="Cẩn thận!">
+```js
+let result = "5" + 3 - 2;
+console.log(result); // 51 (không phải 6!)
+
+// "5" + 3  →  "53" (nối chuỗi)
+// "53" - 2 →  51   (ép về số)
+```
+</Aside>
+
+---
+
+## 3. So sánh lỏng `==` tự ép kiểu
+
+```js
+0 == false;          // true (đã coercion)
+"" == 0;             // true
+null == undefined;   // true
+```
+
+<Aside type="caution" title="Khuyến nghị">
+Dùng `===` để không ép kiểu ngầm, tránh bug khó debug!
+</Aside>
+
+---
+
+## 4. Ép sang Boolean trong điều kiện (truthy/falsy)
+
+```js
+if ("hello") { /* chạy vì truthy */ }
+!!"hello";  // true
+!!0;        // false
+!![];       // true
+!!{};       // true
+```
+
+### Các giá trị falsy trong JavaScript
+
+| Giá trị | Mô tả |
+| ------- | ----- |
+| `false` | Boolean false |
+| `0`, `-0` | Số 0 |
+| `""` | Empty string |
+| `null` | Null |
+| `undefined` | Undefined |
+| `NaN` | Not a Number |
+
+---
+
+## 5. Một số toán tử/ngữ cảnh khác gây coercion
+
+```js
+// Unary plus
++"42";           // 42
+
+// Bitwise (ép về 32-bit int)
+3.9 | 0;         // 3
+
+// So sánh < , >
+"2" > "12";      // true (so sánh chuỗi theo từ vựng)
+"2" > 12;        // false (đã ép về số)
+```
+
+---
+
+## Tóm tắt
+
+<CardGrid>
+  <Card title="Số học (-, *, /)" icon="seti:javascript">
+    Ép cả hai về `Number`
+  </Card>
+  <Card title="Toán tử +" icon="warning">
+    Nếu có string → **nối chuỗi**, không phải cộng số
+  </Card>
+  <Card title="So sánh ==" icon="error">
+    Tự ép kiểu → dễ gây bug. Dùng `===` thay thế!
+  </Card>
+  <Card title="Truthy/Falsy" icon="approve-check">
+    6 giá trị falsy, còn lại đều truthy
+  </Card>
+</CardGrid>
+
+---
+
+## Tiếp Theo
+
+<Aside type="tip" title="Bài tiếp theo">
+Tìm hiểu về [Explicit Type Casting](/languages/javascript/5-type-casting/2-explicit/) — cách ép kiểu tường minh, kiểm soát hoàn toàn.
+</Aside>

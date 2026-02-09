@@ -1,0 +1,105 @@
+---
+title: Built-in Objects
+description: Các đối tượng tích hợp sẵn trong JavaScript — Number, Math, Date, String, Array, Object, Map, Set
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Built-in Objects là gì?
+
+Built-in objects (còn gọi là **global objects**) là những đối tượng được tích hợp sẵn trong ngôn ngữ JavaScript, có thể sử dụng ở **mọi nơi** trong chương trình mà không cần khai báo hoặc import.
+
+<Aside type="note" title="Định nghĩa">
+Built-in objects là các đối tượng có sẵn, được định nghĩa bởi chính ngôn ngữ để giúp lập trình viên xử lý các kiểu dữ liệu và thao tác phổ biến.
+</Aside>
+
+---
+
+## Các Built-in Objects phổ biến
+
+| Đối tượng | Chức năng chính |
+| --------- | --------------- |
+| **Number** | Làm việc với số: `toFixed()`, `toPrecision()`, `toString()`, `isNaN()`, `isFinite()` |
+| **Math** | Hằng số và hàm toán học: `Math.PI`, `Math.sqrt()`, `Math.pow()`, `Math.abs()`, `Math.floor()`, `Math.ceil()`, `Math.round()`, `Math.random()` |
+| **Date** | Thời gian và ngày tháng: `getFullYear()`, `getMonth()`, `getDate()`, `getHours()`, `toDateString()`, `toLocaleString()` |
+| **String** | Xử lý chuỗi: `length`, `toUpperCase()`, `toLowerCase()`, `substring()`, `slice()`, `replace()`, `includes()`, `split()`, `trim()`, `charAt()` |
+| **Boolean** | Giá trị logic: `valueOf()`, `toString()` |
+| **Function** | Các hàm: `call()`, `apply()`, `bind()`, `length`, `name`, `toString()` |
+| **Error** | Xử lý lỗi: `message`, `name`, `stack` |
+| **Array** | Mảng: `push()`, `pop()`, `shift()`, `unshift()`, `map()`, `filter()`, `reduce()`, `forEach()`, `find()`, `includes()`, `sort()` |
+| **Object** | Đối tượng: `keys()`, `values()`, `entries()`, `assign()`, `hasOwnProperty()`, `toString()` |
+| **Map** | Bản đồ: `set()`, `get()`, `has()`, `delete()`, `clear()`, `size` |
+| **Set** | Tập hợp: `add()`, `delete()`, `has()`, `clear()`, `size` |
+
+---
+
+## Ví dụ
+
+<Tabs>
+  <TabItem label="Math">
+    ```js
+    Math.PI;           // 3.141592653589793
+    Math.sqrt(16);     // 4
+    Math.floor(4.7);   // 4
+    Math.ceil(4.2);    // 5
+    Math.round(4.5);   // 5
+    Math.random();     // Số ngẫu nhiên 0 → 1
+    Math.abs(-5);      // 5
+    Math.pow(2, 3);    // 8
+    ```
+  </TabItem>
+  <TabItem label="Array">
+    ```js
+    let arr = [1, 2, 3, 4, 5];
+
+    arr.map(x => x * 2);         // [2, 4, 6, 8, 10]
+    arr.filter(x => x > 2);     // [3, 4, 5]
+    arr.reduce((a, b) => a + b); // 15
+    arr.find(x => x === 3);     // 3
+    arr.includes(4);             // true
+    ```
+  </TabItem>
+  <TabItem label="Set & Map">
+    ```js
+    // Set — chỉ chứa giá trị duy nhất
+    let set = new Set([1, 2, 2, 3, 3, 3]);
+    console.log(set);   // Set { 1, 2, 3 }
+    set.has(2);          // true
+    set.size;            // 3
+
+    // Map — key có thể là bất kỳ kiểu gì
+    let map = new Map();
+    map.set("name", "Alice");
+    map.set(42, "answer");
+    map.get("name");     // "Alice"
+    ```
+  </TabItem>
+  <TabItem label="Date">
+    ```js
+    let now = new Date();
+    now.getFullYear();     // 2026
+    now.getMonth();        // 0-11 (tháng 1 = 0)
+    now.getDate();         // 1-31
+    now.toDateString();    // "Mon Feb 09 2026"
+    now.toLocaleString();  // string theo locale
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Ghi nhớ
+
+<Aside type="tip" title="Ghi nhớ">
+- Các **built-in objects** luôn có sẵn trong **global scope**
+- Bạn có thể dùng chúng **trực tiếp mà không cần import**
+- Một số khác như `RegExp`, `Promise`, `Error` cũng là **built-in objects** trong JS hiện đại
+</Aside>
+
+---
+
+## Tiếp Theo
+
+<Aside type="tip" title="Bài tiếp theo">
+Tìm hiểu về [Type Casting (Ép Kiểu)](/languages/javascript/5-type-casting/) — cách chuyển đổi kiểu dữ liệu trong JavaScript.
+</Aside>

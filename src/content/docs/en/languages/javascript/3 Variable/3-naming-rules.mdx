@@ -1,0 +1,91 @@
+---
+title: Variable Naming Rules
+description: JavaScript naming conventions — camelCase, PascalCase, snake_case
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## Variable Naming Rules
+
+Variable names should accurately describe what the variable holds. When you create good variable names, your JavaScript code becomes easier to understand and work with.
+
+---
+
+## Naming Conventions
+
+| Convention | Description | Example | Usage in JS |
+| ---------- | ----------- | ------- | ----------- |
+| **camelCase** | Each word starts with uppercase (except the first) | `indexOf`, `getElementById` | ✅ Standard |
+| **PascalCase** | Each word starts with uppercase | `WriteLine`, `MyClass` | Class/Constructor |
+| **snake_case** | All lowercase, words separated by `_` | `array_push`, `str_split` | Rarely used |
+| **SCREAMING_SNAKE** | All uppercase, words separated by `_` | `MAX_VALUE`, `API_KEY` | Constants |
+
+---
+
+### camelCase — JavaScript Standard
+
+The first letter of each word is capitalized except for the first word. This is the most commonly used convention in JavaScript.
+
+```js
+let firstName = "John";
+let userAge = 25;
+let isLoggedIn = true;
+
+// Built-in examples
+getElementById;
+querySelector;
+addEventListener;
+```
+
+---
+
+### PascalCase — Classes/Constructors
+
+The first letter of each word is capitalized. Typically used for class and constructor names.
+
+```js
+class UserProfile {}
+class ShoppingCart {}
+
+function Person(name) {
+    this.name = name;
+}
+```
+
+---
+
+### snake_case — Rarely Used in JS
+
+All words are lowercase and separated by `_` (underscore).
+
+```js
+let first_name = "John";   // Not common in JS
+let user_age = 25;
+```
+
+---
+
+### SCREAMING_SNAKE_CASE — Constants
+
+All words are uppercase and separated by `_`. Typically used to denote constants.
+
+```js
+const MAX_VALUE = 100;
+const API_KEY = "abc123";
+const DEFAULT_TIMEOUT = 5000;
+```
+
+<Aside type="tip" title="Quick Reference">
+- Regular variables → `camelCase`
+- Classes → `PascalCase`
+- Constants → `SCREAMING_SNAKE_CASE`
+- Avoid `snake_case` in JS
+</Aside>
+
+---
+
+## Next Steps
+
+<Aside type="tip" title="Next topic">
+Learn about [Scopes](/en/languages/javascript/2-variables/4-scopes/) — where variables can be accessed in your code.
+</Aside>

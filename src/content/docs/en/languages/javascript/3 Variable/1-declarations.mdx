@@ -1,0 +1,95 @@
+---
+title: Variable Declarations
+description: var, let, const — detailed features and comparison in JavaScript
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Variable Declaration Keywords
+
+JavaScript provides 3 keywords for declaring variables: `var`, `let`, and `const`. Each keyword has different characteristics and use cases.
+
+---
+
+<Tabs>
+  <TabItem label="var">
+    The `var` statement declares a variable with **function scope** or **global scope**. The variable can be initialized or left empty.
+
+    **Detailed characteristics:**
+
+    - `var` has **hoisting**: the declaration is moved to the top of the scope, but the value assignment stays in place
+    - Scope is limited to the **function**, not the block `{}`
+    - Can be redeclared with the same name in the same scope
+
+    ```js
+    console.log(a); // undefined (no error)
+    var a = 10;
+
+    if (true) {
+        var x = 5;
+    }
+    console.log(x); // 5
+    ```
+  </TabItem>
+  <TabItem label="let">
+    The `let` statement declares a variable with **block scope**. The variable can be initialized or left empty.
+
+    **Detailed characteristics:**
+
+    - **Block scope**: only exists within the `{}` block
+    - Has **hoisting**, but cannot be accessed before declaration → **Temporal Dead Zone (TDZ)**
+    - Cannot be redeclared with the same name in the same scope
+
+    ```js
+    if (true) {
+        let y = 10;
+        console.log(y); // 10
+    }
+    console.log(y); // ReferenceError: y is not defined
+
+    console.log(z); // ReferenceError (TDZ)
+    let z = 20;
+    ```
+  </TabItem>
+  <TabItem label="const">
+    The `const` statement also declares a variable with **block scope**. Unlike `let`, the value **cannot be reassigned** after initialization.
+
+    **Detailed characteristics:**
+
+    - **Must be initialized** at the time of declaration
+    - Cannot be reassigned to a different value
+    - With **objects or arrays**, you can still modify the contents inside
+
+    ```js
+    const pi = 3.14;
+    pi = 3.14159; // TypeError: Assignment to constant variable
+
+    const arr = [1, 2, 3];
+    arr.push(4);    // OK
+    arr[0] = 10;    // OK
+    arr = [10, 20]; // TypeError
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Comparison Table: var | let | const
+
+| Keyword   | Scope            | Hoisting | Re-declare | Reassign | Notes                                               |
+| --------- | ---------------- | -------- | ---------- | -------- | --------------------------------------------------- |
+| **var**   | Function / Global | Yes      | Yes        | Yes      | Not limited to block `{}`                           |
+| **let**   | Block `{}`       | Yes (TDZ)| No         | Yes      | Safer than `var`                                    |
+| **const** | Block `{}`       | Yes (TDZ)| No         | No       | Use for constants, or object/array fixed references |
+
+<Aside type="tip" title="Recommendation">
+Prefer `const` for values that don't change, `let` for variables that need reassignment. Avoid `var` in modern code!
+</Aside>
+
+---
+
+## Next Steps
+
+<Aside type="tip" title="Next topic">
+Learn about [Hoisting](/en/languages/javascript/2-variables/2-hoisting/) — how JavaScript moves declarations to the top of their scope.
+</Aside>

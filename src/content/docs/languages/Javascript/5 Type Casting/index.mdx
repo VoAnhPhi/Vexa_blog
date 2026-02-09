@@ -1,0 +1,73 @@
+---
+title: Type Casting (Ép Kiểu)
+sidebar:
+  order: 7
+description: Tổng quan về Type Conversion, Coercion và Casting trong JavaScript
+---
+
+import { Card, CardGrid, LinkCard, Aside } from '@astrojs/starlight/components';
+
+**Type casting** (ép kiểu) là quá trình chuyển đổi giá trị từ kiểu dữ liệu này sang kiểu khác.
+
+---
+
+## Nội dung
+
+<CardGrid>
+  <LinkCard
+    title="Implicit Type Casting (Ép kiểu ngầm)"
+    description="JavaScript tự động chuyển kiểu khi toán tử/ngữ cảnh yêu cầu"
+    href="/languages/javascript/5-type-casting/1-implicit/"
+  />
+  <LinkCard
+    title="Explicit Type Casting (Ép kiểu tường minh)"
+    description="Bạn chỉ định rõ kiểu đích: Number(), parseInt(), String(), Boolean()"
+    href="/languages/javascript/5-type-casting/2-explicit/"
+  />
+</CardGrid>
+
+---
+
+## Type Conversion vs Type Coercion
+
+<CardGrid>
+  <Card title="Type Conversion" icon="right-arrow">
+    Đổi giá trị từ kiểu này sang kiểu khác. Có thể **implicit** (ngầm) hoặc **explicit** (tường minh).
+  </Card>
+  <Card title="Type Coercion" icon="random">
+    Type conversion nhưng **ngầm định** (tự động), xảy ra khi ngữ cảnh/toán tử yêu cầu.
+  </Card>
+</CardGrid>
+
+<Aside type="note" title="Quan hệ">
+**Coercion ⊂ Conversion**. Conversion là khái niệm rộng; coercion nhấn mạnh "tự động".
+</Aside>
+
+---
+
+## So Sánh Nhanh 3 Khái Niệm
+
+| Khái niệm | Định nghĩa | Ai kích hoạt? | Ví dụ JS |
+| --------- | ---------- | ------------- | -------- |
+| **Type coercion** | Chuyển kiểu **ngầm** | JS/ngữ cảnh tự làm | `"5"*2 → 10`, `0 == false → true` |
+| **Implicit conversion** | Từ đồng nghĩa của coercion | JS/ngữ cảnh tự làm | `if("hi"){}`, `+"42" // 42` |
+| **Explicit casting** | Bạn **chỉ định** kiểu đích | Lập trình viên | `Number("3.14")`, `parseInt("08",10)` |
+
+---
+
+## Best Practices
+
+<CardGrid>
+  <Card title="Dùng ===" icon="approve-check">
+    Dùng `===` thay cho `==` để tránh coercion ngoài ý muốn
+  </Card>
+  <Card title="Ép tường minh" icon="setting">
+    Ưu tiên ép kiểu tường minh ở rìa hệ thống (input UI/API/file)
+  </Card>
+  <Card title="Number() vs parseInt()" icon="seti:javascript">
+    Cần số **thực** → `Number()`; cần số **nguyên** → `parseInt(str, 10)`
+  </Card>
+  <Card title="Không trộn BigInt" icon="warning">
+    Tránh trộn `BigInt` với `Number` trong 1 biểu thức: `1n + 1 // TypeError`
+  </Card>
+</CardGrid>

@@ -1,0 +1,103 @@
+---
+title: Hoisting
+description: Cơ chế hoisting trong JavaScript — var, let, const và function
+---
+
+import { Card, CardGrid, Aside } from '@astrojs/starlight/components';
+
+## Định nghĩa
+
+Hoisting là một cơ chế trong JavaScript, trong đó **trình thông dịch (interpreter) sẽ đưa phần khai báo (declaration) của biến, hàm, hoặc class lên đầu phạm vi (scope)** trước khi thực thi code.
+
+<Aside type="caution" title="Điểm quan trọng">
+**Chỉ khai báo được hoisting**, không phải cả phần gán giá trị. Hành vi sẽ khác nhau tùy thuộc vào bạn dùng `var`, `let`, `const`, hay `function`.
+</Aside>
+
+---
+
+## Hoisting với `var`
+
+Biến khai báo bằng `var` được đưa lên đầu phạm vi, nhưng giá trị thì giữ nguyên vị trí gán:
+
+```js
+console.log(myVar); // undefined
+var myVar = 5;
+console.log(myVar); // 5
+
+// Trình thông dịch hiểu như:
+// var myVar;           ← Khai báo được hoisting
+// console.log(myVar);  // undefined
+// myVar = 5;           ← Gán giá trị giữ nguyên
+// console.log(myVar);  // 5
+```
+
+---
+
+## Hoisting với `let` và `const` (TDZ)
+
+Biến `let`/`const` cũng được hoisting, nhưng nằm trong **Temporal Dead Zone (TDZ)** — không thể truy cập trước khi khai báo:
+
+```js
+console.log(myLet);   // ReferenceError
+let myLet = 10;
+
+console.log(myConst); // ReferenceError
+const myConst = 20;
+```
+
+<Aside type="note" title="Temporal Dead Zone (TDZ)">
+TDZ là khoảng thời gian từ khi vào scope đến khi gặp dòng khai báo. Truy cập biến trong khoảng này sẽ gây lỗi `ReferenceError`.
+</Aside>
+
+---
+
+## Hoisting với Function
+
+**Function declaration** được hoisting toàn bộ (bao gồm cả phần thân hàm), do đó có thể gọi hàm trước khi khai báo:
+
+```js
+sayHello(); // "Hello!"
+
+function sayHello() {
+    console.log("Hello!");
+}
+```
+
+<Aside type="tip" title="Function Expression thì khác!">
+Nếu gán function vào biến, chỉ phần khai báo biến được hoisting, không phải function:
+
+```js
+greet(); // TypeError: greet is not a function
+
+var greet = function() {
+    console.log("Hi!");
+};
+```
+</Aside>
+
+---
+
+## Tổng kết
+
+<CardGrid>
+  <Card title="var" icon="warning">
+    Hoisting biến, giá trị mặc định `undefined`
+  </Card>
+  <Card title="let, const" icon="error">
+    Hoisting nhưng rơi vào **TDZ**, không thể truy cập trước khi khai báo
+  </Card>
+  <Card title="function declaration" icon="approve-check">
+    Hoisting cả hàm (toàn bộ thân hàm)
+  </Card>
+  <Card title="function expression" icon="warning">
+    Hoisting biến thôi, chưa gán giá trị nên không gọi được sớm
+  </Card>
+</CardGrid>
+
+---
+
+## Tiếp Theo
+
+<Aside type="tip" title="Bài tiếp theo">
+Tìm hiểu về [Quy Tắc Đặt Tên Biến](/languages/javascript/2-variables/3-naming-rules/) — cách đặt tên biến chuẩn trong JavaScript.
+</Aside>

@@ -1,0 +1,101 @@
+---
+title: Phạm Vi (Scopes)
+description: Global, Function và Block scope trong JavaScript
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Scopes là gì?
+
+**Scope** (phạm vi) xác định nơi biến có thể được truy cập trong code của bạn.
+
+---
+
+## 3 Phạm Vi Chính
+
+<CardGrid stagger>
+  <Card title="Global Scope" icon="globe">
+    Thấy ở mọi nơi trong cùng file/chương trình
+  </Card>
+  <Card title="Function Scope" icon="seti:javascript">
+    Thấy bên trong chính hàm đó
+  </Card>
+  <Card title="Block Scope" icon="seti:folder">
+    Thấy bên trong cặp ngoặc khối `{}` (chỉ với `let`/`const`)
+  </Card>
+</CardGrid>
+
+---
+
+## Ví dụ
+
+<Tabs>
+  <TabItem label="Global Scope">
+    ```js
+    let globalVar = "I'm global";
+
+    function test() {
+        console.log(globalVar); // Truy cập được
+    }
+
+    test();                    // "I'm global"
+    console.log(globalVar);    // "I'm global"
+    ```
+  </TabItem>
+  <TabItem label="Function Scope">
+    ```js
+    function myFunction() {
+        var functionVar = "Tôi ở trong hàm";
+        console.log(functionVar); // Truy cập được
+    }
+
+    myFunction();
+    console.log(functionVar); // ReferenceError
+    ```
+  </TabItem>
+  <TabItem label="Block Scope">
+    ```js
+    if (true) {
+        let blockVar = "Tôi ở trong block";
+        const blockConst = "Tôi cũng trong block";
+        console.log(blockVar); // Truy cập được
+    }
+
+    console.log(blockVar);   // ReferenceError
+    console.log(blockConst); // ReferenceError
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## `var` không có Block Scope
+
+<Aside type="caution" title="Lưu ý quan trọng">
+`var` không bị giới hạn trong block `{}` — đây là lý do chính nên tránh dùng `var` trong code hiện đại.
+
+```js
+if (true) {
+    var leakyVar = "Tôi lọt ra ngoài!";
+}
+console.log(leakyVar); // "Tôi lọt ra ngoài!" (không khuyến nghị!)
+```
+</Aside>
+
+---
+
+## Gợi ý
+
+<Aside type="note" title="Lưu ý về Scope">
+- `var` không có block scope, còn `let`/`const` thì có
+- Biến khai báo với `var` thuộc global/function scope
+- Biến khai báo với `let`/`const` bị "nhốt" trong `{}`
+</Aside>
+
+---
+
+## Tiếp Theo
+
+<Aside type="tip" title="Bài tiếp theo">
+Tìm hiểu về [Kiểu Dữ Liệu (Data Types)](/languages/javascript/4-data-types/) — các loại dữ liệu trong JavaScript.
+</Aside>

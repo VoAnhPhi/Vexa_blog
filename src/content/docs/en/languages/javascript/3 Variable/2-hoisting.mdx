@@ -1,0 +1,103 @@
+---
+title: Hoisting
+description: JavaScript hoisting mechanism — var, let, const and function
+---
+
+import { Card, CardGrid, Aside } from '@astrojs/starlight/components';
+
+## Definition
+
+Hoisting is a mechanism in JavaScript where the **interpreter moves the declaration of variables, functions, or classes to the top of their scope** before executing the code.
+
+<Aside type="caution" title="Important">
+**Only declarations are hoisted**, not the value assignments. The behavior differs depending on whether you use `var`, `let`, `const`, or `function`.
+</Aside>
+
+---
+
+## Hoisting with `var`
+
+Variables declared with `var` are hoisted to the top of their scope, but the value assignment stays in place:
+
+```js
+console.log(myVar); // undefined
+var myVar = 5;
+console.log(myVar); // 5
+
+// The interpreter sees it as:
+// var myVar;           ← Declaration is hoisted
+// console.log(myVar);  // undefined
+// myVar = 5;           ← Assignment stays in place
+// console.log(myVar);  // 5
+```
+
+---
+
+## Hoisting with `let` and `const` (TDZ)
+
+`let`/`const` variables are also hoisted, but they enter the **Temporal Dead Zone (TDZ)** — they cannot be accessed before their declaration:
+
+```js
+console.log(myLet);   // ReferenceError
+let myLet = 10;
+
+console.log(myConst); // ReferenceError
+const myConst = 20;
+```
+
+<Aside type="note" title="Temporal Dead Zone (TDZ)">
+TDZ is the period from when the scope is entered until the declaration is reached. Accessing a variable during this period throws a `ReferenceError`.
+</Aside>
+
+---
+
+## Function Hoisting
+
+**Function declarations** are fully hoisted (including the function body), so you can call them before they are declared:
+
+```js
+sayHello(); // "Hello!"
+
+function sayHello() {
+    console.log("Hello!");
+}
+```
+
+<Aside type="tip" title="Function Expressions are different!">
+If you assign a function to a variable, only the variable declaration is hoisted, not the function:
+
+```js
+greet(); // TypeError: greet is not a function
+
+var greet = function() {
+    console.log("Hi!");
+};
+```
+</Aside>
+
+---
+
+## Summary
+
+<CardGrid>
+  <Card title="var" icon="warning">
+    Hoisted, defaults to `undefined`
+  </Card>
+  <Card title="let, const" icon="error">
+    Hoisted but in **TDZ**, cannot access before declaration
+  </Card>
+  <Card title="function declaration" icon="approve-check">
+    Fully hoisted (entire function body)
+  </Card>
+  <Card title="function expression" icon="warning">
+    Only variable declaration hoisted, value not assigned yet
+  </Card>
+</CardGrid>
+
+---
+
+## Next Steps
+
+<Aside type="tip" title="Next topic">
+Learn about [Variable Naming Rules](/en/languages/javascript/2-variables/3-naming-rules/) — standard naming conventions in JavaScript.
+</Aside>

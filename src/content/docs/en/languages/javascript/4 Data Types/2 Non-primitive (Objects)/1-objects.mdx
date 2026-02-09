@@ -1,0 +1,131 @@
+---
+title: 1 Non-primitive (Objects)
+description: Objects in JavaScript — creating, accessing properties, methods and common operations
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## What are Non-primitive Types?
+
+Non-primitive types (also called **reference types**) include Objects, Arrays, Functions, and more. They are stored as **references**, not values.
+
+<CardGrid>
+  <Card title="Mutable" icon="pencil">
+    Values can be changed after creation
+  </Card>
+  <Card title="Compared by Reference" icon="random">
+    Two identical objects with different references are NOT equal
+  </Card>
+  <Card title="Copied by Reference" icon="forward-slash">
+    Assignment copies the reference (both point to the same object)
+  </Card>
+</CardGrid>
+
+---
+
+## Objects
+
+Objects store collections of data as **key-value pairs**. Each object can contain properties and methods.
+
+### Creating Objects
+
+<Tabs>
+  <TabItem label="Object Literal (recommended)">
+    ```js
+    let person = {
+        name: "Alice",
+        age: 25,
+        greet: function() {
+            console.log(`Hello, I'm ${this.name}`);
+        }
+    };
+    ```
+  </TabItem>
+  <TabItem label="new Object()">
+    ```js
+    let person = new Object();
+    person.name = "Alice";
+    person.age = 25;
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+### Accessing Properties and Methods
+
+<Tabs>
+  <TabItem label="Dot Notation">
+    ```js
+    console.log(person.name);   // "Alice"
+    console.log(person.age);    // 25
+    ```
+  </TabItem>
+  <TabItem label="Bracket Notation">
+    ```js
+    console.log(person["name"]); // "Alice"
+    console.log(person["age"]);  // 25
+    ```
+  </TabItem>
+  <TabItem label="Methods">
+    ```js
+    person.greet(); // "Hello, I'm Alice"
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+### Object Properties
+
+<Aside type="note" title="Key Features">
+- Objects can contain properties of **any data type** (strings, numbers, arrays, functions, etc.)
+- Objects can be **nested**, creating complex data structures
+- Objects are ideal for modeling real-world entities: users, products, posts, etc.
+</Aside>
+
+---
+
+## Common Object Operations
+
+| Operation | Methods / Syntax |
+| --------- | ---------------- |
+| **Create & clone/merge** | Literal `{}`, `Object.assign`, spread `{...a}`, `structuredClone` |
+| **Read/write/delete** | Dot `obj.x`, bracket `obj['x']`, assignment, `delete` |
+| **Iterate** | `for...in`, `Object.keys/values/entries` |
+| **Advanced transforms** | Destructuring, rest/spread, computed key `[expr]` |
+| **Immutability** | `Object.freeze/seal`, property descriptors (`Object.defineProperty`) |
+| **Check & safety** | `in`, `hasOwn`, `?.` (optional chaining), `??` (nullish) |
+| **Prototype & inheritance** | `Object.create`, `Object.getPrototypeOf`, `isPrototypeOf` |
+| **JSON serialize** | `JSON.stringify/parse` |
+
+### Examples
+
+```js
+let obj = { a: 1, b: 2 };
+
+// Clone (shallow copy)
+let clone1 = Object.assign({}, obj);
+let clone2 = { ...obj }; // Spread operator
+
+// Iterate
+Object.keys(obj);     // ["a", "b"]
+Object.values(obj);   // [1, 2]
+Object.entries(obj);  // [["a", 1], ["b", 2]]
+
+// Check property
+"a" in obj;                // true
+obj.hasOwnProperty("a");  // true
+
+// Delete & Freeze
+delete obj.a;
+Object.freeze(obj);
+```
+
+---
+
+## Next Steps
+
+<Aside type="tip" title="Next topic">
+Learn about [Prototype & Prototype Chain](/en/languages/javascript/4-data-types/3-prototype/) — the core inheritance mechanism in JavaScript.
+</Aside>

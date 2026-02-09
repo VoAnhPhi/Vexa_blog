@@ -1,0 +1,131 @@
+---
+title: Primitive Types (7 loại)
+sidebar:
+  order: 6
+description: 7 kiểu dữ liệu nguyên thủy trong JavaScript — number, bigint, string, boolean, null, undefined, symbol
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Primitive Types
+
+Đây là 7 kiểu dữ liệu cơ bản trong JavaScript:
+
+<CardGrid>
+  <Card title="number" icon="seti:javascript">
+    Số nguyên và số thực
+  </Card>
+  <Card title="bigint" icon="seti:javascript">
+    Số nguyên rất lớn
+  </Card>
+  <Card title="string" icon="document">
+    Chuỗi ký tự
+  </Card>
+  <Card title="boolean" icon="approve-check">
+    `true` hoặc `false`
+  </Card>
+  <Card title="null" icon="close">
+    Cố ý vắng mặt giá trị
+  </Card>
+  <Card title="undefined" icon="warning">
+    Chưa được gán
+  </Card>
+  <Card title="symbol" icon="star">
+    Giá trị duy nhất (unique)
+  </Card>
+</CardGrid>
+
+### Đặc điểm Primitive Types
+
+<Aside type="note" title="Đặc điểm quan trọng">
+- **Bất biến** (immutable) — không thể thay đổi giá trị
+- **So sánh theo giá trị** — hai biến có cùng giá trị sẽ bằng nhau
+- **Copy giá trị** — khi gán là copy giá trị, không phải tham chiếu
+</Aside>
+
+---
+
+## Chi tiết từng loại
+
+<Tabs>
+  <TabItem label="number">
+    Gồm cả `NaN`, `Infinity`, `0`. Integer an toàn: ±(2⁵³-1)
+
+    ```js
+    let age = 25;
+    let pi = 3.14;
+    let notANumber = NaN;
+    let infinity = Infinity;
+    ```
+  </TabItem>
+  <TabItem label="bigint">
+    Số nguyên rất lớn, viết với hậu tố `n`. **Không** trộn trực tiếp với `number`.
+
+    ```js
+    let bigNumber = 123n;
+    let veryBig = 9007199254740991n;
+    ```
+  </TabItem>
+  <TabItem label="string">
+    Chuỗi UTF-16, bất biến (immutable).
+
+    ```js
+    let name = "JavaScript";
+    let greeting = 'Hello World';
+    let template = `Hello ${name}`;
+    ```
+  </TabItem>
+  <TabItem label="boolean">
+    Chỉ có hai giá trị: `true` hoặc `false`.
+
+    ```js
+    let isActive = true;
+    let isComplete = false;
+    ```
+  </TabItem>
+  <TabItem label="null & undefined">
+    - **null**: "Cố ý vắng mặt giá trị"
+    - **undefined**: "Chưa được gán" — giá trị mặc định của biến chưa khởi tạo
+
+    ```js
+    let emptyValue = null;
+    let notAssigned;
+    console.log(notAssigned); // undefined
+    ```
+  </TabItem>
+  <TabItem label="symbol">
+    Giá trị **duy nhất** (unique), thường dùng làm key ẩn trong object.
+
+    ```js
+    let id = Symbol("id");
+    let anotherId = Symbol("id");
+    console.log(id === anotherId); // false
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Kiểm tra kiểu với `typeof`
+
+```js
+typeof 42;           // 'number'
+typeof 123n;         // 'bigint'
+typeof "hello";      // 'string'
+typeof true;         // 'boolean'
+typeof undefined;    // 'undefined'
+typeof Symbol("id"); // 'symbol'
+typeof null;         // 'object' (quirk lịch sử - BUG!)
+```
+
+<Aside type="caution" title="Lưu ý về typeof null">
+`typeof null` trả về `'object'` — đây là một bug lịch sử của JavaScript, không phải hành vi mong đợi!
+</Aside>
+
+---
+
+## Tiếp Theo
+
+<Aside type="tip" title="Bài tiếp theo">
+Tìm hiểu về [Non-primitive (Objects)](/languages/javascript/4-data-types/2-objects/) — kiểu dữ liệu tham chiếu trong JavaScript.
+</Aside>

@@ -1,0 +1,51 @@
+---
+title: Variables
+sidebar:
+  order: 4
+description: Overview of JavaScript Variables - Declarations, Hoisting, Naming Rules and Scopes
+---
+
+import { Card, CardGrid, LinkCard, Aside } from '@astrojs/starlight/components';
+
+Variables are one of the most fundamental concepts in JavaScript. Understanding how to declare them, their scope, and naming conventions will help you write cleaner and less error-prone code.
+
+---
+
+## Contents
+
+<CardGrid>
+  <LinkCard
+    title="Variable Declarations"
+    description="var, let, const — features, comparison and best practices"
+    href="/en/languages/javascript/2-variables/1-declarations/"
+  />
+  <LinkCard
+    title="Hoisting"
+    description="Declaration hoisting mechanism, TDZ and behavior with functions"
+    href="/en/languages/javascript/2-variables/2-hoisting/"
+  />
+  <LinkCard
+    title="Variable Naming Rules"
+    description="camelCase, PascalCase, snake_case and SCREAMING_SNAKE_CASE"
+    href="/en/languages/javascript/2-variables/3-naming-rules/"
+  />
+  <LinkCard
+    title="Scopes"
+    description="Global, Function and Block scope — where variables can be accessed"
+    href="/en/languages/javascript/2-variables/4-scopes/"
+  />
+</CardGrid>
+
+---
+
+## Quick Overview
+
+| Keyword   | Scope            | Hoisting | Re-declare | Reassign | Notes                                               |
+| --------- | ---------------- | -------- | ---------- | -------- | --------------------------------------------------- |
+| **var**   | Function / Global | Yes      | Yes        | Yes      | Not limited to block `{}`                           |
+| **let**   | Block `{}`       | Yes (TDZ)| No         | Yes      | Safer than `var`                                    |
+| **const** | Block `{}`       | Yes (TDZ)| No         | No       | Use for constants, or object/array fixed references |
+
+<Aside type="tip" title="Recommendation">
+Prefer `const` for values that don't change, `let` for variables that need reassignment. Avoid `var` in modern code!
+</Aside>

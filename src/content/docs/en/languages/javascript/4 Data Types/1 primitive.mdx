@@ -1,0 +1,195 @@
+---
+title: Primitive Types (7 types)
+sidebar:
+  order: 6
+description: The 7 primitive data types in JavaScript — number, bigint, string, boolean, null, undefined, symbol
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Primitive Types
+
+Primitive types are the most basic data types in JavaScript. They are **immutable** (cannot be changed) and are compared by value.
+
+<CardGrid>
+  <Card title="number" icon="seti:javascript">
+    Numbers (integers and decimals)
+  </Card>
+  <Card title="bigint" icon="seti:javascript">
+    Very large integers
+  </Card>
+  <Card title="string" icon="document">
+    Text/characters
+  </Card>
+  <Card title="boolean" icon="approve-check">
+    True or false values
+  </Card>
+  <Card title="null" icon="close">
+    Intentional absence of value
+  </Card>
+  <Card title="undefined" icon="warning">
+    Unassigned value
+  </Card>
+  <Card title="symbol" icon="star">
+    Unique identifiers
+  </Card>
+</CardGrid>
+
+<Aside type="note" title="Key Properties">
+- **Immutable** — Values cannot be changed
+- **Compared by value** — Two variables with the same value are equal
+- **Copied by value** — Assignments copy the value, not a reference
+</Aside>
+
+---
+
+## Detail by Type
+
+<Tabs>
+  <TabItem label="number">
+    Includes integers, decimals, `NaN`, and `Infinity`. Safe integer range: ±(2⁵³-1).
+
+    ```js
+    let age = 25;           // Integer
+    let pi = 3.14;          // Decimal
+    let notANumber = NaN;   // Not a Number
+    let infinity = Infinity;
+
+    console.log(typeof age); // "number"
+    console.log(typeof NaN); // "number" (quirk!)
+    ```
+
+    <Aside type="tip" title="Checking for NaN">
+    Use `Number.isNaN()` to check if a value is NaN. Don't use `=== NaN` because `NaN !== NaN`!
+
+    ```js
+    console.log(NaN === NaN);        // false
+    console.log(Number.isNaN(NaN));  // true (recommended)
+    ```
+    </Aside>
+  </TabItem>
+  <TabItem label="bigint">
+    For integers larger than the safe integer limit. Denoted with `n` suffix.
+
+    ```js
+    let bigNumber = 123n;
+    let veryBig = 9007199254740991n;
+    console.log(typeof bigNumber); // "bigint"
+    ```
+
+    <Aside type="caution" title="Cannot Mix BigInt and Number">
+    ```js
+    1n + 1;         // TypeError
+    1n + BigInt(1); // 2n
+    ```
+    </Aside>
+  </TabItem>
+  <TabItem label="string">
+    Text data encoded in UTF-16. Strings are **immutable**.
+
+    ```js
+    let name = "JavaScript";
+    let greeting = 'Hello World';
+    let template = `Hello ${name}`; // Template literal
+    ```
+
+    **Common Methods:**
+    ```js
+    let str = "  Hello World  ";
+    str.length;            // 15
+    str.toUpperCase();     // "  HELLO WORLD  "
+    str.trim();            // "Hello World"
+    str.includes("World"); // true
+    str.split(" ");        // ["", "", "Hello", "World", "", ""]
+    ```
+  </TabItem>
+  <TabItem label="boolean">
+    Only two values: `true` or `false`.
+
+    ```js
+    let isActive = true;
+    let isComplete = false;
+    console.log(typeof isActive); // "boolean"
+    ```
+
+    <Aside type="caution" title="The 7 Falsy Values">
+    Only these values are falsy. Everything else is truthy!
+
+    ```js
+    Boolean(false);     // false
+    Boolean(0);         // false
+    Boolean("");        // false
+    Boolean(null);      // false
+    Boolean(undefined); // false
+    Boolean(NaN);       // false
+    Boolean([]);        // true (empty array is truthy!)
+    Boolean({});        // true (empty object is truthy!)
+    ```
+    </Aside>
+  </TabItem>
+  <TabItem label="null & undefined">
+    - **null**: Represents the **intentional absence** of a value
+    - **undefined**: Represents a variable that has been declared but **not assigned**
+
+    ```js
+    let emptyValue = null;
+    let notAssigned;
+    console.log(notAssigned); // undefined
+    ```
+
+    | Aspect         | null                   | undefined                           |
+    | -------------- | ---------------------- | ----------------------------------- |
+    | **Meaning**    | Intentional absence    | Not yet assigned                    |
+    | **typeof**     | "object" (bug)         | "undefined"                         |
+    | **Assignment** | Must be explicitly set | Default for uninitialized variables |
+    | **Equality**   | `null == undefined` ✅ | `null === undefined` ❌             |
+
+    <Aside type="caution" title="typeof null Bug">
+    `typeof null` returns `"object"` due to a longstanding bug in JavaScript. `null` is actually a primitive type!
+    </Aside>
+  </TabItem>
+  <TabItem label="symbol">
+    Creates **unique** identifiers. Often used for object property keys.
+
+    ```js
+    let id = Symbol("id");
+    let anotherId = Symbol("id");
+    console.log(id === anotherId); // false (each symbol is unique!)
+    console.log(typeof id);         // "symbol"
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## The `typeof` Operator
+
+```js
+typeof 42;              // "number"
+typeof 123n;            // "bigint"
+typeof "hello";         // "string"
+typeof true;            // "boolean"
+typeof undefined;       // "undefined"
+typeof Symbol("id");    // "symbol"
+typeof null;            // "object" (bug!)
+typeof {};              // "object"
+typeof [];              // "object"
+typeof function() {};   // "function"
+```
+
+<Aside type="tip" title="Checking for Arrays">
+Use `Array.isArray()` to check if something is an array, since `typeof` returns `"object"` for arrays.
+
+```js
+typeof [];           // "object"
+Array.isArray([]);   // true
+```
+</Aside>
+
+---
+
+## Next Steps
+
+<Aside type="tip" title="Next topic">
+Learn about [Non-primitive (Objects)](/en/languages/javascript/4-data-types/2-objects/) — reference types in JavaScript.
+</Aside>
