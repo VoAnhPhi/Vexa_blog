@@ -1,0 +1,84 @@
+---
+title: Data Structures
+sidebar:
+  order: 8
+description: Overview of JavaScript data structures — Keyed Collections, Structured Data, Indexed Collections
+---
+
+import { Card, CardGrid, LinkCard, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+A **data structure** is a way to **organize, manage, and store data** for **efficient access and modification**. JavaScript provides many built-in data structures for different use cases.
+
+---
+
+## Contents
+
+<CardGrid>
+  <LinkCard
+    title="Keyed Collections — Map & Set"
+    description="Map, Set, WeakMap, WeakSet — key→value lookups and unique collections"
+    href="/en/languages/javascript/6-data-structures/1-keyed-collections/"
+  />
+  <LinkCard
+    title="Structured Data — JSON"
+    description="JSON — the most widely used lightweight data interchange format"
+    href="/en/languages/javascript/6-data-structures/2-structured-data/"
+  />
+  <LinkCard
+    title="Indexed Collections — Array & TypedArray"
+    description="Array, TypedArray — ordered lists accessed by index"
+    href="/en/languages/javascript/6-data-structures/3-indexed-collections/"
+  />
+</CardGrid>
+
+---
+
+## Quick Classification
+
+| Structure | Description | When to use |
+| --------- | ----------- | ----------- |
+| **Array** | Ordered list, accessed by index | Sequential iteration, push/pop |
+| **Object** | Key→value mapping (string/symbol keys) | Config, small records |
+| **Map** | Enhanced hash map — key can be *anything* | Object keys, insertion order needed |
+| **Set** | Collection of unique values | Deduplication, membership testing |
+| **WeakMap / WeakSet** | Weak-referenced object keys/elements | Cache, private state |
+| **TypedArray** | High-performance binary arrays | WebGL, audio, ML |
+| **JSON** | Data interchange format | HTTP, localStorage, files |
+
+---
+
+## Common Time Complexities
+
+<Tabs>
+  <TabItem label="Array">
+    | Operation | Complexity |
+    | --------- | ---------- |
+    | `push` / `pop` | O(1) |
+    | `shift` / `unshift` / `splice` | O(n) |
+    | Access `arr[i]` | O(1) |
+    | `includes` / `indexOf` | O(n) |
+    | `sort` | ~O(n log n) |
+  </TabItem>
+  <TabItem label="Map / Set">
+    | Operation | Complexity |
+    | --------- | ---------- |
+    | `set` / `add` | O(1) average |
+    | `get` / `has` | O(1) average |
+    | `delete` | O(1) average |
+  </TabItem>
+  <TabItem label="Object">
+    | Operation | Complexity |
+    | --------- | ---------- |
+    | Access `obj.key` | O(1) average |
+    | `delete obj.key` | O(1) average |
+    | `Object.keys()` | O(n) |
+  </TabItem>
+</Tabs>
+
+<Aside type="tip" title="Which structure to choose?">
+- Need an **ordered list** → `Array`
+- Need **key→value** with string keys → `Object`
+- Need **key→value** with any type as key → `Map`
+- Need a **unique collection** → `Set`
+- Need **cache that auto-cleans** → `WeakMap` / `WeakSet`
+</Aside>

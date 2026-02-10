@@ -1,0 +1,212 @@
+---
+title: Structured Data — JSON
+sidebar:
+  order: 10
+description: JSON — the most widely used lightweight data interchange format on the web
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## What is JSON?
+
+**JSON** (JavaScript Object Notation) is a **lightweight data interchange format** widely used to **store and transmit data** between servers and web applications.
+
+<CardGrid>
+  <Card title="Lightweight & Readable" icon="document">
+    Simple syntax, similar to JavaScript object literals
+  </Card>
+  <Card title="Language Independent" icon="globe">
+    Nearly every language supports parsing/stringifying JSON
+  </Card>
+  <Card title="Web Standard" icon="star">
+    The primary format for REST APIs, localStorage, and config files
+  </Card>
+</CardGrid>
+
+---
+
+## JSON Structure
+
+JSON supports only **6 value types**: `string`, `number`, `boolean`, `null`, `array`, `object`.
+
+<Tabs>
+  <TabItem label="Object">
+    Key–value pairs inside `{}`. Keys **must** be double-quoted strings.
+
+    ```json
+    {
+      "name": "Alice",
+      "age": 21,
+      "student": true
+    }
+    ```
+  </TabItem>
+  <TabItem label="Array">
+    Ordered list of values inside `[]`.
+
+    ```json
+    [
+      "Python",
+      "JavaScript",
+      "C#"
+    ]
+    ```
+  </TabItem>
+  <TabItem label="Nested">
+    Objects and arrays can be nested to form complex structures.
+
+    ```json
+    {
+      "name": "Alice",
+      "skills": ["JS", "Python"],
+      "address": {
+        "city": "London",
+        "country": "UK"
+      }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## JavaScript API
+
+### `JSON.stringify()` — Object → JSON string
+
+```js
+const obj = { name: "Alice", age: 21, hobbies: ["code", "music"] };
+
+// Basic
+const json = JSON.stringify(obj);
+// '{"name":"Alice","age":21,"hobbies":["code","music"]}'
+
+// Pretty-printed (indented)
+const pretty = JSON.stringify(obj, null, 2);
+/*
+{
+  "name": "Alice",
+  "age": 21,
+  "hobbies": [
+    "code",
+    "music"
+  ]
+}
+*/
+```
+
+### `JSON.parse()` — JSON string → Object
+
+```js
+const json = '{"name":"Alice","age":21}';
+const obj = JSON.parse(json);
+
+console.log(obj.name); // "Alice"
+console.log(obj.age);  // 21
+```
+
+---
+
+## Advanced Parameters
+
+<Tabs>
+  <TabItem label="replacer (stringify)">
+    Filter or transform values during stringification:
+
+    ```js
+    const user = { name: "Alice", password: "secret", age: 21 };
+
+    // Keep only specific keys
+    JSON.stringify(user, ["name", "age"]);
+    // '{"name":"Alice","age":21}'
+
+    // Use a function
+    JSON.stringify(user, (key, val) => {
+      if (key === "password") return undefined; // exclude
+      return val;
+    });
+    ```
+  </TabItem>
+  <TabItem label="reviver (parse)">
+    Transform values during parsing:
+
+    ```js
+    const json = '{"date":"2024-01-15T00:00:00.000Z","name":"Alice"}';
+
+    const obj = JSON.parse(json, (key, val) => {
+      if (key === "date") return new Date(val);
+      return val;
+    });
+
+    console.log(obj.date instanceof Date); // true
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## What JSON Does NOT Support
+
+<Aside type="caution" title="JSON Limitations">
+JSON **cannot** serialize these values — they are ignored or converted to `null`:
+
+| Value | Result when stringified |
+| ----- | ---------------------- |
+| `undefined` | Omitted (in objects) / `null` (in arrays) |
+| `function` | Omitted |
+| `Symbol` | Omitted |
+| `Infinity`, `NaN` | Converted to `null` |
+| `Date` | Converted to ISO string |
+| `Map`, `Set` | Converted to `{}` (empty) |
+| Circular reference | **TypeError** |
+
+```js
+JSON.stringify({ a: undefined, b: () => {}, c: NaN });
+// '{"c":null}' — a and b are omitted, NaN becomes null
+```
+</Aside>
+
+---
+
+## Deep Clone with JSON
+
+```js
+const original = { a: 1, b: { c: 2 } };
+
+// Quick deep clone (with limitations)
+const clone = JSON.parse(JSON.stringify(original));
+clone.b.c = 99;
+console.log(original.b.c); // 2 (not affected)
+```
+
+<Aside type="tip" title="Better alternative">
+Since ES2024, use `structuredClone()` for deep cloning — supports `Date`, `Map`, `Set`, and circular references:
+
+```js
+const clone = structuredClone(original);
+```
+</Aside>
+
+---
+
+## Real-World Use Cases
+
+<CardGrid>
+  <Card title="REST APIs" icon="rocket">
+    Send/receive data over HTTP (`fetch`, `axios`)
+  </Card>
+  <Card title="localStorage" icon="laptop">
+    Store data on the client side
+
+    ```js
+    localStorage.setItem("user", JSON.stringify(user));
+    const u = JSON.parse(localStorage.getItem("user"));
+    ```
+  </Card>
+  <Card title="Config Files" icon="setting">
+    `package.json`, `tsconfig.json`, `.eslintrc.json`
+  </Card>
+  <Card title="Data Exchange" icon="random">
+    Interchange data between different languages and systems
+  </Card>
+</CardGrid>

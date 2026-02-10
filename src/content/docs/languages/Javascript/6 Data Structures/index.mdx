@@ -1,0 +1,84 @@
+---
+title: Cấu Trúc Dữ Liệu (Data Structures)
+sidebar:
+  order: 8
+description: Tổng quan về các cấu trúc dữ liệu trong JavaScript — Keyed Collections, Structured Data, Indexed Collections
+---
+
+import { Card, CardGrid, LinkCard, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+**Cấu trúc dữ liệu** là cách **tổ chức, quản lý và lưu trữ dữ liệu** để **truy cập và sửa đổi hiệu quả**. Trong JavaScript có nhiều cấu trúc dữ liệu tích hợp sẵn phục vụ các nhu cầu khác nhau.
+
+---
+
+## Nội dung
+
+<CardGrid>
+  <LinkCard
+    title="Keyed Collections — Map & Set"
+    description="Map, Set, WeakMap, WeakSet — bảng tra cứu key→value và tập hợp không trùng lặp"
+    href="/languages/javascript/6-data-structures/1-keyed-collections/"
+  />
+  <LinkCard
+    title="Structured Data — JSON"
+    description="JSON — định dạng trao đổi dữ liệu nhẹ, phổ biến nhất trên web"
+    href="/languages/javascript/6-data-structures/2-structured-data/"
+  />
+  <LinkCard
+    title="Indexed Collections — Array & TypedArray"
+    description="Array, TypedArray — danh sách có thứ tự, truy cập theo chỉ số"
+    href="/languages/javascript/6-data-structures/3-indexed-collections/"
+  />
+</CardGrid>
+
+---
+
+## Phân loại nhanh
+
+| Cấu trúc | Mô tả | Khi nào dùng |
+| --------- | ------ | ------------ |
+| **Array** | Danh sách có thứ tự, truy cập theo chỉ số | Duyệt tuần tự, push/pop |
+| **Object** | Bảng ánh xạ key→value (key là string/symbol) | Cấu hình, record nhỏ |
+| **Map** | Bảng băm "xịn" — key là *bất kỳ* giá trị | Key là object, cần thứ tự chèn |
+| **Set** | Tập hợp không trùng lặp | Khử trùng, kiểm tra tồn tại |
+| **WeakMap / WeakSet** | Key/phần tử là object, GC tự thu gom | Cache, private state |
+| **TypedArray** | Mảng nhị phân hiệu năng cao | WebGL, audio, ML |
+| **JSON** | Định dạng trao đổi dữ liệu | HTTP, localStorage, file |
+
+---
+
+## Độ phức tạp hay gặp
+
+<Tabs>
+  <TabItem label="Array">
+    | Thao tác | Độ phức tạp |
+    | -------- | ----------- |
+    | `push` / `pop` | O(1) |
+    | `shift` / `unshift` / `splice` | O(n) |
+    | Truy cập `arr[i]` | O(1) |
+    | `includes` / `indexOf` | O(n) |
+    | `sort` | ~O(n log n) |
+  </TabItem>
+  <TabItem label="Map / Set">
+    | Thao tác | Độ phức tạp |
+    | -------- | ----------- |
+    | `set` / `add` | O(1) trung bình |
+    | `get` / `has` | O(1) trung bình |
+    | `delete` | O(1) trung bình |
+  </TabItem>
+  <TabItem label="Object">
+    | Thao tác | Độ phức tạp |
+    | -------- | ----------- |
+    | Truy cập `obj.key` | O(1) trung bình |
+    | `delete obj.key` | O(1) trung bình |
+    | `Object.keys()` | O(n) |
+  </TabItem>
+</Tabs>
+
+<Aside type="tip" title="Chọn cấu trúc nào?">
+- Cần **danh sách có thứ tự** → `Array`
+- Cần **key→value** với key là string → `Object`
+- Cần **key→value** với key là bất kỳ → `Map`
+- Cần **tập hợp không trùng** → `Set`
+- Cần **cache tự dọn rác** → `WeakMap` / `WeakSet`
+</Aside>

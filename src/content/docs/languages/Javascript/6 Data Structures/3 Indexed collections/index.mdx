@@ -1,0 +1,300 @@
+---
+title: Indexed Collections — Array & TypedArray
+sidebar:
+  order: 11
+description: Array và TypedArray — danh sách có thứ tự, truy cập theo chỉ số trong JavaScript
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Trong JavaScript, **Indexed Collections** là tập hợp mà các phần tử được truy cập thông qua **chỉ số (index)** — tức là dạng *danh sách được đánh số*.
+
+---
+
+## Array
+
+### Định nghĩa
+
+`Array` là một **đối tượng** lưu trữ **nhiều giá trị** thuộc *bất kỳ kiểu dữ liệu nào* trong **thứ tự xác định**.
+
+```js
+let fruits = ["apple", "banana", "orange"];
+let mix = [1, "hello", true, { name: "Giang" }];
+```
+
+---
+
+### Cách khởi tạo
+
+<Tabs>
+  <TabItem label="Array Literal (khuyến nghị)">
+    ```js
+    let arr = [1, 2, 3];
+    ```
+  </TabItem>
+  <TabItem label="Constructor">
+    ```js
+    let arr = new Array(1, 2, 3);    // [1, 2, 3]
+    let empty = new Array(5);         // [ <5 empty items> ]
+    ```
+  </TabItem>
+  <TabItem label="Array.from()">
+    ```js
+    let arr = Array.from("hello");    // ['h','e','l','l','o']
+    let nums = Array.from({length: 3}, (_, i) => i + 1); // [1, 2, 3]
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+### Truy cập & chỉnh sửa
+
+```js
+let numbers = [10, 20, 30];
+console.log(numbers[0]);    // 10
+console.log(numbers.length); // 3
+
+numbers[1] = 25;
+console.log(numbers); // [10, 25, 30]
+```
+
+---
+
+### Bản đồ phương thức
+
+| Nhóm thao tác | Phương thức | Ghi chú |
+| -------------- | ----------- | ------- |
+| **Thêm / Xóa** | `push()`, `pop()`, `shift()`, `unshift()`, `splice()` | `push/pop` O(1), còn lại O(n) |
+| **Duyệt** | `for`, `for...of`, `forEach()` | `for...of` khuyến nghị |
+| **Tìm kiếm** | `indexOf()`, `find()`, `findIndex()`, `includes()` | `includes` O(n) |
+| **Biến đổi** | `map()`, `filter()`, `reduce()`, `sort()`, `flat()` | Trả mảng mới (trừ sort) |
+| **Nối** | `concat()`, `spread (...)` | Không thay đổi mảng gốc |
+| **Cắt** | `slice()`, `splice()` | `slice` không đổi gốc, `splice` có |
+
+---
+
+### Ví dụ thao tác phổ biến
+
+<Tabs>
+  <TabItem label="Thêm / Xóa">
+    ```js
+    let arr = [1, 2, 3];
+
+    arr.push(4);       // [1, 2, 3, 4]   — thêm cuối
+    arr.pop();         // [1, 2, 3]       — xóa cuối
+    arr.unshift(0);    // [0, 1, 2, 3]    — thêm đầu
+    arr.shift();       // [1, 2, 3]       — xóa đầu
+
+    // splice: xóa 1 phần tử tại index 1, chèn "a", "b"
+    arr.splice(1, 1, "a", "b"); // [1, "a", "b", 3]
+    ```
+  </TabItem>
+  <TabItem label="Biến đổi">
+    ```js
+    let arr = [1, 2, 3, 4, 5];
+
+    // map — tạo mảng mới
+    let doubled = arr.map(x => x * 2);      // [2, 4, 6, 8, 10]
+
+    // filter — lọc theo điều kiện
+    let evens = arr.filter(x => x % 2 === 0); // [2, 4]
+
+    // reduce — gộp thành 1 giá trị
+    let sum = arr.reduce((acc, x) => acc + x, 0); // 15
+
+    // flat — "phẳng" mảng lồng
+    let nested = [1, [2, [3]]];
+    nested.flat(Infinity); // [1, 2, 3]
+    ```
+  </TabItem>
+  <TabItem label="Tìm kiếm">
+    ```js
+    let arr = [10, 20, 30, 40];
+
+    arr.includes(20);              // true
+    arr.indexOf(30);               // 2
+    arr.find(x => x > 25);        // 30
+    arr.findIndex(x => x > 25);   // 2
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+### Tính chất đặc biệt
+
+<Aside type="note" title="Array trong JS thực chất là Object">
+- Mảng trong JS là **object** có key là chỉ số dạng chuỗi `"0"`, `"1"`, `"2"`, …
+- **Không** cố định kích thước — tự co giãn
+- Các phần tử có thể **khác kiểu**
+- `typeof [] === "object"` — dùng `Array.isArray()` để kiểm tra
+
+```js
+Array.isArray([1, 2, 3]); // true
+Array.isArray("hello");   // false
+```
+</Aside>
+
+---
+
+### Destructuring & Spread
+
+```js
+// Destructuring
+const [first, second, ...rest] = [1, 2, 3, 4, 5];
+// first = 1, second = 2, rest = [3, 4, 5]
+
+// Spread — clone & merge
+const a = [1, 2];
+const b = [3, 4];
+const merged = [...a, ...b]; // [1, 2, 3, 4]
+
+// Spread — clone (shallow)
+const clone = [...a];
+```
+
+---
+
+## TypedArray
+
+### Định nghĩa
+
+**TypedArray** là dạng mảng đặc biệt lưu trữ **dữ liệu nhị phân thô (raw binary data)** có **kiểu cố định** và **độ dài cố định**.
+
+<CardGrid>
+  <Card title="Hiệu năng cao" icon="rocket">
+    Truy cập nhanh, tiết kiệm bộ nhớ hơn Array thường
+  </Card>
+  <Card title="Kiểu cố định" icon="setting">
+    Mỗi phần tử cùng kiểu, cùng kích thước byte
+  </Card>
+  <Card title="Ứng dụng chuyên biệt" icon="star">
+    WebGL, Canvas, Audio API, File API, AI/ML
+  </Card>
+</CardGrid>
+
+---
+
+### Cấu trúc: ArrayBuffer + View
+
+Typed Arrays dựa trên 2 thành phần:
+
+1. **ArrayBuffer** → vùng nhớ nhị phân thô
+2. **View (TypedArray)** → lớp đọc/ghi dữ liệu lên vùng nhớ đó
+
+```js
+// Tạo vùng nhớ 16 byte
+let buffer = new ArrayBuffer(16);
+
+// Tạo "view" kiểu 32-bit integer (mỗi phần tử = 4 byte)
+let view = new Int32Array(buffer);
+console.log(view.length); // 4 phần tử (16 / 4)
+```
+
+---
+
+### Các loại TypedArray
+
+| Kiểu | Byte/phần tử | Dải giá trị |
+| ---- | ------------ | ----------- |
+| `Int8Array` | 1 | -128 → 127 |
+| `Uint8Array` | 1 | 0 → 255 |
+| `Uint8ClampedArray` | 1 | 0 → 255 (clamped) |
+| `Int16Array` | 2 | -32768 → 32767 |
+| `Uint16Array` | 2 | 0 → 65535 |
+| `Int32Array` | 4 | -2³¹ → 2³¹-1 |
+| `Uint32Array` | 4 | 0 → 2³²-1 |
+| `Float32Array` | 4 | Số thực 32-bit |
+| `Float64Array` | 8 | Số thực 64-bit |
+
+---
+
+### Cách tạo
+
+<Tabs>
+  <TabItem label="Tạo rỗng">
+    ```js
+    let int8 = new Int8Array(4); // [0, 0, 0, 0]
+    ```
+  </TabItem>
+  <TabItem label="Từ mảng">
+    ```js
+    let floatArr = new Float32Array([1.5, 2.5, 3.5]);
+    ```
+  </TabItem>
+  <TabItem label="Từ buffer">
+    ```js
+    let buffer = new ArrayBuffer(8);
+    let int16 = new Int16Array(buffer);
+    let subView = new Int16Array(buffer, 2, 2); // offset 2 byte, 2 phần tử
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+### Truy cập và thao tác
+
+```js
+let arr = new Int16Array([10, 20, 30]);
+
+arr[1];            // 20
+arr[1] = 50;       // gán giá trị
+
+// Lặp
+for (let val of arr) console.log(val);
+
+// Các phương thức có sẵn
+arr.set([100, 200, 300]);   // gán hàng loạt
+arr.subarray(0, 2);         // view con (không copy)
+```
+
+---
+
+### Chuyển đổi TypedArray ↔ Array
+
+```js
+let typed = new Uint8Array([1, 2, 3]);
+let normal = Array.from(typed);       // [1, 2, 3]
+let back = new Uint8Array(normal);    // chuyển ngược
+```
+
+---
+
+### Ứng dụng thực tế
+
+<Tabs>
+  <TabItem label="Đọc file nhị phân">
+    ```js
+    fetch("image.png")
+      .then(res => res.arrayBuffer())
+      .then(buf => {
+        let bytes = new Uint8Array(buf);
+        console.log("Số byte:", bytes.length);
+      });
+    ```
+  </TabItem>
+  <TabItem label="Canvas pixel">
+    ```js
+    const canvas = document.getElementById("myCanvas");
+    const ctx = canvas.getContext("2d");
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    // imageData.data là Uint8ClampedArray — RGBA cho mỗi pixel
+    for (let i = 0; i < imageData.data.length; i += 4) {
+      imageData.data[i] = 255;     // R
+      imageData.data[i + 1] = 0;   // G
+      imageData.data[i + 2] = 0;   // B
+      // imageData.data[i + 3] — Alpha
+    }
+    ctx.putImageData(imageData, 0, 0);
+    ```
+  </TabItem>
+</Tabs>
+
+<Aside type="tip" title="Array vs TypedArray">
+- Cần lưu dữ liệu **hỗn hợp kiểu** → dùng `Array`
+- Cần **hiệu năng cao** với dữ liệu số/nhị phân → dùng `TypedArray`
+- TypedArray **không** có `push`, `pop`, `splice` — kích thước cố định!
+</Aside>

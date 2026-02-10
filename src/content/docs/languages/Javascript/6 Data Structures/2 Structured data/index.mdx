@@ -1,0 +1,212 @@
+---
+title: Structured Data — JSON
+sidebar:
+  order: 10
+description: JSON — định dạng trao đổi dữ liệu nhẹ, phổ biến nhất trên web
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## JSON là gì?
+
+**JSON** (viết tắt của **JavaScript Object Notation**) là **định dạng trao đổi dữ liệu nhẹ** (lightweight data interchange format), được dùng phổ biến để **lưu trữ và truyền dữ liệu** giữa server và client.
+
+<CardGrid>
+  <Card title="Nhẹ & Dễ đọc" icon="document">
+    Cú pháp đơn giản, tương tự Object literal trong JS
+  </Card>
+  <Card title="Ngôn ngữ độc lập" icon="globe">
+    Hầu hết ngôn ngữ đều hỗ trợ parse/stringify JSON
+  </Card>
+  <Card title="Tiêu chuẩn web" icon="star">
+    Định dạng chính cho REST API, localStorage, file config
+  </Card>
+</CardGrid>
+
+---
+
+## Cấu trúc JSON
+
+JSON chỉ hỗ trợ **6 kiểu giá trị**: `string`, `number`, `boolean`, `null`, `array`, `object`.
+
+<Tabs>
+  <TabItem label="Object">
+    Gồm các cặp **key–value**, viết trong dấu `{}`. Key **bắt buộc** là chuỗi (có dấu nháy kép).
+
+    ```json
+    {
+      "name": "An Giang",
+      "age": 21,
+      "student": true
+    }
+    ```
+  </TabItem>
+  <TabItem label="Array">
+    Danh sách các giá trị, viết trong dấu `[]`.
+
+    ```json
+    [
+      "Python",
+      "JavaScript",
+      "C#"
+    ]
+    ```
+  </TabItem>
+  <TabItem label="Lồng nhau">
+    Object và Array có thể lồng nhau tạo cấu trúc phức tạp.
+
+    ```json
+    {
+      "name": "An",
+      "skills": ["JS", "Python"],
+      "address": {
+        "city": "HCM",
+        "country": "VN"
+      }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## API trong JavaScript
+
+### `JSON.stringify()` — Object → chuỗi JSON
+
+```js
+const obj = { name: "An", age: 21, hobbies: ["code", "music"] };
+
+// Cơ bản
+const json = JSON.stringify(obj);
+// '{"name":"An","age":21,"hobbies":["code","music"]}'
+
+// Đẹp hơn (indented)
+const pretty = JSON.stringify(obj, null, 2);
+/*
+{
+  "name": "An",
+  "age": 21,
+  "hobbies": [
+    "code",
+    "music"
+  ]
+}
+*/
+```
+
+### `JSON.parse()` — Chuỗi JSON → Object
+
+```js
+const json = '{"name":"An","age":21}';
+const obj = JSON.parse(json);
+
+console.log(obj.name); // "An"
+console.log(obj.age);  // 21
+```
+
+---
+
+## Tham số nâng cao
+
+<Tabs>
+  <TabItem label="replacer (stringify)">
+    Lọc hoặc biến đổi giá trị khi stringify:
+
+    ```js
+    const user = { name: "An", password: "secret", age: 21 };
+
+    // Chỉ giữ một số key
+    JSON.stringify(user, ["name", "age"]);
+    // '{"name":"An","age":21}'
+
+    // Dùng function
+    JSON.stringify(user, (key, val) => {
+      if (key === "password") return undefined; // loại bỏ
+      return val;
+    });
+    ```
+  </TabItem>
+  <TabItem label="reviver (parse)">
+    Biến đổi giá trị khi parse:
+
+    ```js
+    const json = '{"date":"2024-01-15T00:00:00.000Z","name":"An"}';
+
+    const obj = JSON.parse(json, (key, val) => {
+      if (key === "date") return new Date(val);
+      return val;
+    });
+
+    console.log(obj.date instanceof Date); // true
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Những gì JSON KHÔNG hỗ trợ
+
+<Aside type="caution" title="Giới hạn của JSON">
+JSON **không** serialize được các giá trị sau — chúng bị bỏ qua hoặc chuyển thành `null`:
+
+| Giá trị | Kết quả khi stringify |
+| ------- | -------------------- |
+| `undefined` | Bị bỏ qua (trong object) / `null` (trong array) |
+| `function` | Bị bỏ qua |
+| `Symbol` | Bị bỏ qua |
+| `Infinity`, `NaN` | Chuyển thành `null` |
+| `Date` | Chuyển thành chuỗi ISO |
+| `Map`, `Set` | Chuyển thành `{}` (rỗng) |
+| Circular reference | **TypeError** |
+
+```js
+JSON.stringify({ a: undefined, b: () => {}, c: NaN });
+// '{"c":null}' — a và b bị bỏ qua, NaN thành null
+```
+</Aside>
+
+---
+
+## Deep Clone với JSON
+
+```js
+const original = { a: 1, b: { c: 2 } };
+
+// Clone nhanh (có giới hạn)
+const clone = JSON.parse(JSON.stringify(original));
+clone.b.c = 99;
+console.log(original.b.c); // 2 (không bị ảnh hưởng)
+```
+
+<Aside type="tip" title="Thay thế tốt hơn">
+Từ ES2024, dùng `structuredClone()` để deep clone — hỗ trợ `Date`, `Map`, `Set`, circular reference:
+
+```js
+const clone = structuredClone(original);
+```
+</Aside>
+
+---
+
+## Ứng dụng thực tế
+
+<CardGrid>
+  <Card title="REST API" icon="rocket">
+    Gửi/nhận dữ liệu qua HTTP (`fetch`, `axios`)
+  </Card>
+  <Card title="localStorage" icon="laptop">
+    Lưu trữ dữ liệu phía client
+
+    ```js
+    localStorage.setItem("user", JSON.stringify(user));
+    const u = JSON.parse(localStorage.getItem("user"));
+    ```
+  </Card>
+  <Card title="Config files" icon="setting">
+    `package.json`, `tsconfig.json`, `.eslintrc.json`
+  </Card>
+  <Card title="Data exchange" icon="random">
+    Trao đổi dữ liệu giữa các ngôn ngữ/hệ thống khác nhau
+  </Card>
+</CardGrid>

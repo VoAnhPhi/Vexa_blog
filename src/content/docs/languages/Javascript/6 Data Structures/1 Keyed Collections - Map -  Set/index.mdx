@@ -1,0 +1,294 @@
+---
+title: Keyed Collections — Map & Set
+sidebar:
+  order: 9
+description: Map, Set, WeakMap, WeakSet — bảng tra cứu key→value và tập hợp không trùng lặp trong JavaScript
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Map
+
+**Map** là "cuốn sổ ghi chép" gồm các cặp **khóa → giá trị**. Điểm khác biệt quan trọng so với **Object**: khóa có thể là **bất kỳ thứ gì** — object, mảng, hàm — và Map **giữ đúng thứ tự chèn**.
+
+### Vì sao không dùng `Object` cho xong?
+
+<CardGrid>
+  <Card title="Object" icon="warning">
+    Chỉ dùng **string/symbol** làm key — object bị ép thành `"[object Object]"`
+  </Card>
+  <Card title="Map" icon="approve-check">
+    **Giữ nguyên** khóa gốc (so sánh theo tham chiếu), có `size`, dễ lặp, tra cứu **O(1)**
+  </Card>
+</CardGrid>
+
+---
+
+### API chính
+
+```js
+const m = new Map();
+m.set(key, value);     // thêm/cập nhật
+m.get(key);            // lấy ra (không có → undefined)
+m.has(key);            // kiểm tra có key không
+m.delete(key);         // xóa theo key
+m.clear();             // xóa tất cả
+m.size;                // số cặp khóa-giá trị
+```
+
+---
+
+### Ví dụ: dùng object làm khóa
+
+```js
+const u1 = { id: 1, name: "An" };
+const u2 = { id: 2, name: "Bình" };
+
+const roles = new Map();
+roles.set(u1, "admin");
+roles.set(u2, "viewer");
+
+console.log(roles.get(u1)); // "admin"
+console.log(roles.has(u2)); // true
+console.log(roles.size);    // 2
+```
+
+<Aside type="caution" title="Cẩn thận tham chiếu!">
+Hai object "giống nhau" nhưng **khác tham chiếu** là hai khóa khác nhau:
+
+```js
+roles.get({ id: 1, name: "An" }); // undefined (khác tham chiếu với u1)
+```
+</Aside>
+
+---
+
+### Khi nào nên chọn Map?
+
+<CardGrid>
+  <Card title="Key là object" icon="random">
+    Gắn metadata cho DOM node, user object, v.v.
+  </Card>
+  <Card title="Thứ tự chèn" icon="list-format">
+    Cần bảo toàn thứ tự khi lặp (`for...of`, `map.entries()`)
+  </Card>
+  <Card title="API rõ ràng" icon="setting">
+    `set/get/has` + `map.size` — đo kích thước nhanh gọn
+  </Card>
+</CardGrid>
+
+---
+
+### Ví dụ thực tế: đếm tần suất
+
+```js
+const s = "banana";
+const freq = new Map();
+for (const ch of s) freq.set(ch, (freq.get(ch) ?? 0) + 1);
+// [...freq] → [ ['b',1], ['a',3], ['n',2] ]
+```
+
+---
+
+### Lưu ý hay bị vấp
+
+<Aside type="note" title="Lưu ý quan trọng">
+- `JSON.stringify` **không** lưu được Map trực tiếp — cần chuyển đổi:
+
+```js
+const json = JSON.stringify([...freq]);          // thành mảng cặp [k,v]
+const restored = new Map(JSON.parse(json));      // khôi phục lại Map
+```
+
+- `m.get(k)` trả `undefined` nếu không có khóa → check thêm `m.has(k)` nếu cần phân biệt rõ.
+- `set` lại cùng một khóa **không đổi thứ tự** phần tử trong Map.
+- Map **không** bị ảnh hưởng bởi prototype (không như Object).
+</Aside>
+
+---
+
+## WeakMap
+
+Hãy tưởng tượng bạn dán một "note" vào **chính object** để lưu dữ liệu phụ. Khi object biến mất (không còn biến nào trỏ tới), "note" cũng **tự rơi** — bạn không phải dọn rác. Đó là **WeakMap**.
+
+### Khác gì với Map?
+
+<Tabs>
+  <TabItem label="Map">
+    - Key có thể là **bất kỳ** giá trị nào
+    - **Không yếu** — giữ tham chiếu mạnh đến key
+    - **Có thể lặp** — `for...of`, `keys()`, `values()`, `entries()`
+    - Có `size`
+  </TabItem>
+  <TabItem label="WeakMap">
+    - Key **bắt buộc là object** (không nhận primitive)
+    - **Yếu (weak)** — không ngăn GC giải phóng key
+    - **Không thể lặp** — không `for...of`, không `size`
+    - Chỉ có `set/get/has/delete`
+  </TabItem>
+</Tabs>
+
+---
+
+### API tối thiểu
+
+```js
+const wm = new WeakMap();
+wm.set(obj, value);
+wm.get(obj);     // → value | undefined
+wm.has(obj);     // → boolean
+wm.delete(obj);  // → boolean
+```
+
+---
+
+### Khi nào dùng WeakMap?
+
+<CardGrid>
+  <Card title="Private State" icon="close">
+    Gắn metadata/private state cho instance mà không lo rò rỉ bộ nhớ
+  </Card>
+  <Card title="Cache" icon="rocket">
+    Cache theo object — kết quả tự hết hạn khi object gốc bị GC
+  </Card>
+  <Card title="Trạng thái tạm" icon="pencil">
+    Lưu trạng thái gắn với vòng đời object (đã xử lý, cấu hình tạm, v.v.)
+  </Card>
+</CardGrid>
+
+---
+
+### Ví dụ 1: Private state cho class
+
+```js
+const _priv = new WeakMap();
+
+class User {
+  constructor(name) {
+    this.name = name;
+    _priv.set(this, { token: Math.random().toString(36).slice(2) });
+  }
+  getToken() {
+    return _priv.get(this).token;
+  }
+}
+
+let u = new User("An");
+console.log(u.getToken());
+// Khi u = null → entry trong WeakMap tự biến mất
+```
+
+### Ví dụ 2: Cache theo DOM node
+
+```js
+const measureCache = new WeakMap();
+
+function measure(el) {
+  if (measureCache.has(el)) return measureCache.get(el);
+  const rect = el.getBoundingClientRect();
+  const info = { w: rect.width, h: rect.height };
+  measureCache.set(el, info);
+  return info;
+}
+// Khi el bị remove → cache entry biến mất cùng el
+```
+
+<Aside type="caution" title="Khi KHÔNG nên dùng WeakMap">
+- Cần **duyệt tất cả** phần tử → dùng `Map`
+- Cần **kích thước** (`size`) → dùng `Map`
+- Cần **serialize JSON** → dùng `Map`
+- Key là **primitive** (string/number) → dùng `Map`
+</Aside>
+
+---
+
+## Set
+
+**Set** là tập hợp **không trùng lặp**, có thứ tự chèn. Thao tác tra cứu/thêm/xóa trung bình **O(1)**.
+
+### API chính
+
+```js
+const s = new Set();
+s.add(value);       // thêm phần tử
+s.has(value);       // kiểm tra tồn tại
+s.delete(value);    // xóa phần tử
+s.clear();          // xóa tất cả
+s.size;             // số phần tử
+```
+
+---
+
+### Ví dụ: khử trùng lặp
+
+```js
+const uniq = new Set([1, 2, 2, 3, 3]);
+console.log([...uniq]);        // [1, 2, 3]
+
+uniq.add(4);
+console.log(uniq.has(2));      // true
+console.log(uniq.size);        // 4
+```
+
+### Ví dụ: các phép tập hợp
+
+```js
+const a = new Set([1, 2, 3]);
+const b = new Set([2, 3, 4]);
+
+// Giao (intersection)
+const intersection = new Set([...a].filter(x => b.has(x))); // {2, 3}
+
+// Hợp (union)
+const union = new Set([...a, ...b]);                         // {1, 2, 3, 4}
+
+// Hiệu (difference)
+const diff = new Set([...a].filter(x => !b.has(x)));         // {1}
+```
+
+<Aside type="note" title="So sánh trong Set">
+`Set` so sánh theo **SameValueZero** (giống `Map`): `NaN` được xem là bằng chính nó — khác với `===` (vốn `NaN !== NaN`).
+</Aside>
+
+---
+
+## WeakSet
+
+**WeakSet** là tập hợp yếu của **object** (không nhận primitive). Không lặp, không `size`; phần tử bị GC thu gom khi không còn tham chiếu khác.
+
+### API chính
+
+```js
+const ws = new WeakSet();
+ws.add(obj);       // thêm object
+ws.has(obj);       // kiểm tra tồn tại
+ws.delete(obj);    // xóa object
+```
+
+### Ví dụ: đánh dấu "đã xử lý"
+
+```js
+const visited = new WeakSet();
+
+function traverse(node) {
+  if (visited.has(node)) return; // đã duyệt rồi → bỏ qua
+  visited.add(node);
+  // ... duyệt con
+}
+```
+
+<Aside type="tip" title="Khi nào dùng WeakSet?">
+Dùng khi cần **đánh dấu object** (đã xử lý, đã xác thực, v.v.) mà **không muốn giữ chân GC** — phần tử tự biến mất khi object gốc bị thu gom.
+</Aside>
+
+---
+
+## So sánh tổng quan
+
+| Đặc điểm | Map | WeakMap | Set | WeakSet |
+| --------- | --- | ------- | --- | ------- |
+| **Key/Phần tử** | Bất kỳ | Object only | Bất kỳ | Object only |
+| **GC thu gom?** | ❌ | ✅ | ❌ | ✅ |
+| **Có thể lặp?** | ✅ | ❌ | ✅ | ❌ |
+| **Có `size`?** | ✅ | ❌ | ✅ | ❌ |
+| **JSON serialize?** | Cần chuyển đổi | ❌ | Cần chuyển đổi | ❌ |

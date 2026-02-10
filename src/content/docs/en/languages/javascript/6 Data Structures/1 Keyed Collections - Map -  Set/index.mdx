@@ -1,0 +1,294 @@
+---
+title: Keyed Collections — Map & Set
+sidebar:
+  order: 9
+description: Map, Set, WeakMap, WeakSet — key→value lookups and unique collections in JavaScript
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Map
+
+A **Map** holds **key→value** pairs where keys can be **any type** — objects, arrays, functions — and it **preserves insertion order**.
+
+### Why not just use `Object`?
+
+<CardGrid>
+  <Card title="Object" icon="warning">
+    Keys are always **string/symbol** — objects are coerced to `"[object Object]"`
+  </Card>
+  <Card title="Map" icon="approve-check">
+    **Preserves original key** (compared by reference), has `size`, easy iteration, **O(1)** lookup
+  </Card>
+</CardGrid>
+
+---
+
+### Core API
+
+```js
+const m = new Map();
+m.set(key, value);     // add/update
+m.get(key);            // retrieve (missing → undefined)
+m.has(key);            // check existence
+m.delete(key);         // remove by key
+m.clear();             // remove all
+m.size;                // number of entries
+```
+
+---
+
+### Example: using objects as keys
+
+```js
+const u1 = { id: 1, name: "Alice" };
+const u2 = { id: 2, name: "Bob" };
+
+const roles = new Map();
+roles.set(u1, "admin");
+roles.set(u2, "viewer");
+
+console.log(roles.get(u1)); // "admin"
+console.log(roles.has(u2)); // true
+console.log(roles.size);    // 2
+```
+
+<Aside type="caution" title="Reference matters!">
+Two objects with the same shape but **different references** are treated as different keys:
+
+```js
+roles.get({ id: 1, name: "Alice" }); // undefined (different reference)
+```
+</Aside>
+
+---
+
+### When to choose Map?
+
+<CardGrid>
+  <Card title="Non-string keys" icon="random">
+    Attach metadata to DOM nodes, user objects, etc.
+  </Card>
+  <Card title="Insertion order" icon="list-format">
+    Guaranteed iteration order (`for...of`, `map.entries()`)
+  </Card>
+  <Card title="Clean API" icon="setting">
+    `set/get/has` + `map.size` — clear and consistent
+  </Card>
+</CardGrid>
+
+---
+
+### Practical example: frequency counter
+
+```js
+const s = "banana";
+const freq = new Map();
+for (const ch of s) freq.set(ch, (freq.get(ch) ?? 0) + 1);
+// [...freq] → [ ['b',1], ['a',3], ['n',2] ]
+```
+
+---
+
+### Common pitfalls
+
+<Aside type="note" title="Important notes">
+- `JSON.stringify` does **not** serialize Map directly — convert first:
+
+```js
+const json = JSON.stringify([...freq]);          // array of [k,v] pairs
+const restored = new Map(JSON.parse(json));      // restore Map
+```
+
+- `m.get(k)` returns `undefined` if key is missing → use `m.has(k)` to distinguish.
+- Re-setting the same key does **not** change its order in the Map.
+- Map is **not** affected by prototype chain (unlike Object).
+</Aside>
+
+---
+
+## WeakMap
+
+Think of WeakMap as a **sticky note attached to an object**. When the object is garbage collected (no more references), the note **falls off automatically** — no manual cleanup needed.
+
+### Map vs WeakMap
+
+<Tabs>
+  <TabItem label="Map">
+    - Keys can be **any** value
+    - **Strong** reference — prevents key from being GC'd
+    - **Iterable** — `for...of`, `keys()`, `values()`, `entries()`
+    - Has `size`
+  </TabItem>
+  <TabItem label="WeakMap">
+    - Keys **must be objects** (no primitives)
+    - **Weak** reference — does not prevent GC
+    - **Not iterable** — no `for...of`, no `size`
+    - Only `set/get/has/delete`
+  </TabItem>
+</Tabs>
+
+---
+
+### Minimal API
+
+```js
+const wm = new WeakMap();
+wm.set(obj, value);
+wm.get(obj);     // → value | undefined
+wm.has(obj);     // → boolean
+wm.delete(obj);  // → boolean
+```
+
+---
+
+### When to use WeakMap?
+
+<CardGrid>
+  <Card title="Private State" icon="close">
+    Attach private data to instances without risking memory leaks
+  </Card>
+  <Card title="Caching" icon="rocket">
+    Cache by object — results auto-expire when the object is GC'd
+  </Card>
+  <Card title="Temporary State" icon="pencil">
+    Track state tied to an object's lifecycle (processed, config, etc.)
+  </Card>
+</CardGrid>
+
+---
+
+### Example 1: Private state for a class
+
+```js
+const _priv = new WeakMap();
+
+class User {
+  constructor(name) {
+    this.name = name;
+    _priv.set(this, { token: Math.random().toString(36).slice(2) });
+  }
+  getToken() {
+    return _priv.get(this).token;
+  }
+}
+
+let u = new User("Alice");
+console.log(u.getToken());
+// When u = null → WeakMap entry is automatically removed
+```
+
+### Example 2: DOM node cache
+
+```js
+const measureCache = new WeakMap();
+
+function measure(el) {
+  if (measureCache.has(el)) return measureCache.get(el);
+  const rect = el.getBoundingClientRect();
+  const info = { w: rect.width, h: rect.height };
+  measureCache.set(el, info);
+  return info;
+}
+// When el is removed from DOM → cache entry disappears with it
+```
+
+<Aside type="caution" title="When NOT to use WeakMap">
+- Need to **iterate all** entries → use `Map`
+- Need **size** → use `Map`
+- Need **JSON serialization** → use `Map`
+- Keys are **primitives** (string/number) → use `Map`
+</Aside>
+
+---
+
+## Set
+
+A **Set** is a collection of **unique values** that maintains insertion order. Lookup, add, and delete operations are **O(1)** on average.
+
+### Core API
+
+```js
+const s = new Set();
+s.add(value);       // add element
+s.has(value);       // check existence
+s.delete(value);    // remove element
+s.clear();          // remove all
+s.size;             // number of elements
+```
+
+---
+
+### Example: deduplication
+
+```js
+const uniq = new Set([1, 2, 2, 3, 3]);
+console.log([...uniq]);        // [1, 2, 3]
+
+uniq.add(4);
+console.log(uniq.has(2));      // true
+console.log(uniq.size);        // 4
+```
+
+### Example: set operations
+
+```js
+const a = new Set([1, 2, 3]);
+const b = new Set([2, 3, 4]);
+
+// Intersection
+const intersection = new Set([...a].filter(x => b.has(x))); // {2, 3}
+
+// Union
+const union = new Set([...a, ...b]);                         // {1, 2, 3, 4}
+
+// Difference
+const diff = new Set([...a].filter(x => !b.has(x)));         // {1}
+```
+
+<Aside type="note" title="Equality in Set">
+`Set` uses **SameValueZero** comparison (same as `Map`): `NaN` is considered equal to itself — unlike `===` where `NaN !== NaN`.
+</Aside>
+
+---
+
+## WeakSet
+
+A **WeakSet** is a weak collection of **objects only** (no primitives). Not iterable, no `size`; elements are GC'd when no other references exist.
+
+### Core API
+
+```js
+const ws = new WeakSet();
+ws.add(obj);       // add object
+ws.has(obj);       // check existence
+ws.delete(obj);    // remove object
+```
+
+### Example: marking processed nodes
+
+```js
+const visited = new WeakSet();
+
+function traverse(node) {
+  if (visited.has(node)) return; // already visited → skip
+  visited.add(node);
+  // ... traverse children
+}
+```
+
+<Aside type="tip" title="When to use WeakSet?">
+Use when you need to **tag objects** (processed, validated, etc.) without **preventing garbage collection** — entries auto-disappear when the source object is collected.
+</Aside>
+
+---
+
+## Comparison Overview
+
+| Feature | Map | WeakMap | Set | WeakSet |
+| ------- | --- | ------- | --- | ------- |
+| **Key/Element** | Any | Object only | Any | Object only |
+| **GC collected?** | ❌ | ✅ | ❌ | ✅ |
+| **Iterable?** | ✅ | ❌ | ✅ | ❌ |
+| **Has `size`?** | ✅ | ❌ | ✅ | ❌ |
+| **JSON serialize?** | With conversion | ❌ | With conversion | ❌ |
