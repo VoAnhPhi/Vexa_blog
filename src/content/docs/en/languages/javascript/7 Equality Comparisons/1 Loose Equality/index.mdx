@@ -1,0 +1,146 @@
+---
+title: Loose Equality Operator (==)
+sidebar:
+  order: 13
+description: The == operator in JavaScript — loose comparison with automatic type coercion
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## What is `==`?
+
+The `==` (loose equality) operator compares **values** between two operands **after** JavaScript **automatically converts their types** (type coercion) if needed.
+
+```js
+"5" == 5;   // true — "5" is coerced to 5
+0 == false; // true — false is coerced to 0
+```
+
+<Aside type="caution" title="Be careful!">
+Because of **automatic type coercion**, `==` can produce surprising results. This is why most style guides recommend using `===` instead.
+</Aside>
+
+---
+
+## Coercion Rules of `==`
+
+JavaScript follows the **Abstract Equality Comparison** algorithm (ECMA-262 spec):
+
+<Tabs>
+  <TabItem label="Same type">
+    If both operands have the **same type**, `==` behaves **exactly like** `===`:
+
+    ```js
+    5 == 5;           // true
+    "hello" == "hello"; // true
+    null == null;     // true
+    ```
+  </TabItem>
+  <TabItem label="null & undefined">
+    `null` and `undefined` are only **equal** to each other and themselves:
+
+    ```js
+    null == undefined;  // true
+    null == 0;          // false
+    undefined == "";    // false
+    undefined == false; // false
+    ```
+  </TabItem>
+  <TabItem label="Number & String">
+    String is converted to Number before comparison:
+
+    ```js
+    "42" == 42;   // true — "42" → 42
+    "" == 0;      // true — "" → 0
+    "abc" == NaN; // false — "abc" → NaN
+    ```
+  </TabItem>
+  <TabItem label="Boolean">
+    Boolean is converted to Number first (`true` → 1, `false` → 0), then compared:
+
+    ```js
+    true == 1;    // true  — true → 1
+    false == 0;   // true  — false → 0
+    true == "1";  // true  — true → 1, "1" → 1
+    false == "";  // true  — false → 0, "" → 0
+    ```
+  </TabItem>
+  <TabItem label="Object vs Primitive">
+    Object calls `valueOf()` or `toString()` to convert to primitive:
+
+    ```js
+    [1] == 1;         // true — [1].toString() → "1" → 1
+    [1,2] == "1,2";   // true — [1,2].toString() → "1,2"
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Rule Flowchart
+
+```
+a == b
+│
+├─ Same type? → Compare like ===
+│
+├─ null/undefined? → null == undefined = true, else false
+│
+├─ Number vs String? → String → Number
+│
+├─ Boolean? → Boolean → Number, then compare again
+│
+└─ Object vs Primitive? → Object → toPrimitive(), then compare again
+```
+
+---
+
+## "WTF" Cases
+
+```js
+"" == 0;            // true   — "" → 0
+"0" == false;       // true   — false → 0, "0" → 0
+"\t\n" == 0;        // true   — whitespace → 0
+[] == false;        // true   — [] → "" → 0, false → 0
+[] == ![];          // true   — ![] → false → 0, [] → "" → 0
+```
+
+<Aside type="caution" title="This is why you should use ===">
+These results aren't bugs — they follow the spec exactly. But they're **hard to predict** and easy sources of bugs. Use `===` to avoid them entirely!
+</Aside>
+
+---
+
+## When is `==` actually useful?
+
+The **only** case widely accepted by the community:
+
+```js
+// Check for null OR undefined in one expression
+if (x == null) {
+  // x is null OR undefined
+}
+
+// Equivalent to:
+if (x === null || x === undefined) {
+  // ...
+}
+```
+
+<Aside type="tip" title="Best Practice">
+- **Default**: always use `===`
+- **Exception**: `x == null` to check null/undefined concisely
+- Enable ESLint rule `eqeqeq` to auto-warn on `==` usage
+</Aside>
+
+---
+
+## Summary
+
+| Rule | Example | Result |
+| ---- | ------- | ------ |
+| Same type → like `===` | `5 == 5` | true |
+| `null == undefined` | `null == undefined` | true |
+| String → Number | `"5" == 5` | true |
+| Boolean → Number | `true == 1` | true |
+| Object → toPrimitive | `[1] == 1` | true |

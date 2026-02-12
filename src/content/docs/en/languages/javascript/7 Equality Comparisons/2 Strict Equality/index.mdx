@@ -1,0 +1,178 @@
+---
+title: Strict Equality Operator (===)
+sidebar:
+  order: 14
+description: The === operator in JavaScript — strict comparison with no type coercion, requires same type and same value
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## What is `===`?
+
+The `===` (strict equality) operator compares **both type and value** — it performs **no** type conversion whatsoever. Two operands are only equal when they have the **same type AND the same value**.
+
+```js
+"5" === 5;   // false — string ≠ number
+5 === 5;     // true  — same type, same value
+```
+
+<Aside type="tip" title="Golden Rule">
+Always use `===` instead of `==` in almost every case. This is the best practice recommended by all major style guides.
+</Aside>
+
+---
+
+## How it Works
+
+The **Strict Equality Comparison** algorithm is straightforward:
+
+<Tabs>
+  <TabItem label="Different types → false">
+    If two operands have **different types**, the result is always `false` — no coercion happens:
+
+    ```js
+    "5" === 5;          // false — string ≠ number
+    0 === false;        // false — number ≠ boolean
+    null === undefined; // false — null ≠ undefined
+    "" === 0;           // false — string ≠ number
+    ```
+  </TabItem>
+  <TabItem label="Same type → compare values">
+    If they have the same type, compare the values:
+
+    ```js
+    5 === 5;             // true
+    "hello" === "hello"; // true
+    true === true;       // true
+    null === null;       // true
+    undefined === undefined; // true
+    ```
+  </TabItem>
+  <TabItem label="NaN — the exception">
+    `NaN` is **not equal to itself** — per the IEEE 754 standard:
+
+    ```js
+    NaN === NaN;   // false ← surprise!
+    ```
+
+    To check for NaN, use `Number.isNaN()`:
+
+    ```js
+    Number.isNaN(NaN);      // true (recommended)
+    isNaN("hello");         // true (NOT recommended — coerces)
+    Number.isNaN("hello");  // false (correct)
+    ```
+  </TabItem>
+  <TabItem label="+0 and -0">
+    `===` treats `+0` and `-0` as **equal**:
+
+    ```js
+    +0 === -0;   // true
+    0 === -0;    // true
+    ```
+
+    To distinguish them, use `Object.is()`:
+
+    ```js
+    Object.is(+0, -0); // false
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Comparing Reference Types (Objects)
+
+`===` compares **references**, not contents:
+
+```js
+const a = { name: "Alice" };
+const b = { name: "Alice" };
+const c = a;
+
+a === b;  // false — different references (two separate objects in memory)
+a === c;  // true  — same reference (c points to the same object as a)
+```
+
+<Aside type="note" title="Applies to all non-primitives">
+Reference comparison applies to **all** objects: Array, Function, Date, Map, Set, etc.
+
+```js
+[1, 2] === [1, 2];               // false
+(() => {}) === (() => {});        // false
+new Date(0) === new Date(0);     // false
+```
+</Aside>
+
+---
+
+## `===` with Different Data Types
+
+| Comparison | Result | Reason |
+| ---------- | ------ | ------ |
+| `5 === 5` | ✅ true | Same type, same value |
+| `"5" === 5` | ❌ false | Different types (string ≠ number) |
+| `true === 1` | ❌ false | Different types (boolean ≠ number) |
+| `null === undefined` | ❌ false | Different types |
+| `null === null` | ✅ true | Same type, same value |
+| `NaN === NaN` | ❌ false | IEEE 754 exception |
+| `+0 === -0` | ✅ true | Treated as equal |
+| `{} === {}` | ❌ false | Different references |
+
+---
+
+## Practical Applications
+
+<Tabs>
+  <TabItem label="Type checking">
+    ```js
+    // typeof always returns a string → safe to use ===
+    if (typeof x === "string") {
+      // x is definitely a string
+    }
+    if (typeof x === "undefined") {
+      // x is undeclared or undefined
+    }
+    ```
+  </TabItem>
+  <TabItem label="Switch/case">
+    `switch` in JS uses **===** (strict) for comparisons:
+
+    ```js
+    switch (value) {
+      case 1:     // value === 1
+        break;
+      case "1":   // value === "1" (different from case 1!)
+        break;
+    }
+    ```
+  </TabItem>
+  <TabItem label="Array methods">
+    Methods like `indexOf`, `includes`, `lastIndexOf` use **===** (except `includes` uses SameValueZero for NaN):
+
+    ```js
+    [1, 2, 3].indexOf("1");    // -1 (not found — different type)
+    [NaN].indexOf(NaN);        // -1 (NaN !== NaN)
+    [NaN].includes(NaN);       // true (SameValueZero — exception!)
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Summary
+
+<CardGrid>
+  <Card title="No coercion" icon="close">
+    `===` **never** performs automatic type conversion
+  </Card>
+  <Card title="Different types = false" icon="warning">
+    Two values of **different types** → always `false`, no value comparison needed
+  </Card>
+  <Card title="Reference for Objects" icon="random">
+    Objects/Arrays/Functions are compared by **reference**, not content
+  </Card>
+  <Card title="NaN ≠ NaN" icon="star">
+    `NaN === NaN` is `false` — use `Number.isNaN()` instead
+  </Card>
+</CardGrid>

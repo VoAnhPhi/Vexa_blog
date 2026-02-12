@@ -1,0 +1,187 @@
+---
+title: Same-value Equality — Object.is()
+sidebar:
+  order: 15
+description: Object.is() in JavaScript — the most precise equality comparison, correctly handles NaN and distinguishes +0/-0
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## What is `Object.is()`?
+
+`Object.is()` is a **static method** on `Object` that performs the **most precise equality comparison** (same-value equality) in JavaScript.
+
+```js
+Object.is(value1, value2);
+```
+
+It behaves like `===` in **most** cases, but differs in **two important ways**:
+
+<CardGrid>
+  <Card title="NaN === NaN → false" icon="close">
+    `Object.is(NaN, NaN)` → **true** ✅
+  </Card>
+  <Card title="+0 === -0 → true" icon="close">
+    `Object.is(+0, -0)` → **false** ❌
+  </Card>
+</CardGrid>
+
+---
+
+## Comparison with `===`
+
+<Tabs>
+  <TabItem label="Same behavior">
+    In **99% of cases**, `Object.is()` gives the same result as `===`:
+
+    ```js
+    Object.is(5, 5);           // true  — same as 5 === 5
+    Object.is("a", "a");       // true  — same as "a" === "a"
+    Object.is(null, null);     // true  — same as null === null
+    Object.is("5", 5);         // false — same as "5" === 5
+    Object.is(null, undefined); // false — same as null === undefined
+    ```
+  </TabItem>
+  <TabItem label="Different: NaN">
+    ```js
+    // === with NaN
+    NaN === NaN;             // false ← logically wrong!
+
+    // Object.is() with NaN
+    Object.is(NaN, NaN);    // true  ← correct: NaN IS NaN
+    ```
+
+    This makes `Object.is()` useful in algorithms that need to precisely identify NaN values.
+  </TabItem>
+  <TabItem label="Different: ±0">
+    ```js
+    // === with ±0
+    +0 === -0;               // true  ← hides the difference!
+
+    // Object.is() with ±0
+    Object.is(+0, -0);       // false ← recognizes +0 ≠ -0
+    Object.is(+0, +0);       // true
+    Object.is(-0, -0);       // true
+    ```
+
+    In mathematics, `+0` and `-0` **are different** (e.g., `1/+0 = Infinity`, `1/-0 = -Infinity`).
+  </TabItem>
+</Tabs>
+
+---
+
+## When to use `Object.is()`?
+
+<CardGrid>
+  <Card title="NaN checks" icon="star">
+    Alternative to `Number.isNaN()` when comparing two values directly
+  </Card>
+  <Card title="Distinguishing ±0" icon="setting">
+    Math algorithms, polyfills, or when the sign of zero matters
+  </Card>
+  <Card title="Polyfills & Libraries" icon="seti:javascript">
+    Used internally by React (`Object.is` for `useState` dependency check), SameValue in spec
+  </Card>
+</CardGrid>
+
+---
+
+## Practical Examples
+
+### State change detection (React pattern)
+
+```js
+// React uses Object.is() to check if state has changed
+const prevState = NaN;
+const nextState = NaN;
+
+// With ===:
+prevState === nextState;          // false → re-render (WRONG — value unchanged!)
+
+// With Object.is():
+Object.is(prevState, nextState);  // true → skip re-render (CORRECT)
+```
+
+### Distinguishing signed zero in math
+
+```js
+function isNegativeZero(x) {
+  return Object.is(x, -0);
+}
+
+isNegativeZero(-0);  // true
+isNegativeZero(0);   // false
+isNegativeZero(-1);  // false
+
+// Application: direction, graphs, physically-based rendering
+console.log(1 / +0);  // Infinity
+console.log(1 / -0);  // -Infinity
+```
+
+### Polyfill for `Object.is()`
+
+```js
+// For environments before ES6
+if (!Object.is) {
+  Object.is = function(x, y) {
+    if (x === y) {
+      // Handle +0 vs -0
+      return x !== 0 || 1 / x === 1 / y;
+    }
+    // Handle NaN
+    return x !== x && y !== y;
+  };
+}
+```
+
+---
+
+## Complete Comparison Table
+
+| Expression | `==` | `===` | `Object.is()` |
+| ---------- | ---- | ----- | -------------- |
+| `5, 5` | ✅ | ✅ | ✅ |
+| `"5", 5` | ✅ | ❌ | ❌ |
+| `0, false` | ✅ | ❌ | ❌ |
+| `"", 0` | ✅ | ❌ | ❌ |
+| `null, undefined` | ✅ | ❌ | ❌ |
+| `null, null` | ✅ | ✅ | ✅ |
+| `NaN, NaN` | ❌ | ❌ | ✅ |
+| `+0, -0` | ✅ | ✅ | ❌ |
+| `{}, {}` | ❌ | ❌ | ❌ |
+
+---
+
+## SameValue vs SameValueZero
+
+<Aside type="note" title="Under the hood">
+The JavaScript spec has **4 comparison algorithms**:
+
+| Algorithm | Used by | NaN == NaN? | +0 == -0? |
+| --------- | ------- | ----------- | --------- |
+| **Abstract Equality** | `==` | ❌ | ✅ |
+| **Strict Equality** | `===` | ❌ | ✅ |
+| **SameValue** | `Object.is()` | ✅ | ❌ |
+| **SameValueZero** | `Map`, `Set`, `includes()` | ✅ | ✅ |
+
+`SameValueZero` is the "pragmatic version" — treats NaN as equal to itself (great for collections), but still considers +0 = -0 (more convenient).
+</Aside>
+
+---
+
+## Summary
+
+<CardGrid>
+  <Card title="Like ===" icon="approve-check">
+    In 99% of cases, `Object.is()` gives the same result as `===`
+  </Card>
+  <Card title="NaN = NaN" icon="star">
+    `Object.is(NaN, NaN)` → `true` — more correct than `===`
+  </Card>
+  <Card title="+0 ≠ -0" icon="setting">
+    `Object.is(+0, -0)` → `false` — distinguishes signed zero
+  </Card>
+  <Card title="Use when precision matters" icon="rocket">
+    Algorithms, polyfills, React state comparison, spec-level code
+  </Card>
+</CardGrid>

@@ -1,0 +1,104 @@
+---
+title: Equality Comparisons
+sidebar:
+  order: 12
+description: Equality Comparisons in JavaScript — ==, ===, Object.is() and how JavaScript checks if two values are equal
+---
+
+import { Card, CardGrid, LinkCard, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+**Equality Comparisons** determine whether two values are "equal" in JavaScript. When you write a comparison expression (e.g., `a == b` or `a === b`), JavaScript checks the relationship between the two values following different rules for each operator.
+
+---
+
+## Contents
+
+<CardGrid>
+  <LinkCard
+    title="== (Loose Equality)"
+    description="Loose comparison — auto-coerces types before comparing values"
+    href="/en/languages/javascript/7-equality-comparisons/1-loose-equality/"
+  />
+  <LinkCard
+    title="=== (Strict Equality)"
+    description="Strict comparison — must have same type AND same value"
+    href="/en/languages/javascript/7-equality-comparisons/2-strict-equality/"
+  />
+  <LinkCard
+    title="Object.is() (Same-value Equality)"
+    description="Most precise comparison — correctly handles NaN and ±0"
+    href="/en/languages/javascript/7-equality-comparisons/3-same-value-equality/"
+  />
+</CardGrid>
+
+---
+
+## Quick Overview
+
+<CardGrid>
+  <Card title="== (Loose)" icon="warning">
+    **Coerces types** before comparing — `"5" == 5` is `true`
+  </Card>
+  <Card title="=== (Strict)" icon="approve-check">
+    **No coercion** — must have same type AND same value
+  </Card>
+  <Card title="Object.is()" icon="star">
+    Like `===` but correctly handles `NaN` and distinguishes `+0` / `-0`
+  </Card>
+</CardGrid>
+
+<Aside type="tip" title="Best Practice">
+Always use `===` by default. Only use `==` when you **intentionally** want coercion, and `Object.is()` for special cases (NaN, ±0).
+</Aside>
+
+---
+
+## Quick Examples
+
+<Tabs>
+  <TabItem label="== (Loose)">
+    ```js
+    "5" == 5;       // true  — coerces "5" to 5
+    0 == false;     // true  — coerces false to 0
+    null == undefined; // true — special rule
+    "" == 0;        // true  — coerces "" to 0
+    ```
+  </TabItem>
+  <TabItem label="=== (Strict)">
+    ```js
+    "5" === 5;       // false — different types
+    0 === false;     // false — number ≠ boolean
+    null === undefined; // false — different types
+    5 === 5;         // true  — same type, same value
+    ```
+  </TabItem>
+  <TabItem label="Object.is()">
+    ```js
+    Object.is(NaN, NaN);   // true  (NaN === NaN is false!)
+    Object.is(+0, -0);     // false (+0 === -0 is true!)
+    Object.is("5", 5);     // false — same as ===
+    Object.is(5, 5);       // true  — same as ===
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Comparison Table: `==` vs `===` vs `Object.is()`
+
+| Feature | `==` (Loose) | `===` (Strict) | `Object.is()` |
+| ------- | ------------ | -------------- | -------------- |
+| **Type coercion** | ✅ Yes | ❌ No | ❌ No |
+| **Type matching** | JS auto-coerces | Must be same | Must be same |
+| `"5"` vs `5` | ✅ true | ❌ false | ❌ false |
+| `0` vs `false` | ✅ true | ❌ false | ❌ false |
+| `null` vs `undefined` | ✅ true | ❌ false | ❌ false |
+| `NaN` vs `NaN` | ❌ false | ❌ false | ✅ true |
+| `+0` vs `-0` | ✅ true | ✅ true | ❌ false |
+| **Recommendation** | ⚠️ Avoid | 🔹 Default choice | 🔸 Special cases |
+
+<Aside type="caution" title="Golden Rules">
+- **Default**: always use `===`
+- **Only exception for `==`**: checking `null`/`undefined` — `x == null` is equivalent to `x === null || x === undefined`
+- **Use `Object.is()`** when you need to distinguish `NaN` or `+0`/`-0` (algorithms, polyfills, etc.)
+</Aside>
