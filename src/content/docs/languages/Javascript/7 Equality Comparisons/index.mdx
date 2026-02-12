@@ -1,0 +1,104 @@
+---
+title: Equality Comparisons (So Sánh Bằng)
+sidebar:
+  order: 12
+description: So sánh bằng trong JavaScript — ==, ===, Object.is() và cách JavaScript kiểm tra hai giá trị có bằng nhau hay không
+---
+
+import { Card, CardGrid, LinkCard, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+**Equality Comparisons** (so sánh bằng) là cách **JavaScript** kiểm tra xem hai giá trị có "bằng nhau" hay không. Khi bạn viết biểu thức so sánh (ví dụ: `a == b` hoặc `a === b`), JavaScript sẽ kiểm tra mối quan hệ giữa hai giá trị theo quy tắc riêng của từng toán tử.
+
+---
+
+## Nội dung
+
+<CardGrid>
+  <LinkCard
+    title="== (Loose Equality)"
+    description="So sánh lỏng — tự động ép kiểu trước khi so sánh giá trị"
+    href="/languages/javascript/7-equality-comparisons/1-loose-equality/"
+  />
+  <LinkCard
+    title="=== (Strict Equality)"
+    description="So sánh chặt — phải cùng kiểu dữ liệu và cùng giá trị"
+    href="/languages/javascript/7-equality-comparisons/2-strict-equality/"
+  />
+  <LinkCard
+    title="Object.is() (Same-value Equality)"
+    description="So sánh giá trị chính xác nhất — xử lý đúng NaN và ±0"
+    href="/languages/javascript/7-equality-comparisons/3-same-value-equality/"
+  />
+</CardGrid>
+
+---
+
+## Tổng quan nhanh
+
+<CardGrid>
+  <Card title="== (Loose)" icon="warning">
+    **Tự ép kiểu** trước khi so sánh — `"5" == 5` là `true`
+  </Card>
+  <Card title="=== (Strict)" icon="approve-check">
+    **Không ép kiểu** — phải cùng kiểu VÀ cùng giá trị
+  </Card>
+  <Card title="Object.is()" icon="star">
+    Giống `===` nhưng xử lý đúng `NaN` và phân biệt `+0` / `-0`
+  </Card>
+</CardGrid>
+
+<Aside type="tip" title="Khuyến nghị">
+Luôn dùng `===` trong hầu hết trường hợp. Chỉ dùng `==` khi **cố ý** muốn ép kiểu, và `Object.is()` cho các trường hợp đặc biệt (NaN, ±0).
+</Aside>
+
+---
+
+## Ví dụ nhanh
+
+<Tabs>
+  <TabItem label="== (Loose)">
+    ```js
+    "5" == 5;       // true  — ép "5" thành 5
+    0 == false;     // true  — ép false thành 0
+    null == undefined; // true — quy tắc đặc biệt
+    "" == 0;        // true  — ép "" thành 0
+    ```
+  </TabItem>
+  <TabItem label="=== (Strict)">
+    ```js
+    "5" === 5;       // false — khác kiểu
+    0 === false;     // false — number ≠ boolean
+    null === undefined; // false — khác kiểu
+    5 === 5;         // true  — cùng kiểu, cùng giá trị
+    ```
+  </TabItem>
+  <TabItem label="Object.is()">
+    ```js
+    Object.is(NaN, NaN);   // true  (NaN === NaN là false!)
+    Object.is(+0, -0);     // false (+0 === -0 là true!)
+    Object.is("5", 5);     // false — giống ===
+    Object.is(5, 5);       // true  — giống ===
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Bảng so sánh `==`, `===`, và `Object.is()`
+
+| Đặc điểm | `==` (Loose) | `===` (Strict) | `Object.is()` |
+| --------- | ------------ | -------------- | -------------- |
+| **Chuyển đổi kiểu** | ✅ Có | ❌ Không | ❌ Không |
+| **So sánh kiểu** | JS tự ép kiểu | Phải giống nhau | Phải giống nhau |
+| `"5"` vs `5` | ✅ true | ❌ false | ❌ false |
+| `0` vs `false` | ✅ true | ❌ false | ❌ false |
+| `null` vs `undefined` | ✅ true | ❌ false | ❌ false |
+| `NaN` vs `NaN` | ❌ false | ❌ false | ✅ true |
+| `+0` vs `-0` | ✅ true | ✅ true | ❌ false |
+| **Khuyến nghị** | ⚠️ Hạn chế dùng | 🔹 Dùng mặc định | 🔸 Trường hợp đặc biệt |
+
+<Aside type="caution" title="Quy tắc vàng">
+- **Mặc định**: luôn dùng `===`
+- **Ngoại lệ duy nhất cho `==`**: kiểm tra `null`/`undefined` — `x == null` tương đương `x === null || x === undefined`
+- **Dùng `Object.is()`** khi cần phân biệt `NaN` hoặc `+0`/`-0` (thuật toán, polyfill, v.v.)
+</Aside>

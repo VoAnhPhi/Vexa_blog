@@ -1,0 +1,178 @@
+---
+title: Strict Equality Operator (===)
+sidebar:
+  order: 14
+description: Toán tử === trong JavaScript — so sánh chặt, không ép kiểu, phải cùng kiểu và cùng giá trị
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## `===` là gì?
+
+Toán tử `===` (strict equality) so sánh **cả kiểu dữ liệu lẫn giá trị** — **không** thực hiện bất kỳ chuyển đổi kiểu nào. Hai toán hạng chỉ bằng nhau khi **cùng kiểu VÀ cùng giá trị**.
+
+```js
+"5" === 5;   // false — string ≠ number
+5 === 5;     // true  — cùng kiểu, cùng giá trị
+```
+
+<Aside type="tip" title="Quy tắc vàng">
+Luôn dùng `===` thay cho `==` trong hầu hết mọi trường hợp. Đây là best practice được mọi style guide khuyến nghị.
+</Aside>
+
+---
+
+## Quy tắc hoạt động
+
+Thuật toán **Strict Equality Comparison** rất đơn giản:
+
+<Tabs>
+  <TabItem label="Khác kiểu → false">
+    Nếu hai toán hạng **khác kiểu**, kết quả luôn là `false` — không hề có ép kiểu:
+
+    ```js
+    "5" === 5;          // false — string ≠ number
+    0 === false;        // false — number ≠ boolean
+    null === undefined; // false — null ≠ undefined
+    "" === 0;           // false — string ≠ number
+    ```
+  </TabItem>
+  <TabItem label="Cùng kiểu → so sánh giá trị">
+    Nếu cùng kiểu, so sánh giá trị:
+
+    ```js
+    5 === 5;             // true
+    "hello" === "hello"; // true
+    true === true;       // true
+    null === null;       // true
+    undefined === undefined; // true
+    ```
+  </TabItem>
+  <TabItem label="NaN — ngoại lệ">
+    `NaN` **không bằng chính nó** — đây là đặc điểm theo chuẩn IEEE 754:
+
+    ```js
+    NaN === NaN;   // false ← bất ngờ!
+    ```
+
+    Để kiểm tra NaN, dùng `Number.isNaN()`:
+
+    ```js
+    Number.isNaN(NaN);      // true (khuyến nghị)
+    isNaN("hello");         // true (KHÔNG khuyến nghị — ép kiểu)
+    Number.isNaN("hello");  // false (đúng)
+    ```
+  </TabItem>
+  <TabItem label="+0 và -0">
+    `===` xem `+0` và `-0` là **bằng nhau**:
+
+    ```js
+    +0 === -0;   // true
+    0 === -0;    // true
+    ```
+
+    Để phân biệt, dùng `Object.is()`:
+
+    ```js
+    Object.is(+0, -0); // false
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## So sánh kiểu tham chiếu (Objects)
+
+`===` so sánh **tham chiếu** (reference), không phải nội dung:
+
+```js
+const a = { name: "An" };
+const b = { name: "An" };
+const c = a;
+
+a === b;  // false — khác tham chiếu (hai object khác nhau trong bộ nhớ)
+a === c;  // true  — cùng tham chiếu (c trỏ tới cùng object với a)
+```
+
+<Aside type="note" title="Áp dụng cho mọi non-primitive">
+Quy tắc so sánh tham chiếu áp dụng cho **tất cả** object: Array, Function, Date, Map, Set, v.v.
+
+```js
+[1, 2] === [1, 2];               // false
+(() => {}) === (() => {});        // false
+new Date(0) === new Date(0);     // false
+```
+</Aside>
+
+---
+
+## `===` với các kiểu dữ liệu
+
+| So sánh | Kết quả | Lý do |
+| ------- | ------- | ----- |
+| `5 === 5` | ✅ true | Cùng kiểu, cùng giá trị |
+| `"5" === 5` | ❌ false | Khác kiểu (string ≠ number) |
+| `true === 1` | ❌ false | Khác kiểu (boolean ≠ number) |
+| `null === undefined` | ❌ false | Khác kiểu |
+| `null === null` | ✅ true | Cùng kiểu, cùng giá trị |
+| `NaN === NaN` | ❌ false | Ngoại lệ IEEE 754 |
+| `+0 === -0` | ✅ true | Xem như bằng nhau |
+| `{} === {}` | ❌ false | Khác tham chiếu |
+
+---
+
+## Ứng dụng thực tế
+
+<Tabs>
+  <TabItem label="Kiểm tra kiểu">
+    ```js
+    // typeof luôn trả về string → dùng === an toàn
+    if (typeof x === "string") {
+      // x chắc chắn là string
+    }
+    if (typeof x === "undefined") {
+      // x chưa được khai báo hoặc undefined
+    }
+    ```
+  </TabItem>
+  <TabItem label="Switch/case">
+    `switch` trong JS dùng **===** (strict) để so sánh:
+
+    ```js
+    switch (value) {
+      case 1:     // value === 1
+        break;
+      case "1":   // value === "1" (khác case 1!)
+        break;
+    }
+    ```
+  </TabItem>
+  <TabItem label="Array methods">
+    Các method như `indexOf`, `includes`, `lastIndexOf` dùng **===** (ngoại trừ `includes` dùng SameValueZero cho NaN):
+
+    ```js
+    [1, 2, 3].indexOf("1");    // -1 (không tìm thấy — khác kiểu)
+    [NaN].indexOf(NaN);        // -1 (NaN !== NaN)
+    [NaN].includes(NaN);       // true (SameValueZero — ngoại lệ!)
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Tóm tắt
+
+<CardGrid>
+  <Card title="Không ép kiểu" icon="close">
+    `===` **không bao giờ** tự chuyển đổi kiểu dữ liệu
+  </Card>
+  <Card title="Khác kiểu = false" icon="warning">
+    Hai giá trị **khác kiểu** → luôn `false`, không cần so sánh giá trị
+  </Card>
+  <Card title="Tham chiếu cho Object" icon="random">
+    Object/Array/Function so sánh theo **tham chiếu**, không phải nội dung
+  </Card>
+  <Card title="NaN ≠ NaN" icon="star">
+    `NaN === NaN` là `false` — dùng `Number.isNaN()` thay thế
+  </Card>
+</CardGrid>

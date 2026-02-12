@@ -1,0 +1,187 @@
+---
+title: Same-value Equality — Object.is()
+sidebar:
+  order: 15
+description: Object.is() trong JavaScript — so sánh giá trị chính xác nhất, xử lý đúng NaN và phân biệt +0/-0
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## `Object.is()` là gì?
+
+`Object.is()` là **phương thức tĩnh** của `Object`, thực hiện **so sánh giá trị chính xác nhất** (same-value equality) trong JavaScript.
+
+```js
+Object.is(value1, value2);
+```
+
+Giống `===` trong **hầu hết** trường hợp, nhưng khác ở **hai điểm quan trọng**:
+
+<CardGrid>
+  <Card title="NaN === NaN → false" icon="close">
+    `Object.is(NaN, NaN)` → **true** ✅
+  </Card>
+  <Card title="+0 === -0 → true" icon="close">
+    `Object.is(+0, -0)` → **false** ❌
+  </Card>
+</CardGrid>
+
+---
+
+## So sánh với `===`
+
+<Tabs>
+  <TabItem label="Giống nhau">
+    Trong **99% trường hợp**, `Object.is()` cho kết quả giống `===`:
+
+    ```js
+    Object.is(5, 5);           // true  — giống 5 === 5
+    Object.is("a", "a");       // true  — giống "a" === "a"
+    Object.is(null, null);     // true  — giống null === null
+    Object.is("5", 5);         // false — giống "5" === 5
+    Object.is(null, undefined); // false — giống null === undefined
+    ```
+  </TabItem>
+  <TabItem label="Khác nhau: NaN">
+    ```js
+    // === cho NaN
+    NaN === NaN;             // false ← sai về mặt logic!
+
+    // Object.is() cho NaN
+    Object.is(NaN, NaN);    // true  ← đúng: NaN IS NaN
+    ```
+
+    Đây là lý do `Object.is()` hữu ích trong thuật toán cần xác định chính xác giá trị NaN.
+  </TabItem>
+  <TabItem label="Khác nhau: ±0">
+    ```js
+    // === cho ±0
+    +0 === -0;               // true  ← che giấu sự khác biệt!
+
+    // Object.is() cho ±0
+    Object.is(+0, -0);       // false ← nhận ra +0 ≠ -0
+    Object.is(+0, +0);       // true
+    Object.is(-0, -0);       // true
+    ```
+
+    Trong toán học, `+0` và `-0` **khác nhau** (ví dụ: `1/+0 = Infinity`, `1/-0 = -Infinity`).
+  </TabItem>
+</Tabs>
+
+---
+
+## Khi nào dùng `Object.is()`?
+
+<CardGrid>
+  <Card title="Kiểm tra NaN" icon="star">
+    Thay thế `Number.isNaN()` khi cần so sánh trực tiếp hai giá trị
+  </Card>
+  <Card title="Phân biệt ±0" icon="setting">
+    Thuật toán toán học, polyfill, hoặc khi dấu của zero quan trọng
+  </Card>
+  <Card title="Polyfill & Library" icon="seti:javascript">
+    Dùng trong nội bộ React (`Object.is` cho `useState` dependency check), SameValue trong spec
+  </Card>
+</CardGrid>
+
+---
+
+## Ví dụ thực tế
+
+### Kiểm tra thay đổi state (React pattern)
+
+```js
+// React dùng Object.is() để check state có thay đổi không
+const prevState = NaN;
+const nextState = NaN;
+
+// Nếu dùng ===:
+prevState === nextState;          // false → re-render (SAI — giá trị không đổi!)
+
+// Dùng Object.is():
+Object.is(prevState, nextState);  // true → skip re-render (ĐÚNG)
+```
+
+### Phân biệt dấu zero trong toán học
+
+```js
+function isNegativeZero(x) {
+  return Object.is(x, -0);
+}
+
+isNegativeZero(-0);  // true
+isNegativeZero(0);   // false
+isNegativeZero(-1);  // false
+
+// Ứng dụng: hướng di chuyển, đồ thị, physically-based rendering
+console.log(1 / +0);  // Infinity
+console.log(1 / -0);  // -Infinity
+```
+
+### Polyfill cho `Object.is()`
+
+```js
+// Nếu cần hỗ trợ môi trường cũ (trước ES6)
+if (!Object.is) {
+  Object.is = function(x, y) {
+    if (x === y) {
+      // Xử lý +0 vs -0
+      return x !== 0 || 1 / x === 1 / y;
+    }
+    // Xử lý NaN
+    return x !== x && y !== y;
+  };
+}
+```
+
+---
+
+## Bảng tổng hợp tất cả phép so sánh
+
+| Biểu thức | `==` | `===` | `Object.is()` |
+| --------- | ---- | ----- | -------------- |
+| `5, 5` | ✅ | ✅ | ✅ |
+| `"5", 5` | ✅ | ❌ | ❌ |
+| `0, false` | ✅ | ❌ | ❌ |
+| `"", 0` | ✅ | ❌ | ❌ |
+| `null, undefined` | ✅ | ❌ | ❌ |
+| `null, null` | ✅ | ✅ | ✅ |
+| `NaN, NaN` | ❌ | ❌ | ✅ |
+| `+0, -0` | ✅ | ✅ | ❌ |
+| `{}, {}` | ❌ | ❌ | ❌ |
+
+---
+
+## SameValue vs SameValueZero
+
+<Aside type="note" title="Thuật toán bên dưới">
+JavaScript spec có **4 thuật toán so sánh**: 
+
+| Thuật toán | Dùng bởi | NaN == NaN? | +0 == -0? |
+| ---------- | -------- | ----------- | --------- |
+| **Abstract Equality** | `==` | ❌ | ✅ |
+| **Strict Equality** | `===` | ❌ | ✅ |
+| **SameValue** | `Object.is()` | ✅ | ❌ |
+| **SameValueZero** | `Map`, `Set`, `includes()` | ✅ | ✅ |
+
+`SameValueZero` là "phiên bản thực dụng" — nhận NaN bằng chính nó (tốt cho collection), nhưng vẫn xem +0 = -0 (tiện lợi hơn).
+</Aside>
+
+---
+
+## Tóm tắt
+
+<CardGrid>
+  <Card title="Giống ===" icon="approve-check">
+    Trong 99% trường hợp, `Object.is()` cho kết quả giống `===`
+  </Card>
+  <Card title="NaN = NaN" icon="star">
+    `Object.is(NaN, NaN)` → `true` — chính xác hơn `===`
+  </Card>
+  <Card title="+0 ≠ -0" icon="setting">
+    `Object.is(+0, -0)` → `false` — phân biệt dấu zero
+  </Card>
+  <Card title="Dùng khi cần chính xác" icon="rocket">
+    Thuật toán, polyfill, React state comparison, spec-level code
+  </Card>
+</CardGrid>

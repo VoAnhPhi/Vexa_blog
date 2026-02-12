@@ -1,0 +1,146 @@
+---
+title: Loose Equality Operator (==)
+sidebar:
+  order: 13
+description: Toán tử == trong JavaScript — so sánh lỏng với tự động ép kiểu (type coercion)
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## `==` là gì?
+
+Toán tử `==` (loose equality) so sánh **giá trị** giữa hai toán hạng **sau khi** JavaScript tự động **chuyển đổi kiểu dữ liệu (type coercion)** nếu cần.
+
+```js
+"5" == 5;   // true — "5" bị ép thành 5
+0 == false; // true — false bị ép thành 0
+```
+
+<Aside type="caution" title="Cẩn thận!">
+Chính vì **tự ép kiểu**, `==` có thể cho kết quả bất ngờ. Đây là lý do hầu hết style guide khuyên dùng `===`.
+</Aside>
+
+---
+
+## Quy tắc ép kiểu của `==`
+
+JavaScript thực hiện ép kiểu theo **thuật toán Abstract Equality Comparison** (spec ECMA-262):
+
+<Tabs>
+  <TabItem label="Cùng kiểu">
+    Nếu hai toán hạng **cùng kiểu**, `==` hoạt động **giống hệt** `===`:
+
+    ```js
+    5 == 5;           // true
+    "hello" == "hello"; // true
+    null == null;     // true
+    ```
+  </TabItem>
+  <TabItem label="null & undefined">
+    `null` và `undefined` chỉ **bằng nhau** với chính nó và với nhau:
+
+    ```js
+    null == undefined;  // true
+    null == 0;          // false
+    undefined == "";    // false
+    undefined == false; // false
+    ```
+  </TabItem>
+  <TabItem label="Number & String">
+    String → Number trước khi so sánh:
+
+    ```js
+    "42" == 42;   // true — "42" → 42
+    "" == 0;      // true — "" → 0
+    "abc" == NaN; // false — "abc" → NaN
+    ```
+  </TabItem>
+  <TabItem label="Boolean">
+    Boolean → Number trước (`true` → 1, `false` → 0), rồi so sánh tiếp:
+
+    ```js
+    true == 1;    // true  — true → 1
+    false == 0;   // true  — false → 0
+    true == "1";  // true  — true → 1, "1" → 1
+    false == "";  // true  — false → 0, "" → 0
+    ```
+  </TabItem>
+  <TabItem label="Object vs Primitive">
+    Object gọi `valueOf()` hoặc `toString()` để chuyển về primitive:
+
+    ```js
+    [1] == 1;         // true — [1].toString() → "1" → 1
+    [1,2] == "1,2";   // true — [1,2].toString() → "1,2"
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Sơ đồ quy tắc
+
+```
+a == b
+│
+├─ Cùng kiểu? → So sánh giống ===
+│
+├─ null/undefined? → null == undefined = true, còn lại false
+│
+├─ Number vs String? → String → Number
+│
+├─ Boolean? → Boolean → Number, rồi so sánh lại
+│
+└─ Object vs Primitive? → Object → toPrimitive(), rồi so sánh lại
+```
+
+---
+
+## Các trường hợp "khó tin" (wtf)
+
+```js
+"" == 0;            // true   — "" → 0
+"0" == false;       // true   — false → 0, "0" → 0
+"\t\n" == 0;        // true   — whitespace → 0
+[] == false;        // true   — [] → "" → 0, false → 0
+[] == ![];          // true   — ![] → false → 0, [] → "" → 0
+```
+
+<Aside type="caution" title="Đây là lý do nên dùng ===">
+Những kết quả trên không sai — chúng đúng theo spec. Nhưng rất **khó đoán** và dễ gây bug. Dùng `===` để tránh hoàn toàn!
+</Aside>
+
+---
+
+## Khi nào `==` thực sự hữu ích?
+
+Trường hợp **duy nhất** mà `==` được cộng đồng chấp nhận:
+
+```js
+// Kiểm tra null hoặc undefined cùng lúc
+if (x == null) {
+  // x là null HOẶC undefined
+}
+
+// Tương đương với:
+if (x === null || x === undefined) {
+  // ...
+}
+```
+
+<Aside type="tip" title="Best Practice">
+- **Mặc định**: luôn dùng `===`
+- **Ngoại lệ**: `x == null` để check null/undefined gọn hơn
+- Bật ESLint rule `eqeqeq` để tự động cảnh báo khi dùng `==`
+</Aside>
+
+---
+
+## Tóm tắt
+
+| Quy tắc | Ví dụ | Kết quả |
+| ------- | ----- | ------- |
+| Cùng kiểu → giống `===` | `5 == 5` | true |
+| `null == undefined` | `null == undefined` | true |
+| String → Number | `"5" == 5` | true |
+| Boolean → Number | `true == 1` | true |
+| Object → toPrimitive | `[1] == 1` | true |
