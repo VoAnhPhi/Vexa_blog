@@ -1,0 +1,145 @@
+---
+title: do...while Loop
+sidebar:
+  order: 18
+description: The do...while loop in JavaScript — executes at least once, then checks the condition
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## What is `do...while`?
+
+The `do...while` statement creates a loop that executes a specified statement **until** the test condition evaluates to `false`. The condition is evaluated **after** executing the statement, resulting in the statement executing **at least once**.
+
+```js
+do {
+  // statement(s)
+} while (condition);
+```
+
+<CardGrid>
+  <Card title="Runs first" icon="rocket">
+    Body executes **before** the condition is checked
+  </Card>
+  <Card title="At least once" icon="approve-check">
+    **Always** runs at least once — even if condition is false initially
+  </Card>
+</CardGrid>
+
+---
+
+## How is it different from `while`?
+
+<Tabs>
+  <TabItem label="while (checks first)">
+    ```js
+    let i = 10;
+    while (i < 5) {
+      console.log(i); // ← NEVER runs
+      i++;
+    }
+    // No output — condition is false from the start
+    ```
+  </TabItem>
+  <TabItem label="do...while (runs first)">
+    ```js
+    let i = 10;
+    do {
+      console.log(i); // ← RUNS ONCE: prints 10
+      i++;
+    } while (i < 5);
+    // Output: 10
+    ```
+  </TabItem>
+</Tabs>
+
+<Aside type="note" title="The key difference">
+- `while`: checks condition **first** → if false immediately → **never executes**
+- `do...while`: runs **at least once**, then checks the condition
+</Aside>
+
+---
+
+## Examples
+
+<Tabs>
+  <TabItem label="Basic counting">
+    ```js
+    let i = 0;
+    do {
+      console.log(i);
+      i++;
+    } while (i < 5);
+    // Output: 0, 1, 2, 3, 4
+    ```
+  </TabItem>
+  <TabItem label="Menu (at least once)">
+    ```js
+    let choice;
+    do {
+      choice = prompt("Choose: 1) View | 2) Edit | 3) Quit");
+
+      if (choice === "1") console.log("Viewing...");
+      else if (choice === "2") console.log("Editing...");
+    } while (choice !== "3");
+
+    console.log("Goodbye!");
+    ```
+  </TabItem>
+  <TabItem label="Input validation">
+    ```js
+    let num;
+    do {
+      num = Number(prompt("Enter a positive number:"));
+    } while (isNaN(num) || num <= 0);
+
+    console.log(`You entered: ${num}`);
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## When to use `do...while`?
+
+<CardGrid>
+  <Card title="Interactive menus" icon="list-format">
+    Display menu at least once, loop until user chooses to exit
+  </Card>
+  <Card title="Input validation" icon="approve-check">
+    Ask for input at least once, loop if invalid
+  </Card>
+  <Card title="Game loops" icon="star">
+    Run at least one game frame, check end condition after
+  </Card>
+  <Card title="Retry logic" icon="random">
+    Attempt an operation at least once, retry on failure
+  </Card>
+</CardGrid>
+
+---
+
+## Practical Example: Retry with Limit
+
+```js
+let attempts = 0;
+let success = false;
+
+do {
+  attempts++;
+  console.log(`Attempt ${attempts}...`);
+
+  // Simulate: 30% chance of success
+  success = Math.random() < 0.3;
+
+  if (success) {
+    console.log("✅ Success!");
+  } else if (attempts >= 5) {
+    console.log("❌ Out of attempts.");
+  }
+} while (!success && attempts < 5);
+```
+
+<Aside type="tip" title="Remember">
+`do...while` = "**do first, ask later**". Use it when you **definitely** need the body to run at least once before checking the condition.
+</Aside>

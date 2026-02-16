@@ -1,0 +1,239 @@
+---
+title: for Loop
+sidebar:
+  order: 19
+description: The for loop in JavaScript — standard control-flow construct with init, condition, update
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## What is `for`?
+
+The `for` loop is a **standard** control-flow construct in JavaScript. It's commonly used to **iterate a known number of times** or **iterate over a sequence of values**, executing a piece of code for each iteration.
+
+```js
+for (init; condition; update) {
+  // statement(s)
+}
+```
+
+<CardGrid>
+  <Card title="init" icon="pencil">
+    Runs **once** at the start — typically declares a counter variable
+  </Card>
+  <Card title="condition" icon="warning">
+    Checked **before** each iteration — if `true`, body executes
+  </Card>
+  <Card title="update" icon="right-arrow">
+    Runs **after** each iteration — typically increments/decrements counter
+  </Card>
+</CardGrid>
+
+---
+
+## Execution Flow
+
+```
+init (once)
+     ↓
+condition → false → STOP
+     ↓ true
+body
+     ↓
+update
+     ↓
+condition → false → STOP
+     ↓ true
+body
+     ...
+```
+
+---
+
+## Basic Examples
+
+<Tabs>
+  <TabItem label="Count 0 → 4">
+    ```js
+    for (let i = 0; i < 5; i++) {
+      console.log(i);
+    }
+    // Output: 0, 1, 2, 3, 4
+    ```
+  </TabItem>
+  <TabItem label="Countdown">
+    ```js
+    for (let i = 5; i > 0; i--) {
+      console.log(i);
+    }
+    console.log("Liftoff! 🚀");
+    // Output: 5, 4, 3, 2, 1, Liftoff! 🚀
+    ```
+  </TabItem>
+  <TabItem label="Step size">
+    ```js
+    // Print even numbers only
+    for (let i = 0; i <= 10; i += 2) {
+      console.log(i);
+    }
+    // Output: 0, 2, 4, 6, 8, 10
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Iterating Arrays
+
+```js
+const fruits = ["apple", "banana", "cherry"];
+
+for (let i = 0; i < fruits.length; i++) {
+  console.log(`${i}: ${fruits[i]}`);
+}
+// 0: apple
+// 1: banana
+// 2: cherry
+```
+
+<Aside type="tip" title="Use for...of for cleaner code">
+If you **don't need the index**, `for...of` is cleaner and safer:
+
+```js
+for (const fruit of fruits) {
+  console.log(fruit);
+}
+```
+</Aside>
+
+---
+
+## Variations
+
+<Tabs>
+  <TabItem label="Omit init">
+    ```js
+    let i = 0;
+    for (; i < 3; i++) {
+      console.log(i);
+    }
+    ```
+  </TabItem>
+  <TabItem label="Omit update">
+    ```js
+    for (let i = 0; i < 3;) {
+      console.log(i);
+      i++; // update inside body
+    }
+    ```
+  </TabItem>
+  <TabItem label="Infinite loop">
+    ```js
+    for (;;) {
+      // equivalent to while(true)
+      const input = prompt("Type 'quit' to exit:");
+      if (input === "quit") break;
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## `break` and `continue`
+
+<Tabs>
+  <TabItem label="break — exit early">
+    ```js
+    for (let i = 0; i < 10; i++) {
+      if (i === 5) break; // stop at 5
+      console.log(i);
+    }
+    // Output: 0, 1, 2, 3, 4
+    ```
+  </TabItem>
+  <TabItem label="continue — skip">
+    ```js
+    for (let i = 0; i < 5; i++) {
+      if (i === 2) continue; // skip 2
+      console.log(i);
+    }
+    // Output: 0, 1, 3, 4
+    ```
+  </TabItem>
+  <TabItem label="Labels (nested loops)">
+    ```js
+    outer: for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (i === 1 && j === 1) break outer; // break from outer loop
+        console.log(i, j);
+      }
+    }
+    // 0 0, 0 1, 0 2, 1 0
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Nested Loops
+
+```js
+// Multiplication table
+for (let i = 2; i <= 4; i++) {
+  for (let j = 1; j <= 5; j++) {
+    console.log(`${i} × ${j} = ${i * j}`);
+  }
+}
+```
+
+<Aside type="caution" title="Performance">
+Nested loops have **O(n × m)** complexity. For large datasets, consider using `Map`/`Set` or alternative algorithms to reduce complexity.
+</Aside>
+
+---
+
+## `for` vs `for...of` vs `for...in`
+
+| Loop | Iterates over | Use for | Example |
+| ---- | ------------- | ------- | ------- |
+| **for** | Index | When you need index or known count | `for (let i = 0; i < n; i++)` |
+| **for...of** | Values | Array, String, Map, Set | `for (const x of arr)` |
+| **for...in** | Keys | Object (enumerable properties) | `for (const k in obj)` |
+
+---
+
+## Practical Examples
+
+<Tabs>
+  <TabItem label="Find prime numbers">
+    ```js
+    function isPrime(n) {
+      if (n < 2) return false;
+      for (let i = 2; i <= Math.sqrt(n); i++) {
+        if (n % i === 0) return false;
+      }
+      return true;
+    }
+
+    for (let i = 2; i <= 20; i++) {
+      if (isPrime(i)) console.log(i);
+    }
+    // 2, 3, 5, 7, 11, 13, 17, 19
+    ```
+  </TabItem>
+  <TabItem label="FizzBuzz">
+    ```js
+    for (let i = 1; i <= 15; i++) {
+      if (i % 15 === 0) console.log("FizzBuzz");
+      else if (i % 3 === 0) console.log("Fizz");
+      else if (i % 5 === 0) console.log("Buzz");
+      else console.log(i);
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+<Aside type="tip" title="Summary">
+`for` is the **most flexible** loop — use it when you know the iteration count, need the index, or need fine-grained control (custom step, multiple counters, conditional break/continue).
+</Aside>

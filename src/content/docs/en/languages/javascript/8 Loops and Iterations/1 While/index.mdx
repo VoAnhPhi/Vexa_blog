@@ -1,0 +1,146 @@
+---
+title: while Loop
+sidebar:
+  order: 17
+description: The while loop in JavaScript — loops while condition is true, checks before executing
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## What is `while`?
+
+The `while` statement creates a loop that executes a specified statement **as long as** the test condition evaluates to `true`. The condition is evaluated **before** executing the statement.
+
+```js
+while (condition) {
+  // statement(s)
+}
+```
+
+<CardGrid>
+  <Card title="Checks first" icon="warning">
+    Condition is evaluated **before** each iteration
+  </Card>
+  <Card title="May run 0 times" icon="information">
+    If condition is false initially → body **never** executes
+  </Card>
+</CardGrid>
+
+---
+
+## Syntax
+
+```js
+while (condition) {
+  // statement(s)
+}
+// condition: expression that returns true or false
+// When condition = true → body executes
+// When condition = false → loop stops
+```
+
+---
+
+## Basic Examples
+
+<Tabs>
+  <TabItem label="Count 0 → 4">
+    ```js
+    let i = 0;
+    while (i < 5) {
+      console.log(i);
+      i++;
+    }
+    // Output: 0, 1, 2, 3, 4
+    ```
+  </TabItem>
+  <TabItem label="Countdown">
+    ```js
+    let count = 5;
+    while (count > 0) {
+      console.log(count);
+      count--;
+    }
+    console.log("Liftoff! 🚀");
+    // Output: 5, 4, 3, 2, 1, Liftoff! 🚀
+    ```
+  </TabItem>
+  <TabItem label="Search">
+    ```js
+    const nums = [3, 7, 2, 9, 5];
+    let idx = 0;
+
+    while (idx < nums.length && nums[idx] !== 9) {
+      idx++;
+    }
+
+    console.log(`Found 9 at index ${idx}`); // index 3
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Infinite Loops
+
+<Aside type="danger" title="Be careful!">
+If the condition is **always true** → the loop never stops → browser/program freezes:
+
+```js
+// ⚠️ DON'T RUN THIS!
+while (true) {
+  console.log("Runs forever");
+}
+```
+
+If you intentionally need an infinite loop (server loop, game loop), always ensure there's a `break` to exit:
+
+```js
+while (true) {
+  const input = prompt("Type 'quit' to exit:");
+  if (input === "quit") break; // ← exit point
+  console.log("You typed:", input);
+}
+```
+</Aside>
+
+---
+
+## When to use `while`?
+
+<CardGrid>
+  <Card title="Unknown iterations" icon="approve-check">
+    Reading a file until EOF, waiting for input, polling an API
+  </Card>
+  <Card title="Complex conditions" icon="setting">
+    Condition depends on calculations inside the loop body
+  </Card>
+</CardGrid>
+
+### Practical example: halving repeatedly
+
+```js
+let n = 128;
+let steps = 0;
+
+while (n > 1) {
+  n = Math.floor(n / 2);
+  steps++;
+}
+
+console.log(`Steps: ${steps}`); // 7 (128→64→32→16→8→4→2→1)
+```
+
+---
+
+## Quick Comparison
+
+| Feature | `while` | `do...while` | `for` |
+| ------- | ------- | ------------ | ----- |
+| Condition check | **Before** | **After** | **Before** |
+| Minimum runs | 0 times | **1 time** | 0 times |
+| Use when | Unknown iterations | Need ≥1 run | Known iterations |
+
+<Aside type="tip" title="Remember">
+Every `for` loop can be rewritten as `while`, and vice versa. Choose whichever is **most readable** for the specific context.
+</Aside>

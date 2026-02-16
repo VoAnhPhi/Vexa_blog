@@ -1,0 +1,160 @@
+---
+title: Loops & Iterations
+sidebar:
+  order: 16
+description: Overview of loops in JavaScript — while, do...while, for and their variants
+---
+
+import { Card, CardGrid, LinkCard, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+**Loops** let you perform a task **repeatedly** in a quick and simple way. Think of a loop as a computerized version of the game: *"Take 5 steps to the east"*.
+
+```js
+for (let i = 0; i < 5; i++) {
+  console.log("Step to the east");
+}
+```
+
+---
+
+## Contents
+
+<CardGrid>
+  <LinkCard
+    title="while"
+    description="Loop while condition is true — checks before executing"
+    href="/en/languages/javascript/8-loops/1-while/"
+  />
+  <LinkCard
+    title="do...while"
+    description="Executes at least once, then checks the condition"
+    href="/en/languages/javascript/8-loops/2-do-while/"
+  />
+  <LinkCard
+    title="for"
+    description="Standard loop — init, condition, update in a single line"
+    href="/en/languages/javascript/8-loops/3-for/"
+  />
+</CardGrid>
+
+---
+
+## Quick Comparison
+
+| Loop | Condition check | Minimum runs | When to use |
+| ---- | --------------- | ------------ | ----------- |
+| **while** | **Before** each iteration | 0 times | Unknown number of iterations |
+| **do...while** | **After** each iteration | 1 time | Must run at least once (menu, input) |
+| **for** | **Before** each iteration | 0 times | Known number of iterations |
+| **for...in** | — | 0 times | Iterate over object keys |
+| **for...of** | — | 0 times | Iterate over iterable values (array, string, Map…) |
+
+---
+
+## Equivalent Examples
+
+Three ways to write the same logic:
+
+<Tabs>
+  <TabItem label="for">
+    ```js
+    for (let i = 0; i < 3; i++) {
+      console.log(i); // 0, 1, 2
+    }
+    ```
+  </TabItem>
+  <TabItem label="while">
+    ```js
+    let i = 0;
+    while (i < 3) {
+      console.log(i); // 0, 1, 2
+      i++;
+    }
+    ```
+  </TabItem>
+  <TabItem label="do...while">
+    ```js
+    let i = 0;
+    do {
+      console.log(i); // 0, 1, 2
+      i++;
+    } while (i < 3);
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## `break` and `continue`
+
+<CardGrid>
+  <Card title="break" icon="close">
+    **Exit** the loop immediately
+
+    ```js
+    for (let i = 0; i < 10; i++) {
+      if (i === 5) break;
+      console.log(i); // 0, 1, 2, 3, 4
+    }
+    ```
+  </Card>
+  <Card title="continue" icon="right-arrow">
+    **Skip** the current iteration and move to the next
+
+    ```js
+    for (let i = 0; i < 5; i++) {
+      if (i === 2) continue;
+      console.log(i); // 0, 1, 3, 4
+    }
+    ```
+  </Card>
+</CardGrid>
+
+---
+
+## `for...in` and `for...of`
+
+<Tabs>
+  <TabItem label="for...in (iterate keys)">
+    Iterates over the **enumerable keys** of an object:
+
+    ```js
+    const user = { name: "Alice", age: 21, city: "London" };
+    for (const key in user) {
+      console.log(key, "→", user[key]);
+    }
+    // name → Alice
+    // age → 21
+    // city → London
+    ```
+
+    <Aside type="caution" title="Don't use for Arrays">
+    `for...in` traverses the prototype chain — **avoid** using it for Arrays. Use `for...of` instead.
+    </Aside>
+  </TabItem>
+  <TabItem label="for...of (iterate values)">
+    Iterates over the **values** of any iterable (Array, String, Map, Set…):
+
+    ```js
+    const fruits = ["apple", "banana", "cherry"];
+    for (const fruit of fruits) {
+      console.log(fruit);
+    }
+    // apple, banana, cherry
+
+    const name = "Hello";
+    for (const ch of name) {
+      console.log(ch);
+    }
+    // H, e, l, l, o
+    ```
+  </TabItem>
+</Tabs>
+
+<Aside type="tip" title="Which loop to choose?">
+- **Known iterations** → `for`
+- **Unknown iterations, only know the stop condition** → `while`
+- **Must run at least once** → `do...while`
+- **Iterate object keys** → `for...in`
+- **Iterate array/string/iterable values** → `for...of`
+</Aside>
