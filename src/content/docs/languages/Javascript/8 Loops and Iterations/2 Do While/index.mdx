@@ -1,0 +1,145 @@
+---
+title: Vòng lặp do...while
+sidebar:
+  order: 18
+description: Vòng lặp do...while trong JavaScript — chạy ít nhất 1 lần, rồi mới kiểm tra điều kiện
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## `do...while` là gì?
+
+Câu lệnh `do...while` tạo ra một vòng lặp thực thi câu lệnh được chỉ định cho đến khi điều kiện kiểm tra trả về `false`. Điều kiện sẽ được đánh giá **sau khi** câu lệnh được thực thi, vì vậy câu lệnh sẽ luôn được chạy **ít nhất một lần**.
+
+```js
+do {
+  // khối lệnh
+} while (điều_kiện);
+```
+
+<CardGrid>
+  <Card title="Chạy trước" icon="rocket">
+    Khối lệnh chạy **trước**, rồi mới kiểm tra điều kiện
+  </Card>
+  <Card title="Ít nhất 1 lần" icon="approve-check">
+    **Luôn** chạy ít nhất 1 lần — dù điều kiện sai ngay từ đầu
+  </Card>
+</CardGrid>
+
+---
+
+## Khác gì với `while`?
+
+<Tabs>
+  <TabItem label="while (kiểm tra trước)">
+    ```js
+    let i = 10;
+    while (i < 5) {
+      console.log(i); // ← KHÔNG BAO GIỜ chạy
+      i++;
+    }
+    // Không có output — điều kiện sai ngay từ đầu
+    ```
+  </TabItem>
+  <TabItem label="do...while (chạy trước)">
+    ```js
+    let i = 10;
+    do {
+      console.log(i); // ← CHẠY 1 LẦN: in ra 10
+      i++;
+    } while (i < 5);
+    // Output: 10
+    ```
+  </TabItem>
+</Tabs>
+
+<Aside type="note" title="Điểm khác biệt duy nhất">
+- `while`: kiểm tra **điều kiện trước** → nếu sai ngay → **không chạy lần nào**
+- `do...while`: chạy **ít nhất 1 lần**, rồi mới kiểm tra điều kiện
+</Aside>
+
+---
+
+## Ví dụ
+
+<Tabs>
+  <TabItem label="Đếm cơ bản">
+    ```js
+    let i = 0;
+    do {
+      console.log(i);
+      i++;
+    } while (i < 5);
+    // Output: 0, 1, 2, 3, 4
+    ```
+  </TabItem>
+  <TabItem label="Menu (ít nhất 1 lần)">
+    ```js
+    let choice;
+    do {
+      choice = prompt("Chọn: 1) Xem | 2) Sửa | 3) Thoát");
+
+      if (choice === "1") console.log("Đang xem...");
+      else if (choice === "2") console.log("Đang sửa...");
+    } while (choice !== "3");
+
+    console.log("Tạm biệt!");
+    ```
+  </TabItem>
+  <TabItem label="Validate input">
+    ```js
+    let num;
+    do {
+      num = Number(prompt("Nhập số dương:"));
+    } while (isNaN(num) || num <= 0);
+
+    console.log(`Bạn nhập: ${num}`);
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Khi nào dùng `do...while`?
+
+<CardGrid>
+  <Card title="Menu tương tác" icon="list-format">
+    Hiển thị menu ít nhất 1 lần, lặp cho đến khi user chọn thoát
+  </Card>
+  <Card title="Validate input" icon="approve-check">
+    Hỏi user nhập dữ liệu ít nhất 1 lần, lặp nếu không hợp lệ
+  </Card>
+  <Card title="Game loop" icon="star">
+    Chạy ít nhất 1 vòng game, kiểm tra điều kiện kết thúc sau
+  </Card>
+  <Card title="Retry logic" icon="random">
+    Thử thực hiện thao tác ít nhất 1 lần, retry nếu thất bại
+  </Card>
+</CardGrid>
+
+---
+
+## Ví dụ thực tế: Retry với giới hạn
+
+```js
+let attempts = 0;
+let success = false;
+
+do {
+  attempts++;
+  console.log(`Lần thử ${attempts}...`);
+
+  // Giả lập: 30% xác suất thành công
+  success = Math.random() < 0.3;
+
+  if (success) {
+    console.log("✅ Thành công!");
+  } else if (attempts >= 5) {
+    console.log("❌ Hết số lần thử.");
+  }
+} while (!success && attempts < 5);
+```
+
+<Aside type="tip" title="Ghi nhớ">
+`do...while` = "**làm trước, hỏi sau**". Dùng khi bạn **chắc chắn** cần chạy khối lệnh ít nhất 1 lần trước khi kiểm tra điều kiện.
+</Aside>

@@ -1,0 +1,239 @@
+---
+title: Vòng lặp for
+sidebar:
+  order: 19
+description: Vòng lặp for trong JavaScript — cấu trúc điều khiển chuẩn với khởi tạo, điều kiện, cập nhật
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## `for` là gì?
+
+Vòng lặp `for` là cấu trúc điều khiển **chuẩn** trong JavaScript. Nó thường được dùng để **lặp một số lần xác định trước** hoặc **duyệt qua một dãy giá trị**, thực thi đoạn mã cho mỗi lần lặp.
+
+```js
+for (khởi_tạo; điều_kiện; cập_nhật) {
+  // khối lệnh
+}
+```
+
+<CardGrid>
+  <Card title="khởi_tạo" icon="pencil">
+    Chạy **1 lần** lúc bắt đầu — thường khai báo biến đếm
+  </Card>
+  <Card title="điều_kiện" icon="warning">
+    Kiểm tra **trước** mỗi vòng — nếu `true` thì chạy khối lệnh
+  </Card>
+  <Card title="cập_nhật" icon="right-arrow">
+    Chạy **sau** mỗi vòng — thường tăng/giảm biến đếm
+  </Card>
+</CardGrid>
+
+---
+
+## Luồng thực thi
+
+```
+khởi_tạo (1 lần)
+     ↓
+điều_kiện → false → DỪNG
+     ↓ true
+khối lệnh
+     ↓
+cập_nhật
+     ↓
+điều_kiện → false → DỪNG
+     ↓ true
+khối lệnh
+     ...
+```
+
+---
+
+## Ví dụ cơ bản
+
+<Tabs>
+  <TabItem label="Đếm 0 → 4">
+    ```js
+    for (let i = 0; i < 5; i++) {
+      console.log(i);
+    }
+    // Output: 0, 1, 2, 3, 4
+    ```
+  </TabItem>
+  <TabItem label="Đếm ngược">
+    ```js
+    for (let i = 5; i > 0; i--) {
+      console.log(i);
+    }
+    console.log("Phóng! 🚀");
+    // Output: 5, 4, 3, 2, 1, Phóng! 🚀
+    ```
+  </TabItem>
+  <TabItem label="Bước nhảy">
+    ```js
+    // Chỉ in số chẵn
+    for (let i = 0; i <= 10; i += 2) {
+      console.log(i);
+    }
+    // Output: 0, 2, 4, 6, 8, 10
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Duyệt mảng
+
+```js
+const fruits = ["apple", "banana", "cherry"];
+
+for (let i = 0; i < fruits.length; i++) {
+  console.log(`${i}: ${fruits[i]}`);
+}
+// 0: apple
+// 1: banana
+// 2: cherry
+```
+
+<Aside type="tip" title="Dùng for...of cho gọn hơn">
+Nếu **không cần index**, `for...of` gọn và an toàn hơn:
+
+```js
+for (const fruit of fruits) {
+  console.log(fruit);
+}
+```
+</Aside>
+
+---
+
+## Các biến thể
+
+<Tabs>
+  <TabItem label="Bỏ khởi tạo">
+    ```js
+    let i = 0;
+    for (; i < 3; i++) {
+      console.log(i);
+    }
+    ```
+  </TabItem>
+  <TabItem label="Bỏ cập nhật">
+    ```js
+    for (let i = 0; i < 3;) {
+      console.log(i);
+      i++; // cập nhật bên trong
+    }
+    ```
+  </TabItem>
+  <TabItem label="Vòng lặp vô hạn">
+    ```js
+    for (;;) {
+      // tương đương while(true)
+      const input = prompt("Nhập 'quit' để thoát:");
+      if (input === "quit") break;
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## `break` và `continue`
+
+<Tabs>
+  <TabItem label="break — thoát sớm">
+    ```js
+    for (let i = 0; i < 10; i++) {
+      if (i === 5) break; // dừng tại 5
+      console.log(i);
+    }
+    // Output: 0, 1, 2, 3, 4
+    ```
+  </TabItem>
+  <TabItem label="continue — bỏ qua">
+    ```js
+    for (let i = 0; i < 5; i++) {
+      if (i === 2) continue; // bỏ qua 2
+      console.log(i);
+    }
+    // Output: 0, 1, 3, 4
+    ```
+  </TabItem>
+  <TabItem label="Label (vòng lặp lồng)">
+    ```js
+    outer: for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (i === 1 && j === 1) break outer; // thoát cả vòng ngoài
+        console.log(i, j);
+      }
+    }
+    // 0 0, 0 1, 0 2, 1 0
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Vòng lặp lồng nhau
+
+```js
+// Bảng cửu chương
+for (let i = 2; i <= 4; i++) {
+  for (let j = 1; j <= 5; j++) {
+    console.log(`${i} × ${j} = ${i * j}`);
+  }
+}
+```
+
+<Aside type="caution" title="Hiệu năng">
+Vòng lặp lồng nhau có độ phức tạp **O(n × m)**. Với dữ liệu lớn, cần cân nhắc dùng `Map`/`Set` hoặc thuật toán khác để giảm độ phức tạp.
+</Aside>
+
+---
+
+## `for` vs `for...of` vs `for...in`
+
+| Vòng lặp | Duyệt | Dùng cho | Ví dụ |
+| -------- | ------ | -------- | ----- |
+| **for** | Chỉ số | Cần index, biết số lần | `for (let i = 0; i < n; i++)` |
+| **for...of** | Giá trị | Array, String, Map, Set | `for (const x of arr)` |
+| **for...in** | Key | Object (enumerable props) | `for (const k in obj)` |
+
+---
+
+## Ví dụ thực tế
+
+<Tabs>
+  <TabItem label="Tìm số nguyên tố">
+    ```js
+    function isPrime(n) {
+      if (n < 2) return false;
+      for (let i = 2; i <= Math.sqrt(n); i++) {
+        if (n % i === 0) return false;
+      }
+      return true;
+    }
+
+    for (let i = 2; i <= 20; i++) {
+      if (isPrime(i)) console.log(i);
+    }
+    // 2, 3, 5, 7, 11, 13, 17, 19
+    ```
+  </TabItem>
+  <TabItem label="FizzBuzz">
+    ```js
+    for (let i = 1; i <= 15; i++) {
+      if (i % 15 === 0) console.log("FizzBuzz");
+      else if (i % 3 === 0) console.log("Fizz");
+      else if (i % 5 === 0) console.log("Buzz");
+      else console.log(i);
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+<Aside type="tip" title="Tóm tắt">
+`for` là vòng lặp **linh hoạt nhất** — dùng khi biết số lần lặp, cần index, hoặc cần kiểm soát chi tiết (bước nhảy, nhiều biến đếm, break/continue có điều kiện).
+</Aside>

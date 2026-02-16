@@ -1,0 +1,160 @@
+---
+title: Vòng Lặp (Loops & Iterations)
+sidebar:
+  order: 16
+description: Tổng quan về các vòng lặp trong JavaScript — while, do...while, for và các biến thể
+---
+
+import { Card, CardGrid, LinkCard, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+**Vòng lặp** giúp bạn thực hiện một việc **lặp đi lặp lại** một cách nhanh chóng và đơn giản. Bạn có thể hình dung vòng lặp giống như một phiên bản máy tính hóa của trò chơi: *"Đi 5 bước về phía đông"*.
+
+```js
+for (let i = 0; i < 5; i++) {
+  console.log("Bước về phía đông");
+}
+```
+
+---
+
+## Nội dung
+
+<CardGrid>
+  <LinkCard
+    title="while"
+    description="Lặp khi điều kiện đúng — kiểm tra trước, chạy sau"
+    href="/languages/javascript/8-loops/1-while/"
+  />
+  <LinkCard
+    title="do...while"
+    description="Chạy ít nhất 1 lần, rồi mới kiểm tra điều kiện"
+    href="/languages/javascript/8-loops/2-do-while/"
+  />
+  <LinkCard
+    title="for"
+    description="Vòng lặp chuẩn — khởi tạo, điều kiện, cập nhật trong một dòng"
+    href="/languages/javascript/8-loops/3-for/"
+  />
+</CardGrid>
+
+---
+
+## So sánh nhanh
+
+| Vòng lặp | Kiểm tra điều kiện | Chạy tối thiểu | Khi nào dùng |
+| -------- | ------------------ | --------------- | ------------ |
+| **while** | **Trước** mỗi vòng | 0 lần | Không biết trước số lần lặp |
+| **do...while** | **Sau** mỗi vòng | 1 lần | Cần chạy ít nhất 1 lần (menu, input) |
+| **for** | **Trước** mỗi vòng | 0 lần | Biết số lần lặp cụ thể |
+| **for...in** | — | 0 lần | Duyệt key của object |
+| **for...of** | — | 0 lần | Duyệt giá trị iterable (array, string, Map…) |
+
+---
+
+## Ví dụ tương đương
+
+Ba cách viết cho cùng một kết quả:
+
+<Tabs>
+  <TabItem label="for">
+    ```js
+    for (let i = 0; i < 3; i++) {
+      console.log(i); // 0, 1, 2
+    }
+    ```
+  </TabItem>
+  <TabItem label="while">
+    ```js
+    let i = 0;
+    while (i < 3) {
+      console.log(i); // 0, 1, 2
+      i++;
+    }
+    ```
+  </TabItem>
+  <TabItem label="do...while">
+    ```js
+    let i = 0;
+    do {
+      console.log(i); // 0, 1, 2
+      i++;
+    } while (i < 3);
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## `break` và `continue`
+
+<CardGrid>
+  <Card title="break" icon="close">
+    **Thoát** khỏi vòng lặp ngay lập tức
+
+    ```js
+    for (let i = 0; i < 10; i++) {
+      if (i === 5) break;
+      console.log(i); // 0, 1, 2, 3, 4
+    }
+    ```
+  </Card>
+  <Card title="continue" icon="right-arrow">
+    **Bỏ qua** lần lặp hiện tại, chuyển sang lần tiếp theo
+
+    ```js
+    for (let i = 0; i < 5; i++) {
+      if (i === 2) continue;
+      console.log(i); // 0, 1, 3, 4
+    }
+    ```
+  </Card>
+</CardGrid>
+
+---
+
+## `for...in` và `for...of`
+
+<Tabs>
+  <TabItem label="for...in (duyệt key)">
+    Duyệt qua các **key** (thuộc tính **enumerable**) của object:
+
+    ```js
+    const user = { name: "An", age: 21, city: "HCM" };
+    for (const key in user) {
+      console.log(key, "→", user[key]);
+    }
+    // name → An
+    // age → 21
+    // city → HCM
+    ```
+
+    <Aside type="caution" title="Không dùng cho Array">
+    `for...in` duyệt cả prototype chain — **không nên** dùng cho Array. Dùng `for...of` thay thế.
+    </Aside>
+  </TabItem>
+  <TabItem label="for...of (duyệt giá trị)">
+    Duyệt qua các **giá trị** của iterable (Array, String, Map, Set…):
+
+    ```js
+    const fruits = ["apple", "banana", "cherry"];
+    for (const fruit of fruits) {
+      console.log(fruit);
+    }
+    // apple, banana, cherry
+
+    const name = "Hello";
+    for (const ch of name) {
+      console.log(ch);
+    }
+    // H, e, l, l, o
+    ```
+  </TabItem>
+</Tabs>
+
+<Aside type="tip" title="Chọn vòng lặp nào?">
+- **Biết số lần lặp** → `for`
+- **Chỉ biết điều kiện dừng** → `while`
+- **Cần chạy ít nhất 1 lần** → `do...while`
+- **Duyệt object key** → `for...in`
+- **Duyệt array/string/iterable** → `for...of`
+</Aside>

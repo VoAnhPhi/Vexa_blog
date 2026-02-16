@@ -1,0 +1,146 @@
+---
+title: Vòng lặp while
+sidebar:
+  order: 17
+description: Vòng lặp while trong JavaScript — lặp khi điều kiện đúng, kiểm tra trước khi chạy
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## `while` là gì?
+
+Câu lệnh `while` tạo ra một vòng lặp thực thi câu lệnh được chỉ định **miễn là** điều kiện kiểm tra trả về `true`. Điều kiện sẽ được đánh giá **trước khi** câu lệnh được thực thi.
+
+```js
+while (điều_kiện) {
+  // khối lệnh được lặp
+}
+```
+
+<CardGrid>
+  <Card title="Kiểm tra trước" icon="warning">
+    Điều kiện được đánh giá **trước** mỗi vòng lặp
+  </Card>
+  <Card title="Có thể 0 lần" icon="information">
+    Nếu điều kiện sai ngay từ đầu → khối lệnh **không bao giờ** chạy
+  </Card>
+</CardGrid>
+
+---
+
+## Cú pháp
+
+```js
+while (điều_kiện) {
+  // khối lệnh
+}
+// điều_kiện: biểu thức trả về true hoặc false
+// Khi điều_kiện = true → khối lệnh chạy
+// Khi điều_kiện = false → vòng lặp dừng
+```
+
+---
+
+## Ví dụ cơ bản
+
+<Tabs>
+  <TabItem label="Đếm 0 → 4">
+    ```js
+    let i = 0;
+    while (i < 5) {
+      console.log(i);
+      i++;
+    }
+    // Output: 0, 1, 2, 3, 4
+    ```
+  </TabItem>
+  <TabItem label="Đếm ngược">
+    ```js
+    let count = 5;
+    while (count > 0) {
+      console.log(count);
+      count--;
+    }
+    console.log("Phóng tên lửa! 🚀");
+    // Output: 5, 4, 3, 2, 1, Phóng tên lửa! 🚀
+    ```
+  </TabItem>
+  <TabItem label="Tìm kiếm">
+    ```js
+    const nums = [3, 7, 2, 9, 5];
+    let idx = 0;
+
+    while (idx < nums.length && nums[idx] !== 9) {
+      idx++;
+    }
+
+    console.log(`Tìm thấy 9 tại index ${idx}`); // index 3
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Vòng lặp vô hạn
+
+<Aside type="danger" title="Cẩn thận!">
+Nếu điều kiện **luôn đúng** → vòng lặp không bao giờ dừng → trình duyệt/chương trình bị treo:
+
+```js
+// ⚠️ ĐỪNG CHẠY!
+while (true) {
+  console.log("Chạy mãi mãi");
+}
+```
+
+Nếu cần vòng lặp vô hạn có chủ đích (server loop, game loop), luôn đảm bảo có lệnh `break` để thoát:
+
+```js
+while (true) {
+  const input = prompt("Nhập 'quit' để thoát:");
+  if (input === "quit") break; // ← điểm thoát
+  console.log("Bạn nhập:", input);
+}
+```
+</Aside>
+
+---
+
+## Khi nào dùng `while`?
+
+<CardGrid>
+  <Card title="Không biết số lần lặp" icon="approve-check">
+    Đọc file cho đến hết, chờ input, polling API
+  </Card>
+  <Card title="Điều kiện phức tạp" icon="setting">
+    Điều kiện phụ thuộc vào kết quả tính toán bên trong vòng lặp
+  </Card>
+</CardGrid>
+
+### Ví dụ thực tế: chia liên tục cho 2
+
+```js
+let n = 128;
+let steps = 0;
+
+while (n > 1) {
+  n = Math.floor(n / 2);
+  steps++;
+}
+
+console.log(`Số bước: ${steps}`); // 7 (128→64→32→16→8→4→2→1)
+```
+
+---
+
+## So sánh nhanh
+
+| Đặc điểm | `while` | `do...while` | `for` |
+| --------- | ------- | ------------ | ----- |
+| Kiểm tra điều kiện | **Trước** | **Sau** | **Trước** |
+| Chạy tối thiểu | 0 lần | **1 lần** | 0 lần |
+| Dùng khi | Không biết số lần | Cần ≥1 lần | Biết số lần |
+
+<Aside type="tip" title="Mẹo">
+Mọi vòng `for` đều có thể viết lại bằng `while`, và ngược lại. Chọn loại nào **đọc dễ hiểu nhất** cho ngữ cảnh cụ thể.
+</Aside>
