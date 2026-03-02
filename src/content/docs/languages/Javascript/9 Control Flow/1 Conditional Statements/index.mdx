@@ -1,0 +1,306 @@
+---
+title: Conditional Statements (Câu Lệnh Điều Kiện)
+sidebar:
+  order: 21
+description: if...else, switch...case, toán tử 3 ngôi — rẽ nhánh theo điều kiện trong JavaScript
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## If...Else
+
+### Khái niệm
+
+`if...else` là cấu trúc rẽ nhánh quen thuộc nhất — dùng để **rẽ nhánh dựa trên biểu thức boolean** (truthy/falsy). Bạn có thể xâu chuỗi `else if` để bao phủ nhiều điều kiện.
+
+---
+
+### Cú pháp
+
+<Tabs>
+  <TabItem label="if đơn giản">
+    ```js
+    if (condition) {
+      // chạy khi condition là truthy
+    }
+    ```
+  </TabItem>
+  <TabItem label="if...else">
+    ```js
+    if (condition) {
+      // truthy
+    } else {
+      // falsy
+    }
+    ```
+  </TabItem>
+  <TabItem label="if...else if...else">
+    ```js
+    if (condition1) {
+      // condition1 đúng
+    } else if (condition2) {
+      // condition2 đúng
+    } else {
+      // tất cả sai
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+### Ví dụ
+
+```js
+const score = 84;
+
+if (score >= 90) {
+  console.log("A");
+} else if (score >= 80) {
+  console.log("B");      // ← "B" (84 >= 80)
+} else if (score >= 70) {
+  console.log("C");
+} else {
+  console.log("F");
+}
+```
+
+---
+
+### Truthy / Falsy
+
+<Aside type="note" title="6 giá trị falsy trong JS">
+JS đánh giá truthy/falsy khi dùng trong điều kiện:
+
+| Falsy | Mô tả |
+| ----- | ----- |
+| `false` | Boolean false |
+| `0`, `-0` | Số 0 |
+| `""` | Chuỗi rỗng |
+| `null` | Null |
+| `undefined` | Undefined |
+| `NaN` | Not a Number |
+
+**Mọi thứ khác** đều là truthy — kể cả `[]`, `{}`, `"0"`, `"false"`.
+</Aside>
+
+---
+
+### Toán tử 3 ngôi (Ternary)
+
+Dùng cho **biểu thức** đơn giản thay vì khối `if...else`:
+
+```js
+const age = 17;
+const canVote = age >= 18 ? "Yes" : "No";  // "No"
+```
+
+<Aside type="caution" title="Không lồng quá sâu!">
+```js
+// ❌ Khó đọc
+const result = a > b ? (c > d ? "A" : "B") : (e > f ? "C" : "D");
+
+// ✅ Dùng if...else cho logic phức tạp
+```
+</Aside>
+
+---
+
+### Short-circuit với `&&`, `||`, `??`
+
+<Tabs>
+  <TabItem label="&& (AND)">
+    Trả về giá trị **falsy đầu tiên**, hoặc giá trị cuối nếu tất cả truthy:
+
+    ```js
+    const user = { name: "An" };
+    user && console.log(user.name); // "An" — chỉ chạy nếu user tồn tại
+
+    0 && "hello";    // 0 (falsy đầu tiên)
+    1 && "hello";    // "hello" (tất cả truthy → giá trị cuối)
+    ```
+  </TabItem>
+  <TabItem label="|| (OR)">
+    Trả về giá trị **truthy đầu tiên**, hoặc giá trị cuối nếu tất cả falsy:
+
+    ```js
+    const name = input || "Guest";  // fallback nếu input là falsy
+
+    "" || "default";     // "default" ("" là falsy)
+    "hello" || "world";  // "hello" (truthy đầu tiên)
+    ```
+  </TabItem>
+  <TabItem label="?? (Nullish)">
+    Trả về vế phải **chỉ khi** vế trái là `null` hoặc `undefined` (không gộp `0`, `""`, `false`):
+
+    ```js
+    const count = 0;
+    count || 10;   // 10 ← sai! (0 là falsy)
+    count ?? 10;   // 0  ← đúng! (0 không phải null/undefined)
+
+    null ?? "default";      // "default"
+    undefined ?? "default"; // "default"
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Switch...Case
+
+### Khái niệm
+
+`switch` chọn nhánh theo **giá trị** (so sánh `===`). Hữu ích khi có **nhiều case rời rạc** cùng kiểm tra một biến.
+
+---
+
+### Cú pháp
+
+```js
+switch (expression) {
+  case value1:
+    // chạy khi expression === value1
+    break;
+  case value2:
+    // chạy khi expression === value2
+    break;
+  default:
+    // chạy nếu không khớp case nào
+}
+```
+
+---
+
+### Ví dụ
+
+<Tabs>
+  <TabItem label="Cơ bản">
+    ```js
+    const role = "admin";
+
+    switch (role) {
+      case "admin":
+        console.log("Full access");
+        break;
+      case "editor":
+        console.log("Edit access");
+        break;
+      case "viewer":
+        console.log("Read only");
+        break;
+      default:
+        console.log("Unknown role");
+    }
+    ```
+  </TabItem>
+  <TabItem label="Nhóm nhiều case">
+    Nhiều giá trị dùng chung một nhánh xử lý:
+
+    ```js
+    const code = 400;
+
+    switch (code) {
+      case 400:
+      case 404:
+      case 422:
+        console.log("Client error");
+        break;
+      case 500:
+      case 502:
+        console.log("Server error");
+        break;
+      default:
+        console.log("OK");
+    }
+    ```
+  </TabItem>
+  <TabItem label="Return trong hàm">
+    Trong hàm, dùng `return` thay `break` cho gọn:
+
+    ```js
+    function getLabel(status) {
+      switch (status) {
+        case "active":   return "🟢 Active";
+        case "pending":  return "🟡 Pending";
+        case "inactive": return "🔴 Inactive";
+        default:         return "❓ Unknown";
+      }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+### Lưu ý quan trọng
+
+<Aside type="caution" title="Fall-through trap!">
+**Quên `break`** → code "rơi" xuống case tiếp theo (fall-through):
+
+```js
+const x = 1;
+switch (x) {
+  case 1:
+    console.log("One");
+    // ← quên break!
+  case 2:
+    console.log("Two");   // ← cũng chạy!
+    break;
+}
+// Output: "One", "Two" — ngoài ý muốn!
+```
+
+**Quy tắc**: luôn có `break` hoặc `return` cho mỗi case (trừ khi cố ý nhóm case).
+</Aside>
+
+---
+
+### Switch vs Object Lookup
+
+<Tabs>
+  <TabItem label="switch">
+    ```js
+    function getDiscount(tier) {
+      switch (tier) {
+        case "gold":     return 0.2;
+        case "silver":   return 0.1;
+        case "bronze":   return 0.05;
+        default:         return 0;
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem label="Object lookup (gọn hơn)">
+    ```js
+    const discounts = {
+      gold: 0.2,
+      silver: 0.1,
+      bronze: 0.05,
+    };
+
+    function getDiscount(tier) {
+      return discounts[tier] ?? 0;
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+<Aside type="tip" title="Khi nào dùng gì?">
+- **`if...else`**: điều kiện phức tạp, khoảng giá trị, logic boolean
+- **`switch`**: nhiều case rời rạc cùng 1 biến, cần fall-through có chủ đích
+- **Ternary `? :`**: gán giá trị theo điều kiện đơn giản
+- **Object lookup**: thay `switch` khi chỉ ánh xạ giá trị → giá trị
+- **`??`**: fallback chỉ cho `null`/`undefined` (không gộp `0`, `""`)
+</Aside>
+
+---
+
+## Tóm tắt
+
+| Cấu trúc | Mô tả | Best Practice |
+| --------- | ------ | ------------- |
+| `if...else` | Rẽ nhánh boolean | Ưu tiên guard clause (return sớm) |
+| `switch` | Rẽ nhánh theo giá trị `===` | Luôn `break`/`return` mỗi case |
+| `? :` | Biểu thức điều kiện | Không lồng sâu > 1 tầng |
+| `&&` / `\|\|` | Short-circuit | Dùng cho check nhanh / fallback |
+| `??` | Nullish coalescing | Thay `\|\|` khi `0`/`""` là giá trị hợp lệ |

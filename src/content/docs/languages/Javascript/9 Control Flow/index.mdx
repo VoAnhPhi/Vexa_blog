@@ -1,0 +1,165 @@
+---
+title: Control Flow (Luồng Điều Khiển)
+sidebar:
+  order: 20
+description: Tổng quan về luồng điều khiển trong JavaScript — rẽ nhánh, ngoại lệ và các pattern nâng cao
+---
+
+import { Card, CardGrid, LinkCard, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+**Control flow** (luồng điều khiển) là cách JavaScript quyết định **chạy lệnh nào**, **khi nào**, và **bao lâu**. Mặc định, code chạy từ trên xuống dưới (tuần tự), nhưng các cấu trúc điều khiển cho phép bạn thay đổi luồng đó.
+
+---
+
+## Nội dung
+
+<CardGrid>
+  <LinkCard
+    title="Conditional Statements"
+    description="if...else, switch...case, toán tử 3 ngôi — rẽ nhánh theo điều kiện"
+    href="/languages/javascript/9-control-flow/1-conditional-statements/"
+  />
+  <LinkCard
+    title="Exception Handling"
+    description="throw, try/catch/finally, Error objects — xử lý ngoại lệ"
+    href="/languages/javascript/9-control-flow/2-exception-handling/"
+  />
+</CardGrid>
+
+---
+
+## Tổng quan các khối điều khiển
+
+<Tabs>
+  <TabItem label="Rẽ nhánh">
+    Quyết định **nhánh nào** sẽ chạy dựa trên điều kiện:
+
+    | Cấu trúc | Mô tả | Khi nào dùng |
+    | --------- | ------ | ------------ |
+    | `if / else` | Rẽ nhánh theo boolean (truthy/falsy) | Điều kiện phức tạp, ít case |
+    | `switch` | Chọn nhánh theo **giá trị** (`===`) | Nhiều case rời rạc cùng 1 biến |
+    | `? :` | Toán tử 3 ngôi — biểu thức | Gán giá trị theo điều kiện đơn giản |
+    | `&& \|\| ??` | Short-circuit evaluation | Guard clauses, fallback |
+  </TabItem>
+  <TabItem label="Vòng lặp">
+    Thực hiện **lặp đi lặp lại** cho đến khi điều kiện dừng:
+
+    | Cấu trúc | Mô tả |
+    | --------- | ------ |
+    | `for` | Biết số lần lặp |
+    | `while` | Chỉ biết điều kiện dừng |
+    | `do...while` | Chạy ít nhất 1 lần |
+    | `for...of` | Duyệt giá trị iterable |
+    | `for...in` | Duyệt key của object |
+    | `break / continue` | Điều khiển vòng lặp |
+  </TabItem>
+  <TabItem label="Ngoại lệ">
+    Quản lý **tình huống bất thường** khi chạy:
+
+    | Cấu trúc | Mô tả |
+    | --------- | ------ |
+    | `throw` | Ném lỗi, dừng luồng bình thường |
+    | `try / catch` | Bắt và xử lý lỗi |
+    | `finally` | Luôn chạy sau cùng (dọn dẹp) |
+    | `Error` objects | Lỗi dựng sẵn & tuỳ biến |
+  </TabItem>
+</Tabs>
+
+---
+
+## Sơ đồ luồng điều khiển
+
+```
+Code chạy tuần tự (trên → dưới)
+       │
+       ├─ Rẽ nhánh? ──→ if/else, switch, ? :
+       │
+       ├─ Lặp? ───────→ for, while, do...while
+       │
+       ├─ Lỗi? ───────→ throw → catch → finally
+       │
+       └─ Tiếp tục tuần tự...
+```
+
+---
+
+## Ví dụ nhanh
+
+<Tabs>
+  <TabItem label="if...else">
+    ```js
+    const score = 84;
+
+    if (score >= 90) {
+      console.log("A");
+    } else if (score >= 80) {
+      console.log("B");      // ← chạy
+    } else {
+      console.log("C or below");
+    }
+    ```
+  </TabItem>
+  <TabItem label="switch">
+    ```js
+    const role = "admin";
+
+    switch (role) {
+      case "admin":
+        console.log("Full access"); // ← chạy
+        break;
+      case "editor":
+        console.log("Edit access");
+        break;
+      default:
+        console.log("Read only");
+    }
+    ```
+  </TabItem>
+  <TabItem label="try/catch">
+    ```js
+    try {
+      const data = JSON.parse('invalid json');
+    } catch (e) {
+      console.error("Lỗi:", e.message); // ← bắt lỗi
+    } finally {
+      console.log("Luôn chạy");
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Pattern nâng cao
+
+<CardGrid>
+  <Card title="Guard Clause" icon="approve-check">
+    Return sớm để tránh lồng `if` quá sâu:
+
+    ```js
+    function process(user) {
+      if (!user) return;
+      if (!user.active) return;
+      // logic chính ở đây...
+    }
+    ```
+  </Card>
+  <Card title="Object Lookup" icon="setting">
+    Thay `switch` bằng object cho gọn:
+
+    ```js
+    const actions = {
+      admin: () => "Full access",
+      editor: () => "Edit access",
+    };
+    const result = (actions[role] ?? (() => "Read only"))();
+    ```
+  </Card>
+</CardGrid>
+
+<Aside type="tip" title="Khuyến nghị">
+- Ưu tiên **guard clauses** (return sớm) thay vì lồng nhiều `if/else`
+- Dùng `===` thay `==` trong mọi so sánh
+- Luôn xử lý lỗi — **không nuốt lỗi** trong `catch` mà không log/rethrow
+- Với nhiều case cùng 1 biến: cân nhắc **object lookup** thay `switch`
+</Aside>

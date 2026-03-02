@@ -1,0 +1,294 @@
+---
+title: Exception Handling (Xử Lý Ngoại Lệ)
+sidebar:
+  order: 22
+description: throw, try/catch/finally, Error objects — xử lý ngoại lệ trong JavaScript
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+**Exception Handling** là cơ chế quản lý các **tình huống bất thường** khi chạy chương trình — những tình huống khiến luồng thực thi bình thường **không thể tiếp tục an toàn**. Khi lỗi được **ném** (`throw`), JavaScript sẽ **ngắt luồng hiện tại** và "unwind" call stack cho đến khi gặp `catch`; nếu không có, chương trình kết thúc trong trạng thái lỗi.
+
+---
+
+## Throw
+
+### Khái niệm
+
+`throw` chủ động **ném lỗi** để dừng luồng bình thường và chuyển sang cơ chế bắt lỗi.
+
+<Aside type="note" title="Ném gì?">
+Bạn có thể throw **bất kỳ giá trị nào**, nhưng nên dùng **đối tượng `Error`** — có `name`, `message`, `stack` (stacktrace) để debug dễ hơn.
+</Aside>
+
+---
+
+### Cú pháp
+
+```js
+throw expression;
+```
+
+### Ví dụ
+
+<Tabs>
+  <TabItem label="Throw Error object">
+    ```js
+    function parseAge(x) {
+      const n = Number(x);
+      if (!Number.isInteger(n) || n < 0) {
+        throw new RangeError("Age must be a non-negative integer");
+      }
+      return n;
+    }
+
+    parseAge(-5);  // RangeError: Age must be a non-negative integer
+    parseAge("abc"); // RangeError: Age must be a non-negative integer
+    ```
+  </TabItem>
+  <TabItem label="Throw string (không khuyến nghị)">
+    ```js
+    // ❌ Hoạt động nhưng không có stack trace
+    throw "Something went wrong";
+
+    // ✅ Luôn dùng Error object
+    throw new Error("Something went wrong");
+    ```
+  </TabItem>
+  <TabItem label="Async / Promise">
+    `throw` trong `async` function làm Promise **reject**:
+
+    ```js
+    async function loadData() {
+      throw new Error("Failed to load");
+      // tương đương: return Promise.reject(new Error("Failed to load"))
+    }
+
+    loadData().catch(e => console.error(e.message));
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Try / Catch / Finally
+
+### Khái niệm
+
+<CardGrid>
+  <Card title="try" icon="pencil">
+    Vùng code **có thể** phát sinh lỗi
+  </Card>
+  <Card title="catch" icon="warning">
+    **Bắt** và xử lý lỗi nếu `try` ném ra
+  </Card>
+  <Card title="finally" icon="approve-check">
+    **Luôn chạy** sau cùng — dù có lỗi, `return`, hay `break`
+  </Card>
+</CardGrid>
+
+---
+
+### Cú pháp
+
+```js
+try {
+  // code có thể gây lỗi
+} catch (error) {
+  // xử lý lỗi
+} finally {
+  // dọn dẹp — luôn chạy
+}
+```
+
+<Aside type="note" title="Các tổ hợp hợp lệ">
+- `try...catch` — phổ biến nhất
+- `try...finally` — không catch, chỉ dọn dẹp
+- `try...catch...finally` — đầy đủ nhất
+</Aside>
+
+---
+
+### Ví dụ
+
+<Tabs>
+  <TabItem label="Đồng bộ">
+    ```js
+    try {
+      const data = JSON.parse('{"x":1}');
+      console.log(data.x); // 1
+    } catch (e) {
+      console.error("JSON invalid:", e.message);
+    } finally {
+      console.log("Xong"); // luôn chạy
+    }
+    ```
+  </TabItem>
+  <TabItem label="Async/Await">
+    ```js
+    async function fetchJson(url) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+      } catch (e) {
+        console.error("Fetch failed:", e.message);
+        throw e; // rethrow để caller biết
+      } finally {
+        // dọn dẹp (tắt loading, v.v.)
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem label="Conditional catch">
+    Bắt lỗi theo kiểu cụ thể:
+
+    ```js
+    try {
+      riskyOperation();
+    } catch (e) {
+      if (e instanceof TypeError) {
+        console.error("Type error:", e.message);
+      } else if (e instanceof RangeError) {
+        console.error("Range error:", e.message);
+      } else {
+        throw e; // không biết → ném tiếp
+      }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+### Lưu ý về `finally`
+
+<Aside type="danger" title="Cẩn thận return trong finally!">
+`return` trong `finally` sẽ **ghi đè** kết quả/lỗi từ `try/catch` — **hầu như không bao giờ** nên làm:
+
+```js
+function broken() {
+  try {
+    throw new Error("Oops");
+  } finally {
+    return "OK"; // ← ghi đè lỗi! Caller không biết có lỗi
+  }
+}
+
+broken(); // "OK" — lỗi bị nuốt!
+```
+</Aside>
+
+---
+
+## Error Objects
+
+### Các loại lỗi dựng sẵn
+
+| Loại | Khi nào xảy ra |
+| ---- | -------------- |
+| `Error` | Lỗi chung |
+| `TypeError` | Sai kiểu dữ liệu (`null.foo`, gọi non-function) |
+| `RangeError` | Giá trị ngoài phạm vi (`new Array(-1)`) |
+| `ReferenceError` | Biến chưa khai báo |
+| `SyntaxError` | Cú pháp sai (thường lúc parse) |
+| `URIError` | `decodeURI('%')` — URI không hợp lệ |
+
+---
+
+### Thuộc tính của Error
+
+```js
+try {
+  undeclaredVar;
+} catch (e) {
+  console.log(e.name);    // "ReferenceError"
+  console.log(e.message); // "undeclaredVar is not defined"
+  console.log(e.stack);   // full stack trace
+}
+```
+
+---
+
+### Tạo lỗi tuỳ biến (Custom Error)
+
+<Tabs>
+  <TabItem label="ES6 class">
+    ```js
+    class AuthError extends Error {
+      constructor(message, cause) {
+        super(message, { cause }); // Error.cause (ES2022)
+        this.name = "AuthError";
+        this.code = "AUTH_FAILED";
+      }
+    }
+
+    function authenticate(token) {
+      if (!token) throw new AuthError("Token missing");
+      // ...
+    }
+    ```
+  </TabItem>
+  <TabItem label="Sử dụng">
+    ```js
+    try {
+      authenticate(null);
+    } catch (e) {
+      if (e instanceof AuthError) {
+        console.log(e.code);    // "AUTH_FAILED"
+        console.log(e.message); // "Token missing"
+      }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+### Error Wrapping (Bọc lỗi)
+
+Thêm **ngữ cảnh** vào lỗi gốc mà không mất thông tin:
+
+```js
+try {
+  await saveToDB(item);
+} catch (e) {
+  throw new Error("Failed to save order", { cause: e });
+  // caller có thể truy cập: error.cause → lỗi gốc
+}
+```
+
+<Aside type="tip" title="Error.cause (ES2022)">
+`new Error(message, { cause })` cho phép **chuỗi lỗi** — giữ nguyên lỗi gốc trong `error.cause` để debug xuyên nhiều tầng.
+</Aside>
+
+---
+
+## Best Practices
+
+<CardGrid>
+  <Card title="Luôn throw Error object" icon="approve-check">
+    Không throw string/number — cần `name`, `message`, `stack` để debug
+  </Card>
+  <Card title="Không nuốt lỗi" icon="close">
+    Log rồi **rethrow** nếu không thể xử lý triệt để ở tầng hiện tại
+  </Card>
+  <Card title="Throw đúng loại" icon="setting">
+    Tham số sai → `TypeError`/`RangeError`; auth sai → custom `AuthError`
+  </Card>
+  <Card title="Bọc lỗi (wrapping)" icon="random">
+    Dùng `{ cause }` để thêm ngữ cảnh khi ném lại lỗi
+  </Card>
+</CardGrid>
+
+---
+
+## Tóm tắt
+
+| Cấu trúc | Mô tả | Ghi nhớ |
+| --------- | ------ | ------- |
+| `throw` | Ném lỗi, dừng luồng | Luôn throw `Error` object |
+| `try` | Vùng có thể lỗi | Đặt code "nguy hiểm" ở đây |
+| `catch(e)` | Bắt và xử lý lỗi | Check `instanceof` nếu cần |
+| `finally` | Luôn chạy sau cùng | Dọn dẹp — **đừng** `return` ở đây |
+| `Error.cause` | Chuỗi lỗi (ES2022) | Giữ nguyên lỗi gốc qua nhiều tầng |
