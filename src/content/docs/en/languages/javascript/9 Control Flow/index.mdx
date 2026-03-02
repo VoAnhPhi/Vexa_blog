@@ -1,0 +1,165 @@
+---
+title: Control Flow
+sidebar:
+  order: 20
+description: Overview of JavaScript control flow — branching, exceptions, and advanced patterns
+---
+
+import { Card, CardGrid, LinkCard, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+**Control flow** is how JavaScript decides **which statements to run**, **when**, and **for how long**. By default, code runs top-to-bottom (sequentially), but control structures let you alter that flow.
+
+---
+
+## Contents
+
+<CardGrid>
+  <LinkCard
+    title="Conditional Statements"
+    description="if...else, switch...case, ternary operator — branching based on conditions"
+    href="/en/languages/javascript/9-control-flow/1-conditional-statements/"
+  />
+  <LinkCard
+    title="Exception Handling"
+    description="throw, try/catch/finally, Error objects — handling runtime exceptions"
+    href="/en/languages/javascript/9-control-flow/2-exception-handling/"
+  />
+</CardGrid>
+
+---
+
+## Control Flow Overview
+
+<Tabs>
+  <TabItem label="Branching">
+    Decide **which branch** to run based on conditions:
+
+    | Structure | Description | When to use |
+    | --------- | ----------- | ----------- |
+    | `if / else` | Branch on boolean (truthy/falsy) | Complex conditions, few cases |
+    | `switch` | Branch on **value** (`===`) | Many discrete cases for one variable |
+    | `? :` | Ternary — expression | Simple conditional assignment |
+    | `&& \|\| ??` | Short-circuit evaluation | Guard clauses, fallbacks |
+  </TabItem>
+  <TabItem label="Loops">
+    **Repeat** until a stopping condition is met:
+
+    | Structure | Description |
+    | --------- | ----------- |
+    | `for` | Known iteration count |
+    | `while` | Only know stopping condition |
+    | `do...while` | Run at least once |
+    | `for...of` | Iterate iterable values |
+    | `for...in` | Iterate object keys |
+    | `break / continue` | Loop control |
+  </TabItem>
+  <TabItem label="Exceptions">
+    Handle **abnormal situations** at runtime:
+
+    | Structure | Description |
+    | --------- | ----------- |
+    | `throw` | Throw error, break normal flow |
+    | `try / catch` | Catch and handle errors |
+    | `finally` | Always runs last (cleanup) |
+    | `Error` objects | Built-in & custom errors |
+  </TabItem>
+</Tabs>
+
+---
+
+## Control Flow Diagram
+
+```
+Code runs sequentially (top → bottom)
+       │
+       ├─ Branch? ──→ if/else, switch, ? :
+       │
+       ├─ Loop? ────→ for, while, do...while
+       │
+       ├─ Error? ───→ throw → catch → finally
+       │
+       └─ Continue sequentially...
+```
+
+---
+
+## Quick Examples
+
+<Tabs>
+  <TabItem label="if...else">
+    ```js
+    const score = 84;
+
+    if (score >= 90) {
+      console.log("A");
+    } else if (score >= 80) {
+      console.log("B");      // ← runs
+    } else {
+      console.log("C or below");
+    }
+    ```
+  </TabItem>
+  <TabItem label="switch">
+    ```js
+    const role = "admin";
+
+    switch (role) {
+      case "admin":
+        console.log("Full access"); // ← runs
+        break;
+      case "editor":
+        console.log("Edit access");
+        break;
+      default:
+        console.log("Read only");
+    }
+    ```
+  </TabItem>
+  <TabItem label="try/catch">
+    ```js
+    try {
+      const data = JSON.parse('invalid json');
+    } catch (e) {
+      console.error("Error:", e.message); // ← catches
+    } finally {
+      console.log("Always runs");
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Advanced Patterns
+
+<CardGrid>
+  <Card title="Guard Clause" icon="approve-check">
+    Return early to avoid deeply nested `if`:
+
+    ```js
+    function process(user) {
+      if (!user) return;
+      if (!user.active) return;
+      // main logic here...
+    }
+    ```
+  </Card>
+  <Card title="Object Lookup" icon="setting">
+    Replace `switch` with an object for cleaner code:
+
+    ```js
+    const actions = {
+      admin: () => "Full access",
+      editor: () => "Edit access",
+    };
+    const result = (actions[role] ?? (() => "Read only"))();
+    ```
+  </Card>
+</CardGrid>
+
+<Aside type="tip" title="Recommendations">
+- Prefer **guard clauses** (early return) over deeply nested `if/else`
+- Use `===` instead of `==` in all comparisons
+- Always handle errors — **don't swallow errors** in `catch` without log/rethrow
+- For many cases with one variable: consider **object lookup** over `switch`
+</Aside>

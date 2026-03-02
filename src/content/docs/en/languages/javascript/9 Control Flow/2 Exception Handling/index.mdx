@@ -1,0 +1,294 @@
+---
+title: Exception Handling
+sidebar:
+  order: 22
+description: throw, try/catch/finally, Error objects — handling exceptions in JavaScript
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+**Exception Handling** is the mechanism for managing **abnormal situations** during program execution — situations where the normal flow **cannot safely continue**. When an error is **thrown**, JavaScript **breaks the current flow** and "unwinds" the call stack until it finds a `catch`; if none exists, the program terminates in an error state.
+
+---
+
+## Throw
+
+### Concept
+
+`throw` deliberately **throws an error** to break the normal flow and trigger the error-handling mechanism.
+
+<Aside type="note" title="What can you throw?">
+You can throw **any value**, but you should use **`Error` objects** — they include `name`, `message`, `stack` (stacktrace) for easier debugging.
+</Aside>
+
+---
+
+### Syntax
+
+```js
+throw expression;
+```
+
+### Examples
+
+<Tabs>
+  <TabItem label="Throw Error object">
+    ```js
+    function parseAge(x) {
+      const n = Number(x);
+      if (!Number.isInteger(n) || n < 0) {
+        throw new RangeError("Age must be a non-negative integer");
+      }
+      return n;
+    }
+
+    parseAge(-5);    // RangeError: Age must be a non-negative integer
+    parseAge("abc"); // RangeError: Age must be a non-negative integer
+    ```
+  </TabItem>
+  <TabItem label="Throw string (not recommended)">
+    ```js
+    // ❌ Works but no stack trace
+    throw "Something went wrong";
+
+    // ✅ Always use Error objects
+    throw new Error("Something went wrong");
+    ```
+  </TabItem>
+  <TabItem label="Async / Promise">
+    `throw` inside an `async` function causes the Promise to **reject**:
+
+    ```js
+    async function loadData() {
+      throw new Error("Failed to load");
+      // equivalent: return Promise.reject(new Error("Failed to load"))
+    }
+
+    loadData().catch(e => console.error(e.message));
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Try / Catch / Finally
+
+### Concept
+
+<CardGrid>
+  <Card title="try" icon="pencil">
+    Code block that **may** throw an error
+  </Card>
+  <Card title="catch" icon="warning">
+    **Catches** and handles errors thrown in `try`
+  </Card>
+  <Card title="finally" icon="approve-check">
+    **Always runs** last — regardless of errors, `return`, or `break`
+  </Card>
+</CardGrid>
+
+---
+
+### Syntax
+
+```js
+try {
+  // code that may throw
+} catch (error) {
+  // handle error
+} finally {
+  // cleanup — always runs
+}
+```
+
+<Aside type="note" title="Valid combinations">
+- `try...catch` — most common
+- `try...finally` — no catch, just cleanup
+- `try...catch...finally` — most complete
+</Aside>
+
+---
+
+### Examples
+
+<Tabs>
+  <TabItem label="Synchronous">
+    ```js
+    try {
+      const data = JSON.parse('{"x":1}');
+      console.log(data.x); // 1
+    } catch (e) {
+      console.error("Invalid JSON:", e.message);
+    } finally {
+      console.log("Done"); // always runs
+    }
+    ```
+  </TabItem>
+  <TabItem label="Async/Await">
+    ```js
+    async function fetchJson(url) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+      } catch (e) {
+        console.error("Fetch failed:", e.message);
+        throw e; // rethrow so caller knows
+      } finally {
+        // cleanup (hide loading spinner, etc.)
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem label="Conditional catch">
+    Catch errors by specific type:
+
+    ```js
+    try {
+      riskyOperation();
+    } catch (e) {
+      if (e instanceof TypeError) {
+        console.error("Type error:", e.message);
+      } else if (e instanceof RangeError) {
+        console.error("Range error:", e.message);
+      } else {
+        throw e; // unknown → rethrow
+      }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+### Notes on `finally`
+
+<Aside type="danger" title="Careful with return in finally!">
+`return` inside `finally` will **override** the result/error from `try/catch` — you should **almost never** do this:
+
+```js
+function broken() {
+  try {
+    throw new Error("Oops");
+  } finally {
+    return "OK"; // ← overrides the error! Caller won't know
+  }
+}
+
+broken(); // "OK" — error swallowed!
+```
+</Aside>
+
+---
+
+## Error Objects
+
+### Built-in Error Types
+
+| Type | When it occurs |
+| ---- | -------------- |
+| `Error` | General error |
+| `TypeError` | Wrong data type (`null.foo`, calling non-function) |
+| `RangeError` | Value out of range (`new Array(-1)`) |
+| `ReferenceError` | Undeclared variable |
+| `SyntaxError` | Invalid syntax (usually during parsing) |
+| `URIError` | `decodeURI('%')` — invalid URI |
+
+---
+
+### Error Properties
+
+```js
+try {
+  undeclaredVar;
+} catch (e) {
+  console.log(e.name);    // "ReferenceError"
+  console.log(e.message); // "undeclaredVar is not defined"
+  console.log(e.stack);   // full stack trace
+}
+```
+
+---
+
+### Custom Error Classes
+
+<Tabs>
+  <TabItem label="ES6 class">
+    ```js
+    class AuthError extends Error {
+      constructor(message, cause) {
+        super(message, { cause }); // Error.cause (ES2022)
+        this.name = "AuthError";
+        this.code = "AUTH_FAILED";
+      }
+    }
+
+    function authenticate(token) {
+      if (!token) throw new AuthError("Token missing");
+      // ...
+    }
+    ```
+  </TabItem>
+  <TabItem label="Usage">
+    ```js
+    try {
+      authenticate(null);
+    } catch (e) {
+      if (e instanceof AuthError) {
+        console.log(e.code);    // "AUTH_FAILED"
+        console.log(e.message); // "Token missing"
+      }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+### Error Wrapping
+
+Add **context** to the original error without losing information:
+
+```js
+try {
+  await saveToDB(item);
+} catch (e) {
+  throw new Error("Failed to save order", { cause: e });
+  // caller can access: error.cause → original error
+}
+```
+
+<Aside type="tip" title="Error.cause (ES2022)">
+`new Error(message, { cause })` enables **error chaining** — preserves the original error in `error.cause` for debugging across multiple layers.
+</Aside>
+
+---
+
+## Best Practices
+
+<CardGrid>
+  <Card title="Always throw Error objects" icon="approve-check">
+    Don't throw strings/numbers — you need `name`, `message`, `stack` for debugging
+  </Card>
+  <Card title="Don't swallow errors" icon="close">
+    Log then **rethrow** if you can't fully handle it at the current layer
+  </Card>
+  <Card title="Throw the right type" icon="setting">
+    Bad params → `TypeError`/`RangeError`; auth failure → custom `AuthError`
+  </Card>
+  <Card title="Wrap errors" icon="random">
+    Use `{ cause }` to add context when rethrowing
+  </Card>
+</CardGrid>
+
+---
+
+## Summary
+
+| Structure | Description | Remember |
+| --------- | ----------- | -------- |
+| `throw` | Throw error, break flow | Always throw `Error` objects |
+| `try` | Code that may error | Put "dangerous" code here |
+| `catch(e)` | Catch and handle error | Check `instanceof` if needed |
+| `finally` | Always runs last | Cleanup — **don't** `return` here |
+| `Error.cause` | Error chaining (ES2022) | Preserves original error across layers |

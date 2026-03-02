@@ -1,0 +1,306 @@
+---
+title: Conditional Statements
+sidebar:
+  order: 21
+description: if...else, switch...case, ternary operator — branching based on conditions in JavaScript
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## If...Else
+
+### Concept
+
+`if...else` is the most common branching structure — used to **branch based on a boolean expression** (truthy/falsy). You can chain `else if` to cover multiple conditions.
+
+---
+
+### Syntax
+
+<Tabs>
+  <TabItem label="Simple if">
+    ```js
+    if (condition) {
+      // runs when condition is truthy
+    }
+    ```
+  </TabItem>
+  <TabItem label="if...else">
+    ```js
+    if (condition) {
+      // truthy
+    } else {
+      // falsy
+    }
+    ```
+  </TabItem>
+  <TabItem label="if...else if...else">
+    ```js
+    if (condition1) {
+      // condition1 is true
+    } else if (condition2) {
+      // condition2 is true
+    } else {
+      // all false
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+### Example
+
+```js
+const score = 84;
+
+if (score >= 90) {
+  console.log("A");
+} else if (score >= 80) {
+  console.log("B");      // ← "B" (84 >= 80)
+} else if (score >= 70) {
+  console.log("C");
+} else {
+  console.log("F");
+}
+```
+
+---
+
+### Truthy / Falsy
+
+<Aside type="note" title="6 Falsy Values in JS">
+JS evaluates truthy/falsy when used in conditions:
+
+| Falsy | Description |
+| ----- | ----------- |
+| `false` | Boolean false |
+| `0`, `-0` | Number zero |
+| `""` | Empty string |
+| `null` | Null |
+| `undefined` | Undefined |
+| `NaN` | Not a Number |
+
+**Everything else** is truthy — including `[]`, `{}`, `"0"`, `"false"`.
+</Aside>
+
+---
+
+### Ternary Operator
+
+Use for simple **expressions** instead of `if...else` blocks:
+
+```js
+const age = 17;
+const canVote = age >= 18 ? "Yes" : "No";  // "No"
+```
+
+<Aside type="caution" title="Don't nest too deeply!">
+```js
+// ❌ Hard to read
+const result = a > b ? (c > d ? "A" : "B") : (e > f ? "C" : "D");
+
+// ✅ Use if...else for complex logic
+```
+</Aside>
+
+---
+
+### Short-circuit with `&&`, `||`, `??`
+
+<Tabs>
+  <TabItem label="&& (AND)">
+    Returns the **first falsy value**, or the last value if all are truthy:
+
+    ```js
+    const user = { name: "An" };
+    user && console.log(user.name); // "An" — only runs if user exists
+
+    0 && "hello";    // 0 (first falsy)
+    1 && "hello";    // "hello" (all truthy → last value)
+    ```
+  </TabItem>
+  <TabItem label="|| (OR)">
+    Returns the **first truthy value**, or the last value if all are falsy:
+
+    ```js
+    const name = input || "Guest";  // fallback if input is falsy
+
+    "" || "default";     // "default" ("" is falsy)
+    "hello" || "world";  // "hello" (first truthy)
+    ```
+  </TabItem>
+  <TabItem label="?? (Nullish)">
+    Returns right side **only when** left side is `null` or `undefined` (does not include `0`, `""`, `false`):
+
+    ```js
+    const count = 0;
+    count || 10;   // 10 ← wrong! (0 is falsy)
+    count ?? 10;   // 0  ← correct! (0 is not null/undefined)
+
+    null ?? "default";      // "default"
+    undefined ?? "default"; // "default"
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Switch...Case
+
+### Concept
+
+`switch` selects a branch by **value** (compared with `===`). Useful when you have **many discrete cases** checking the same variable.
+
+---
+
+### Syntax
+
+```js
+switch (expression) {
+  case value1:
+    // runs when expression === value1
+    break;
+  case value2:
+    // runs when expression === value2
+    break;
+  default:
+    // runs if no case matches
+}
+```
+
+---
+
+### Examples
+
+<Tabs>
+  <TabItem label="Basic">
+    ```js
+    const role = "admin";
+
+    switch (role) {
+      case "admin":
+        console.log("Full access");
+        break;
+      case "editor":
+        console.log("Edit access");
+        break;
+      case "viewer":
+        console.log("Read only");
+        break;
+      default:
+        console.log("Unknown role");
+    }
+    ```
+  </TabItem>
+  <TabItem label="Grouping cases">
+    Multiple values sharing the same handler:
+
+    ```js
+    const code = 400;
+
+    switch (code) {
+      case 400:
+      case 404:
+      case 422:
+        console.log("Client error");
+        break;
+      case 500:
+      case 502:
+        console.log("Server error");
+        break;
+      default:
+        console.log("OK");
+    }
+    ```
+  </TabItem>
+  <TabItem label="Return in function">
+    In functions, use `return` instead of `break` for cleaner code:
+
+    ```js
+    function getLabel(status) {
+      switch (status) {
+        case "active":   return "🟢 Active";
+        case "pending":  return "🟡 Pending";
+        case "inactive": return "🔴 Inactive";
+        default:         return "❓ Unknown";
+      }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+### Important Notes
+
+<Aside type="caution" title="Fall-through trap!">
+**Forgetting `break`** → code "falls through" to the next case:
+
+```js
+const x = 1;
+switch (x) {
+  case 1:
+    console.log("One");
+    // ← forgot break!
+  case 2:
+    console.log("Two");   // ← also runs!
+    break;
+}
+// Output: "One", "Two" — unintended!
+```
+
+**Rule**: always include `break` or `return` for each case (unless intentionally grouping).
+</Aside>
+
+---
+
+### Switch vs Object Lookup
+
+<Tabs>
+  <TabItem label="switch">
+    ```js
+    function getDiscount(tier) {
+      switch (tier) {
+        case "gold":     return 0.2;
+        case "silver":   return 0.1;
+        case "bronze":   return 0.05;
+        default:         return 0;
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem label="Object lookup (cleaner)">
+    ```js
+    const discounts = {
+      gold: 0.2,
+      silver: 0.1,
+      bronze: 0.05,
+    };
+
+    function getDiscount(tier) {
+      return discounts[tier] ?? 0;
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+<Aside type="tip" title="When to use what?">
+- **`if...else`**: complex conditions, ranges, boolean logic
+- **`switch`**: many discrete cases for one variable, intentional fall-through
+- **Ternary `? :`**: simple conditional value assignment
+- **Object lookup**: replace `switch` when simply mapping value → value
+- **`??`**: fallback only for `null`/`undefined` (preserves `0`, `""`)
+</Aside>
+
+---
+
+## Summary
+
+| Structure | Description | Best Practice |
+| --------- | ----------- | ------------- |
+| `if...else` | Boolean branching | Prefer guard clauses (early return) |
+| `switch` | Value-based branching (`===`) | Always `break`/`return` each case |
+| `? :` | Conditional expression | Don't nest deeper than 1 level |
+| `&&` / `\|\|` | Short-circuit | Use for quick checks / fallbacks |
+| `??` | Nullish coalescing | Replace `\|\|` when `0`/`""` are valid |
