@@ -1,0 +1,138 @@
+---
+title: Expressions & Operators (Biểu Thức & Toán Tử)
+sidebar:
+  order: 23
+description: Tổng quan về biểu thức và toán tử trong JavaScript — nền tảng của mọi phép tính, điều kiện và logic
+---
+
+import { Card, CardGrid, LinkCard, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Chương này giải thích về **biểu thức (expressions)** và **toán tử (operators)** trong JavaScript — nền tảng để xử lý mọi phép tính, điều kiện và logic trong ngôn ngữ này.
+
+---
+
+## Nội dung
+
+<CardGrid>
+  <LinkCard
+    title="Assignment & Arithmetic"
+    description="Toán tử gán, số học và toán tử đơn (unary)"
+    href="/languages/javascript/10-expressions-operators/1-assignment-arithmetic/"
+  />
+  <LinkCard
+    title="Comparison & Logical"
+    description="Toán tử so sánh, logic và điều kiện (ternary)"
+    href="/languages/javascript/10-expressions-operators/2-comparison-logical/"
+  />
+  <LinkCard
+    title="Bitwise & Misc"
+    description="Toán tử bitwise, comma, BigInt và string"
+    href="/languages/javascript/10-expressions-operators/3-bitwise-misc/"
+  />
+</CardGrid>
+
+---
+
+## Biểu thức (Expressions)
+
+**Biểu thức** là bất kỳ đoạn mã nào **trả về một giá trị**. Giá trị đó có thể là số, chuỗi, boolean, object hoặc `undefined`.
+
+<Tabs>
+  <TabItem label="Side effects">
+    Biểu thức **có tác dụng phụ** — làm thay đổi giá trị trong bộ nhớ:
+
+    ```js
+    let x = 5;   // tạo biến và gán giá trị (tác dụng phụ)
+    x++;          // thay đổi giá trị x
+    ```
+  </TabItem>
+  <TabItem label="Pure evaluate">
+    Biểu thức **chỉ tính toán** — trả về giá trị mà không thay đổi gì:
+
+    ```js
+    2 + 3             // trả về 5
+    Math.max(10, 20)  // trả về 20
+    ```
+  </TabItem>
+</Tabs>
+
+<Aside type="tip" title="Quy tắc nhận biết">
+Nếu thứ gì có thể nằm **bên phải dấu `=`**, thì đó là một biểu thức.
+
+```js
+let result = /* ← bất kỳ expression nào */;
+let y = 2 + 3;          // ✅ expression
+let z = Math.random();   // ✅ expression
+let w = x > 0 ? 1 : -1; // ✅ expression
+```
+</Aside>
+
+---
+
+## Phân loại toán tử
+
+<Tabs>
+  <TabItem label="Theo chức năng">
+    | Nhóm | Toán tử | Mô tả |
+    | ---- | ------- | ----- |
+    | **Gán** | `=` `+=` `-=` `*=` `/=` `%=` `**=` | Lưu giá trị vào biến |
+    | **Số học** | `+` `-` `*` `/` `%` `**` `++` `--` | Phép toán cơ bản |
+    | **So sánh** | `==` `===` `!=` `!==` `>` `<` `>=` `<=` | Trả về `true` / `false` |
+    | **Logic** | `&&` `\|\|` `!` | Kết hợp boolean |
+    | **Điều kiện** | `? :` | Ternary — rẽ nhánh inline |
+    | **Bitwise** | `&` `\|` `^` `~` `<<` `>>` `>>>` | Thao tác bit nhị phân |
+    | **Chuỗi** | `+` `+=` | Nối chuỗi |
+    | **BigInt** | `+` `-` `*` `/` `%` `**` | Số nguyên lớn (`n`) |
+    | **Đặc biệt** | `,` `typeof` `delete` `void` `in` `instanceof` | Các toán tử khác |
+  </TabItem>
+  <TabItem label="Theo số toán hạng">
+    | Loại | Số toán hạng | Ví dụ |
+    | ---- | ------------ | ----- |
+    | **Unary** (đơn) | 1 | `!x`, `typeof x`, `++x` |
+    | **Binary** (nhị) | 2 | `a + b`, `x === y` |
+    | **Ternary** (tam) | 3 | `a ? b : c` |
+  </TabItem>
+</Tabs>
+
+---
+
+## Thứ tự ưu tiên (Precedence)
+
+Khi nhiều toán tử xuất hiện trong cùng biểu thức, JavaScript dùng **thứ tự ưu tiên** để quyết định thứ tự tính toán:
+
+```js
+let x = 2 + 3 * 4;     // 14, không phải 20 → * ưu tiên hơn +
+let y = (2 + 3) * 4;   // 20 → () buộc + chạy trước
+```
+
+| Ưu tiên (cao → thấp) | Toán tử |
+| --------------------- | ------- |
+| 1. Nhóm | `()` |
+| 2. Unary | `!` `typeof` `++` `--` `+` `-` |
+| 3. Lũy thừa | `**` |
+| 4. Nhân / Chia | `*` `/` `%` |
+| 5. Cộng / Trừ | `+` `-` |
+| 6. Dịch bit | `<<` `>>` `>>>` |
+| 7. So sánh | `<` `>` `<=` `>=` `instanceof` `in` |
+| 8. Bằng | `==` `!=` `===` `!==` |
+| 9. Bitwise AND | `&` |
+| 10. Bitwise XOR | `^` |
+| 11. Bitwise OR | `\|` |
+| 12. Logic AND | `&&` |
+| 13. Logic OR | `\|\|` |
+| 14. Nullish | `??` |
+| 15. Ternary | `? :` |
+| 16. Gán | `=` `+=` `-=` ... |
+| 17. Comma | `,` |
+
+<Aside type="caution" title="Mẹo thực tế">
+Đừng cố nhớ bảng — dùng **ngoặc `()`** để code rõ ràng hơn:
+
+```js
+// ❌ Dựa vào precedence → khó đọc
+let r = a && b || c && d;
+
+// ✅ Dùng () → ý định rõ ràng
+let r = (a && b) || (c && d);
+```
+</Aside>

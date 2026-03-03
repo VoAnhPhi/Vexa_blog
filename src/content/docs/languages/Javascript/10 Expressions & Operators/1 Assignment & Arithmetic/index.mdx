@@ -1,0 +1,237 @@
+---
+title: Assignment & Arithmetic Operators
+sidebar:
+  order: 24
+description: Toán tử gán, số học và toán tử đơn (unary) trong JavaScript
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Assignment Operators | Toán tử gán
+
+Dùng để **lưu giá trị vào biến**.
+
+| Toán tử | Ví dụ | Tương đương với |
+| ------- | ----- | --------------- |
+| `=` | `x = 10` | Gán giá trị |
+| `+=` | `x += 5` | `x = x + 5` |
+| `-=` | `x -= 2` | `x = x - 2` |
+| `*=` | `x *= 3` | `x = x * 3` |
+| `/=` | `x /= 2` | `x = x / 2` |
+| `%=` | `x %= 3` | `x = x % 3` |
+| `**=` | `x **= 2` | `x = x ** 2` |
+
+### Ví dụ
+
+```js
+let x = 10;
+
+x += 5;   // x = 15
+x -= 3;   // x = 12
+x *= 2;   // x = 24
+x /= 4;   // x = 6
+x %= 4;   // x = 2
+x **= 3;  // x = 8
+```
+
+<Aside type="note" title="Bitwise assignment">
+Cũng có các toán tử gán bitwise: `&=`, `|=`, `^=`, `<<=`, `>>=`, `>>>=` — ít dùng trong thực tế.
+</Aside>
+
+---
+
+### Destructuring Assignment
+
+ES6 cho phép gán giải cấu trúc:
+
+<Tabs>
+  <TabItem label="Array">
+    ```js
+    const [a, b, c] = [1, 2, 3];
+    console.log(a, b, c); // 1 2 3
+
+    // Swap không cần biến tạm
+    let x = 1, y = 2;
+    [x, y] = [y, x];
+    console.log(x, y); // 2 1
+    ```
+  </TabItem>
+  <TabItem label="Object">
+    ```js
+    const { name, age } = { name: "An", age: 25 };
+    console.log(name, age); // "An" 25
+
+    // Đổi tên biến
+    const { name: n, age: a } = { name: "An", age: 25 };
+    console.log(n, a); // "An" 25
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Arithmetic Operators | Toán tử số học
+
+Dùng để thực hiện các phép toán cơ bản.
+
+| Toán tử | Mô tả | Ví dụ | Kết quả |
+| ------- | ----- | ----- | ------- |
+| `+` | Cộng | `5 + 2` | `7` |
+| `-` | Trừ | `5 - 2` | `3` |
+| `*` | Nhân | `3 * 4` | `12` |
+| `/` | Chia | `10 / 2` | `5` |
+| `%` | Lấy dư (modulo) | `10 % 3` | `1` |
+| `**` | Lũy thừa | `2 ** 3` | `8` |
+| `++` | Tăng 1 | `x++` | `x = x + 1` |
+| `--` | Giảm 1 | `x--` | `x = x - 1` |
+
+---
+
+### Lưu ý quan trọng
+
+<Tabs>
+  <TabItem label="Chia cho 0">
+    ```js
+    10 / 0;       // Infinity
+    -10 / 0;      // -Infinity
+    0 / 0;        // NaN
+    ```
+  </TabItem>
+  <TabItem label="Modulo">
+    ```js
+    10 % 3;  // 1 (10 = 3×3 + 1)
+    -10 % 3; // -1 (giữ dấu của bên trái)
+    10 % -3; // 1
+
+    // Ứng dụng: kiểm tra chẵn/lẻ
+    const isEven = n => n % 2 === 0;
+    ```
+  </TabItem>
+  <TabItem label="+ với string">
+    `+` thực hiện **nối chuỗi** khi một bên là string:
+
+    ```js
+    "5" + 2;    // "52" (string + number → string)
+    5 + "2";    // "52"
+    5 + 2;      // 7   (number + number → number)
+    5 + 2 + "3" // "73" (7 + "3" → "73")
+    "3" + 5 + 2 // "352" ("3" + 5 → "35" + 2 → "352")
+    ```
+
+    <Aside type="caution" title="Cẩn thận!">
+    Dùng `Number()` hoặc `+` (unary) để ép kiểu trước khi tính.
+    </Aside>
+  </TabItem>
+</Tabs>
+
+---
+
+### Prefix vs Postfix (++/--)
+
+<Tabs>
+  <TabItem label="Prefix (++x)">
+    **Tăng trước**, rồi trả giá trị mới:
+
+    ```js
+    let a = 5;
+    let b = ++a;
+    console.log(a); // 6
+    console.log(b); // 6 (tăng trước, rồi gán)
+    ```
+  </TabItem>
+  <TabItem label="Postfix (x++)">
+    Trả giá trị cũ, **rồi tăng**:
+
+    ```js
+    let a = 5;
+    let b = a++;
+    console.log(a); // 6
+    console.log(b); // 5 (gán giá trị cũ, rồi mới tăng)
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Unary Operators | Toán tử đơn
+
+Là các toán tử chỉ hoạt động với **một toán hạng** (một giá trị).
+
+| Toán tử | Mô tả | Ví dụ | Kết quả |
+| ------- | ----- | ----- | ------- |
+| `+` | Chuyển sang kiểu số | `+"5"` | `5` |
+| `-` | Đảo dấu hoặc chuyển kiểu số | `-true` | `-1` |
+| `!` | Phủ định logic | `!false` | `true` |
+| `typeof` | Trả về kiểu dữ liệu | `typeof "hi"` | `"string"` |
+| `delete` | Xóa thuộc tính của object | `delete obj.key` | `true` |
+| `void` | Thực thi nhưng luôn trả về `undefined` | `void 0` | `undefined` |
+| `++` | Tăng thêm 1 | `++x` | `x = x + 1` |
+| `--` | Giảm đi 1 | `--x` | `x = x - 1` |
+
+---
+
+### Ví dụ chi tiết
+
+<Tabs>
+  <TabItem label="+ / - (unary)">
+    ```js
+    +"5";        // 5 (string → number)
+    +true;       // 1
+    +false;      // 0
+    +null;       // 0
+    +undefined;  // NaN
+
+    -"5";        // -5
+    -true;       // -1
+    ```
+  </TabItem>
+  <TabItem label="typeof">
+    ```js
+    typeof 42;           // "number"
+    typeof "hello";      // "string"
+    typeof true;         // "boolean"
+    typeof undefined;    // "undefined"
+    typeof null;         // "object" ← bug lịch sử!
+    typeof {};           // "object"
+    typeof [];           // "object"
+    typeof function(){}; // "function"
+    ```
+  </TabItem>
+  <TabItem label="delete / void">
+    ```js
+    const obj = { a: 1, b: 2 };
+    delete obj.a;
+    console.log(obj); // { b: 2 }
+
+    // void — luôn trả về undefined
+    void 0;           // undefined
+    void "hello";     // undefined
+    // Ứng dụng: void trong href
+    // <a href="javascript:void(0)">Click</a>
+    ```
+  </TabItem>
+  <TabItem label="! / !!">
+    ```js
+    !true;      // false
+    !0;         // true
+    !"";        // true
+    !null;      // true
+
+    // Double NOT — chuyển sang boolean
+    !!"hello";  // true
+    !!0;        // false
+    !!null;     // false
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Tóm tắt
+
+| Nhóm | Toán tử chính | Ghi nhớ |
+| ---- | ------------- | ------- |
+| **Gán** | `=` `+=` `-=` ... | Gán về bên trái |
+| **Số học** | `+` `-` `*` `/` `%` `**` | `+` cũng nối string! |
+| **Tăng/giảm** | `++` `--` | Prefix ≠ Postfix |
+| **Unary** | `+` `-` `!` `typeof` `delete` `void` | Chỉ cần 1 toán hạng |

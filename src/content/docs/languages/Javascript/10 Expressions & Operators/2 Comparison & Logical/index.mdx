@@ -1,0 +1,217 @@
+---
+title: Comparison & Logical Operators
+sidebar:
+  order: 25
+description: Toán tử so sánh, logic và điều kiện (ternary) trong JavaScript
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Comparison Operators | Toán tử so sánh
+
+So sánh hai giá trị và trả về `true` hoặc `false`.
+
+| Toán tử | Ý nghĩa | Ví dụ | Kết quả |
+| ------- | ------- | ----- | ------- |
+| `==` | Bằng (so sánh lỏng) | `5 == "5"` | `true` |
+| `===` | Bằng (so sánh chặt) | `5 === "5"` | `false` |
+| `!=` | Khác (so sánh lỏng) | `5 != "5"` | `false` |
+| `!==` | Khác (so sánh chặt) | `5 !== "5"` | `true` |
+| `>` | Lớn hơn | `7 > 3` | `true` |
+| `<` | Nhỏ hơn | `3 < 5` | `true` |
+| `>=` | Lớn hơn hoặc bằng | `5 >= 5` | `true` |
+| `<=` | Nhỏ hơn hoặc bằng | `4 <= 2` | `false` |
+
+---
+
+### == vs === (Loose vs Strict)
+
+<Tabs>
+  <TabItem label="== (Loose)">
+    **Ép kiểu** trước khi so sánh — có thể gây bất ngờ:
+
+    ```js
+    5 == "5";      // true  (string → number)
+    0 == false;    // true  (false → 0)
+    "" == false;   // true  ("" → 0, false → 0)
+    null == undefined; // true (quy tắc đặc biệt)
+    null == 0;     // false (null chỉ == undefined)
+    ```
+  </TabItem>
+  <TabItem label="=== (Strict)">
+    **Không ép kiểu** — phải cùng kiểu VÀ cùng giá trị:
+
+    ```js
+    5 === "5";     // false (khác kiểu)
+    0 === false;   // false
+    "" === false;  // false
+    null === undefined; // false
+    NaN === NaN;   // false ← đặc biệt!
+    ```
+  </TabItem>
+</Tabs>
+
+<Aside type="tip" title="Best Practice">
+**Luôn dùng `===` và `!==`** — tránh các kết quả bất ngờ từ type coercion. Chi tiết xem phần [Equality Comparisons](/languages/javascript/7-equality-comparisons/).
+</Aside>
+
+---
+
+### So sánh chuỗi
+
+Chuỗi được so sánh theo thứ tự **Unicode** (từng ký tự):
+
+```js
+"a" < "b";      // true (97 < 98)
+"abc" < "abd";  // true
+"a" < "B";      // false (97 > 66) — viết hoa có mã nhỏ hơn!
+"10" < "9";     // true — so sánh string, không phải number!
+```
+
+<Aside type="caution" title="Cẩn thận!">
+Khi so sánh **string chứa số**, JavaScript so sánh theo Unicode, KHÔNG theo giá trị số. Ép kiểu trước: `Number("10") < Number("9")` → `false`.
+</Aside>
+
+---
+
+## Logical Operators | Toán tử logic
+
+Làm việc với giá trị boolean hoặc "truthy/falsy".
+
+| Toán tử | Ý nghĩa | Ví dụ | Kết quả |
+| ------- | ------- | ----- | ------- |
+| `&&` | AND (và) | `true && false` | `false` |
+| `\|\|` | OR (hoặc) | `true \|\| false` | `true` |
+| `!` | NOT (phủ định) | `!true` | `false` |
+
+---
+
+### Short-circuit Evaluation
+
+<Tabs>
+  <TabItem label="&& (AND)">
+    Trả về giá trị **falsy đầu tiên**, hoặc giá trị cuối nếu tất cả truthy:
+
+    ```js
+    true && "hello";   // "hello"
+    false && "hello";  // false (dừng ngay)
+    0 && "hello";      // 0
+
+    // Ứng dụng: chạy code khi điều kiện đúng
+    user && user.save();
+    ```
+  </TabItem>
+  <TabItem label="|| (OR)">
+    Trả về giá trị **truthy đầu tiên**, hoặc giá trị cuối nếu tất cả falsy:
+
+    ```js
+    "" || "Guest";      // "Guest"
+    0 || 42;            // 42
+    "hello" || "world"; // "hello"
+
+    // Ứng dụng: giá trị mặc định
+    let name = input || "Guest";
+    ```
+  </TabItem>
+  <TabItem label="?? (Nullish)">
+    Chỉ trả vế phải khi vế trái là `null`/`undefined` — **không** gộp `0`, `""`, `false`:
+
+    ```js
+    0 || 10;    // 10 ← sai nếu 0 là giá trị hợp lệ
+    0 ?? 10;    // 0  ← đúng!
+
+    null ?? "default";      // "default"
+    undefined ?? "default"; // "default"
+    false ?? "default";     // false (không phải null/undefined)
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+### Bảng chân trị
+
+<Tabs>
+  <TabItem label="AND (&&)">
+    | A | B | A && B |
+    | --- | --- | --- |
+    | `true` | `true` | `true` |
+    | `true` | `false` | `false` |
+    | `false` | `true` | `false` |
+    | `false` | `false` | `false` |
+  </TabItem>
+  <TabItem label="OR (||)">
+    | A | B | A \|\| B |
+    | --- | --- | --- |
+    | `true` | `true` | `true` |
+    | `true` | `false` | `true` |
+    | `false` | `true` | `true` |
+    | `false` | `false` | `false` |
+  </TabItem>
+  <TabItem label="NOT (!)">
+    | A | !A |
+    | --- | --- |
+    | `true` | `false` |
+    | `false` | `true` |
+  </TabItem>
+</Tabs>
+
+---
+
+## Conditional Operator | Toán tử điều kiện
+
+Toán tử điều kiện (ternary) cho phép viết ngắn gọn câu lệnh `if–else` **dưới dạng biểu thức**.
+
+### Cú pháp
+
+```js
+điều_kiện ? giá_trị_nếu_đúng : giá_trị_nếu_sai;
+```
+
+### Ví dụ
+
+<Tabs>
+  <TabItem label="Cơ bản">
+    ```js
+    let age = 20;
+    let access = (age >= 18) ? "Được phép" : "Từ chối";
+    console.log(access); // "Được phép"
+    ```
+  </TabItem>
+  <TabItem label="Trong JSX/template">
+    ```jsx
+    // React JSX — dùng ternary để render có điều kiện
+    return (
+      <div>
+        {isLoggedIn ? <Dashboard /> : <Login />}
+      </div>
+    );
+    ```
+  </TabItem>
+  <TabItem label="Lồng nhau (tránh!)">
+    ```js
+    // ❌ Khó đọc
+    const grade = score >= 90 ? "A"
+               : score >= 80 ? "B"
+               : score >= 70 ? "C"
+               : "F";
+
+    // ✅ Nên dùng if...else hoặc object lookup
+    ```
+  </TabItem>
+</Tabs>
+
+<Aside type="tip" title="Khi nào dùng ternary?">
+- **Dùng**: gán giá trị đơn giản theo 1 điều kiện
+- **Không dùng**: logic phức tạp, nhiều nhánh, hoặc có side effects
+</Aside>
+
+---
+
+## Tóm tắt
+
+| Nhóm | Toán tử chính | Ghi nhớ |
+| ---- | ------------- | ------- |
+| **So sánh** | `==` `===` `!=` `!==` `>` `<` `>=` `<=` | Luôn dùng `===` / `!==` |
+| **Logic** | `&&` `\|\|` `!` `??` | Short-circuit + nullish coalescing |
+| **Điều kiện** | `? :` | Chỉ cho biểu thức đơn giản |

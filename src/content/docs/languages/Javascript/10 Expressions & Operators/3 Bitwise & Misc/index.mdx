@@ -1,0 +1,244 @@
+---
+title: Bitwise & Misc Operators
+sidebar:
+  order: 26
+description: Toán tử bitwise, comma, BigInt và string trong JavaScript
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Bitwise Operators | Toán tử bit
+
+Hoạt động trực tiếp trên **bit nhị phân** của số. Ít dùng trong thực tế, nhưng rất nhanh và hiệu quả cho xử lý thấp tầng.
+
+| Toán tử | Ý nghĩa | Ví dụ | Kết quả |
+| ------- | ------- | ----- | ------- |
+| `&` | AND | `5 & 1` | `1` |
+| `\|` | OR | `5 \| 1` | `5` |
+| `^` | XOR | `5 ^ 1` | `4` |
+| `~` | NOT | `~5` | `-6` |
+| `<<` | Dịch trái | `5 << 1` | `10` |
+| `>>` | Dịch phải | `5 >> 1` | `2` |
+| `>>>` | Dịch phải không dấu | `5 >>> 1` | `2` |
+
+---
+
+### Giải thích nhị phân
+
+<Tabs>
+  <TabItem label="AND (&)">
+    Cả hai bit đều `1` → kết quả `1`:
+
+    ```
+    5 = 0101
+    1 = 0001
+    --------
+    & = 0001 → 1
+    ```
+
+    ```js
+    5 & 1;  // 1
+    6 & 3;  // 2 (0110 & 0011 = 0010)
+    ```
+  </TabItem>
+  <TabItem label="OR (|)">
+    Ít nhất một bit `1` → kết quả `1`:
+
+    ```
+    5 = 0101
+    1 = 0001
+    --------
+    | = 0101 → 5
+    ```
+
+    ```js
+    5 | 1;  // 5
+    6 | 3;  // 7 (0110 | 0011 = 0111)
+    ```
+  </TabItem>
+  <TabItem label="XOR (^)">
+    Hai bit **khác nhau** → kết quả `1`:
+
+    ```
+    5 = 0101
+    1 = 0001
+    --------
+    ^ = 0100 → 4
+    ```
+
+    ```js
+    5 ^ 1;  // 4
+    // Ứng dụng: swap không cần biến tạm
+    let a = 5, b = 3;
+    a ^= b; b ^= a; a ^= b;
+    // a = 3, b = 5
+    ```
+  </TabItem>
+  <TabItem label="Shift (<<, >>)">
+    ```js
+    5 << 1;  // 10 (0101 → 1010) — nhân 2
+    5 >> 1;  // 2  (0101 → 0010) — chia 2 (bỏ phần lẻ)
+
+    // Ứng dụng: nhân/chia nhanh cho lũy thừa của 2
+    8 << 2;  // 32 (8 × 4)
+    32 >> 3; // 4  (32 ÷ 8)
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+### Ứng dụng thực tế
+
+<CardGrid>
+  <Card title="Kiểm tra chẵn/lẻ" icon="approve-check">
+    ```js
+    // Nhanh hơn modulo
+    const isOdd = n => (n & 1) === 1;
+    isOdd(5); // true
+    isOdd(4); // false
+    ```
+  </Card>
+  <Card title="Flags / Permissions" icon="setting">
+    ```js
+    const READ  = 0b001; // 1
+    const WRITE = 0b010; // 2
+    const EXEC  = 0b100; // 4
+
+    let perms = READ | WRITE; // 3
+    perms & READ;  // 1 (truthy → có quyền)
+    perms & EXEC;  // 0 (falsy → không có)
+    ```
+  </Card>
+</CardGrid>
+
+---
+
+## Comma Operator | Toán tử dấu phẩy
+
+Cho phép thực hiện nhiều biểu thức trong cùng một dòng, nhưng **chỉ giá trị của biểu thức cuối cùng được trả về**.
+
+```js
+let a = (1 + 2, 3 + 4);
+console.log(a); // 7 (chỉ lấy kết quả cuối)
+```
+
+### Thường dùng trong vòng lặp
+
+```js
+for (let i = 0, j = 10; i < j; i++, j--) {
+  console.log(i, j);
+}
+// 0 10
+// 1 9
+// 2 8
+// 3 7
+// 4 6
+```
+
+<Aside type="note" title="Khi nào dùng?">
+Comma operator hiếm khi cần thiết ngoài `for` loop. Trong hầu hết trường hợp, viết nhiều dòng code **rõ ràng hơn** là dùng comma.
+</Aside>
+
+---
+
+## BigInt Operators | Toán tử BigInt
+
+`BigInt` dùng để biểu diễn số nguyên rất lớn vượt quá giới hạn của kiểu `Number` ($2^{53} - 1$).
+
+Hoạt động tương tự như toán tử số học, nhưng **cả hai toán hạng đều phải là BigInt**.
+
+### Ví dụ
+
+```js
+const big = 9007199254740991n;
+console.log(big + 2n);  // 9007199254740993n
+console.log(big * 2n);  // 18014398509481982n
+```
+
+### Lưu ý
+
+<Tabs>
+  <TabItem label="Không trộn kiểu">
+    ```js
+    // ❌ TypeError — không thể trộn BigInt và Number
+    10n + 5;   // TypeError!
+
+    // ✅ Ép kiểu trước
+    10n + BigInt(5);   // 15n
+    Number(10n) + 5;   // 15
+    ```
+  </TabItem>
+  <TabItem label="Phép chia">
+    BigInt chia **cắt phần thập phân** (giống chia nguyên):
+
+    ```js
+    7n / 2n;   // 3n (không phải 3.5)
+    -7n / 2n;  // -3n
+    ```
+  </TabItem>
+  <TabItem label="So sánh">
+    ```js
+    // == cho phép so sánh khác kiểu
+    10n == 10;   // true
+    10n === 10;  // false (khác kiểu)
+
+    // So sánh lớn/nhỏ hoạt động bình thường
+    10n > 5;     // true
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## String Operators | Toán tử chuỗi
+
+Dùng để nối hoặc gán chuỗi.
+
+| Toán tử | Ví dụ | Kết quả |
+| ------- | ----- | ------- |
+| `+` | `'Hello ' + 'World'` | `'Hello World'` |
+| `+=` | `str += '!'` | Gán thêm vào chuỗi hiện có |
+
+### Ví dụ
+
+```js
+let msg = "Hello";
+msg += " JavaScript!";
+console.log(msg); // "Hello JavaScript!"
+```
+
+---
+
+### Template Literals (ES6)
+
+Cách hiện đại hơn để nối chuỗi:
+
+```js
+const name = "An";
+const age = 25;
+
+// ❌ Dùng +
+const s1 = "Tôi là " + name + ", " + age + " tuổi.";
+
+// ✅ Dùng template literal
+const s2 = `Tôi là ${name}, ${age} tuổi.`;
+```
+
+<Aside type="tip" title="Template literal có thể chứa expression">
+```js
+`Tổng: ${2 + 3}`;                // "Tổng: 5"
+`Status: ${isOk ? "✅" : "❌"}`;  // "Status: ✅" hoặc "Status: ❌"
+```
+</Aside>
+
+---
+
+## Tóm tắt
+
+| Nhóm | Toán tử | Ghi nhớ |
+| ---- | ------- | ------- |
+| **Bitwise** | `&` `\|` `^` `~` `<<` `>>` `>>>` | Thao tác bit — dùng cho flags, permission |
+| **Comma** | `,` | Chỉ trả giá trị cuối — chủ yếu dùng trong `for` |
+| **BigInt** | `+` `-` `*` `/` `%` `**` (với `n`) | Không trộn với Number |
+| **String** | `+` `+=` | Ưu tiên template literal thay `+` |
