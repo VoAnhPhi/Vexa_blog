@@ -1,0 +1,138 @@
+---
+title: Expressions & Operators
+sidebar:
+  order: 23
+description: Overview of JavaScript expressions and operators — the foundation of all calculations, conditions and logic
+---
+
+import { Card, CardGrid, LinkCard, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+This chapter explains **expressions** and **operators** in JavaScript — the foundation for handling all calculations, conditions, and logic in the language.
+
+---
+
+## Contents
+
+<CardGrid>
+  <LinkCard
+    title="Assignment & Arithmetic"
+    description="Assignment, arithmetic and unary operators"
+    href="/en/languages/javascript/10-expressions-operators/1-assignment-arithmetic/"
+  />
+  <LinkCard
+    title="Comparison & Logical"
+    description="Comparison, logical and conditional (ternary) operators"
+    href="/en/languages/javascript/10-expressions-operators/2-comparison-logical/"
+  />
+  <LinkCard
+    title="Bitwise & Misc"
+    description="Bitwise, comma, BigInt and string operators"
+    href="/en/languages/javascript/10-expressions-operators/3-bitwise-misc/"
+  />
+</CardGrid>
+
+---
+
+## Expressions
+
+An **expression** is any piece of code that **evaluates to a value**. That value can be a number, string, boolean, object, or `undefined`.
+
+<Tabs>
+  <TabItem label="Side effects">
+    Expressions **with side effects** — change values in memory:
+
+    ```js
+    let x = 5;   // creates a variable and assigns a value (side effect)
+    x++;          // changes the value of x
+    ```
+  </TabItem>
+  <TabItem label="Pure evaluate">
+    Expressions that **only compute** — return a value without changing anything:
+
+    ```js
+    2 + 3             // returns 5
+    Math.max(10, 20)  // returns 20
+    ```
+  </TabItem>
+</Tabs>
+
+<Aside type="tip" title="How to identify an expression">
+If something can appear on the **right side of `=`**, it is an expression.
+
+```js
+let result = /* ← any expression */;
+let y = 2 + 3;          // ✅ expression
+let z = Math.random();   // ✅ expression
+let w = x > 0 ? 1 : -1; // ✅ expression
+```
+</Aside>
+
+---
+
+## Operator Categories
+
+<Tabs>
+  <TabItem label="By function">
+    | Group | Operators | Description |
+    | ----- | --------- | ----------- |
+    | **Assignment** | `=` `+=` `-=` `*=` `/=` `%=` `**=` | Store values in variables |
+    | **Arithmetic** | `+` `-` `*` `/` `%` `**` `++` `--` | Basic math operations |
+    | **Comparison** | `==` `===` `!=` `!==` `>` `<` `>=` `<=` | Return `true` / `false` |
+    | **Logical** | `&&` `\|\|` `!` | Combine booleans |
+    | **Conditional** | `? :` | Ternary — inline branching |
+    | **Bitwise** | `&` `\|` `^` `~` `<<` `>>` `>>>` | Binary bit operations |
+    | **String** | `+` `+=` | Concatenation |
+    | **BigInt** | `+` `-` `*` `/` `%` `**` | Large integers (`n`) |
+    | **Special** | `,` `typeof` `delete` `void` `in` `instanceof` | Miscellaneous operators |
+  </TabItem>
+  <TabItem label="By operand count">
+    | Type | Operands | Example |
+    | ---- | -------- | ------- |
+    | **Unary** | 1 | `!x`, `typeof x`, `++x` |
+    | **Binary** | 2 | `a + b`, `x === y` |
+    | **Ternary** | 3 | `a ? b : c` |
+  </TabItem>
+</Tabs>
+
+---
+
+## Operator Precedence
+
+When multiple operators appear in the same expression, JavaScript uses **precedence** to decide the order of evaluation:
+
+```js
+let x = 2 + 3 * 4;     // 14, not 20 → * has higher precedence than +
+let y = (2 + 3) * 4;   // 20 → () forces + to run first
+```
+
+| Precedence (high → low) | Operators |
+| ------------------------ | --------- |
+| 1. Grouping | `()` |
+| 2. Unary | `!` `typeof` `++` `--` `+` `-` |
+| 3. Exponentiation | `**` |
+| 4. Multiply / Divide | `*` `/` `%` |
+| 5. Add / Subtract | `+` `-` |
+| 6. Bitwise shift | `<<` `>>` `>>>` |
+| 7. Relational | `<` `>` `<=` `>=` `instanceof` `in` |
+| 8. Equality | `==` `!=` `===` `!==` |
+| 9. Bitwise AND | `&` |
+| 10. Bitwise XOR | `^` |
+| 11. Bitwise OR | `\|` |
+| 12. Logical AND | `&&` |
+| 13. Logical OR | `\|\|` |
+| 14. Nullish | `??` |
+| 15. Ternary | `? :` |
+| 16. Assignment | `=` `+=` `-=` ... |
+| 17. Comma | `,` |
+
+<Aside type="caution" title="Practical tip">
+Don't try to memorize the table — use **parentheses `()`** for clarity:
+
+```js
+// ❌ Relies on precedence → hard to read
+let r = a && b || c && d;
+
+// ✅ Use () → intent is clear
+let r = (a && b) || (c && d);
+```
+</Aside>

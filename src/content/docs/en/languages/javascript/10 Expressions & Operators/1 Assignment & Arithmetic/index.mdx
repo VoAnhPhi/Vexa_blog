@@ -1,0 +1,237 @@
+---
+title: Assignment & Arithmetic Operators
+sidebar:
+  order: 24
+description: Assignment, arithmetic and unary operators in JavaScript
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Assignment Operators
+
+Used to **store values in variables**.
+
+| Operator | Example | Equivalent to |
+| -------- | ------- | ------------- |
+| `=` | `x = 10` | Assign value |
+| `+=` | `x += 5` | `x = x + 5` |
+| `-=` | `x -= 2` | `x = x - 2` |
+| `*=` | `x *= 3` | `x = x * 3` |
+| `/=` | `x /= 2` | `x = x / 2` |
+| `%=` | `x %= 3` | `x = x % 3` |
+| `**=` | `x **= 2` | `x = x ** 2` |
+
+### Example
+
+```js
+let x = 10;
+
+x += 5;   // x = 15
+x -= 3;   // x = 12
+x *= 2;   // x = 24
+x /= 4;   // x = 6
+x %= 4;   // x = 2
+x **= 3;  // x = 8
+```
+
+<Aside type="note" title="Bitwise assignment">
+There are also bitwise assignment operators: `&=`, `|=`, `^=`, `<<=`, `>>=`, `>>>=` — rarely used in practice.
+</Aside>
+
+---
+
+### Destructuring Assignment
+
+ES6 allows destructuring assignment:
+
+<Tabs>
+  <TabItem label="Array">
+    ```js
+    const [a, b, c] = [1, 2, 3];
+    console.log(a, b, c); // 1 2 3
+
+    // Swap without a temp variable
+    let x = 1, y = 2;
+    [x, y] = [y, x];
+    console.log(x, y); // 2 1
+    ```
+  </TabItem>
+  <TabItem label="Object">
+    ```js
+    const { name, age } = { name: "An", age: 25 };
+    console.log(name, age); // "An" 25
+
+    // Rename variables
+    const { name: n, age: a } = { name: "An", age: 25 };
+    console.log(n, a); // "An" 25
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Arithmetic Operators
+
+Used to perform basic math operations.
+
+| Operator | Description | Example | Result |
+| -------- | ----------- | ------- | ------ |
+| `+` | Addition | `5 + 2` | `7` |
+| `-` | Subtraction | `5 - 2` | `3` |
+| `*` | Multiplication | `3 * 4` | `12` |
+| `/` | Division | `10 / 2` | `5` |
+| `%` | Remainder (modulo) | `10 % 3` | `1` |
+| `**` | Exponentiation | `2 ** 3` | `8` |
+| `++` | Increment by 1 | `x++` | `x = x + 1` |
+| `--` | Decrement by 1 | `x--` | `x = x - 1` |
+
+---
+
+### Important Notes
+
+<Tabs>
+  <TabItem label="Division by 0">
+    ```js
+    10 / 0;       // Infinity
+    -10 / 0;      // -Infinity
+    0 / 0;        // NaN
+    ```
+  </TabItem>
+  <TabItem label="Modulo">
+    ```js
+    10 % 3;  // 1 (10 = 3×3 + 1)
+    -10 % 3; // -1 (keeps sign of left operand)
+    10 % -3; // 1
+
+    // Use case: check even/odd
+    const isEven = n => n % 2 === 0;
+    ```
+  </TabItem>
+  <TabItem label="+ with strings">
+    `+` performs **string concatenation** when one side is a string:
+
+    ```js
+    "5" + 2;    // "52" (string + number → string)
+    5 + "2";    // "52"
+    5 + 2;      // 7   (number + number → number)
+    5 + 2 + "3" // "73" (7 + "3" → "73")
+    "3" + 5 + 2 // "352" ("3" + 5 → "35" + 2 → "352")
+    ```
+
+    <Aside type="caution" title="Watch out!">
+    Use `Number()` or `+` (unary) to cast types before calculating.
+    </Aside>
+  </TabItem>
+</Tabs>
+
+---
+
+### Prefix vs Postfix (++/--)
+
+<Tabs>
+  <TabItem label="Prefix (++x)">
+    **Increments first**, then returns the new value:
+
+    ```js
+    let a = 5;
+    let b = ++a;
+    console.log(a); // 6
+    console.log(b); // 6 (increment first, then assign)
+    ```
+  </TabItem>
+  <TabItem label="Postfix (x++)">
+    Returns the old value, **then increments**:
+
+    ```js
+    let a = 5;
+    let b = a++;
+    console.log(a); // 6
+    console.log(b); // 5 (assign old value, then increment)
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Unary Operators
+
+Operators that work with only **one operand**.
+
+| Operator | Description | Example | Result |
+| -------- | ----------- | ------- | ------ |
+| `+` | Convert to number | `+"5"` | `5` |
+| `-` | Negate or convert to number | `-true` | `-1` |
+| `!` | Logical NOT | `!false` | `true` |
+| `typeof` | Returns data type | `typeof "hi"` | `"string"` |
+| `delete` | Delete object property | `delete obj.key` | `true` |
+| `void` | Execute but always return `undefined` | `void 0` | `undefined` |
+| `++` | Increment by 1 | `++x` | `x = x + 1` |
+| `--` | Decrement by 1 | `--x` | `x = x - 1` |
+
+---
+
+### Detailed Examples
+
+<Tabs>
+  <TabItem label="+ / - (unary)">
+    ```js
+    +"5";        // 5 (string → number)
+    +true;       // 1
+    +false;      // 0
+    +null;       // 0
+    +undefined;  // NaN
+
+    -"5";        // -5
+    -true;       // -1
+    ```
+  </TabItem>
+  <TabItem label="typeof">
+    ```js
+    typeof 42;           // "number"
+    typeof "hello";      // "string"
+    typeof true;         // "boolean"
+    typeof undefined;    // "undefined"
+    typeof null;         // "object" ← historical bug!
+    typeof {};           // "object"
+    typeof [];           // "object"
+    typeof function(){}; // "function"
+    ```
+  </TabItem>
+  <TabItem label="delete / void">
+    ```js
+    const obj = { a: 1, b: 2 };
+    delete obj.a;
+    console.log(obj); // { b: 2 }
+
+    // void — always returns undefined
+    void 0;           // undefined
+    void "hello";     // undefined
+    // Use case: void in href
+    // <a href="javascript:void(0)">Click</a>
+    ```
+  </TabItem>
+  <TabItem label="! / !!">
+    ```js
+    !true;      // false
+    !0;         // true
+    !"";        // true
+    !null;      // true
+
+    // Double NOT — convert to boolean
+    !!"hello";  // true
+    !!0;        // false
+    !!null;     // false
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Summary
+
+| Group | Key Operators | Remember |
+| ----- | ------------- | -------- |
+| **Assignment** | `=` `+=` `-=` ... | Assigns to the left side |
+| **Arithmetic** | `+` `-` `*` `/` `%` `**` | `+` also concatenates strings! |
+| **Increment/Decrement** | `++` `--` | Prefix ≠ Postfix |
+| **Unary** | `+` `-` `!` `typeof` `delete` `void` | Only needs 1 operand |

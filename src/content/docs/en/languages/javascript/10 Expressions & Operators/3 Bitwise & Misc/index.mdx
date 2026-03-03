@@ -1,0 +1,244 @@
+---
+title: Bitwise & Misc Operators
+sidebar:
+  order: 26
+description: Bitwise, comma, BigInt and string operators in JavaScript
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Bitwise Operators
+
+Operate directly on the **binary bits** of numbers. Rarely used in everyday code, but very fast and efficient for low-level processing.
+
+| Operator | Meaning | Example | Result |
+| -------- | ------- | ------- | ------ |
+| `&` | AND | `5 & 1` | `1` |
+| `\|` | OR | `5 \| 1` | `5` |
+| `^` | XOR | `5 ^ 1` | `4` |
+| `~` | NOT | `~5` | `-6` |
+| `<<` | Left shift | `5 << 1` | `10` |
+| `>>` | Right shift | `5 >> 1` | `2` |
+| `>>>` | Unsigned right shift | `5 >>> 1` | `2` |
+
+---
+
+### Binary Explanation
+
+<Tabs>
+  <TabItem label="AND (&)">
+    Both bits must be `1` → result is `1`:
+
+    ```
+    5 = 0101
+    1 = 0001
+    --------
+    & = 0001 → 1
+    ```
+
+    ```js
+    5 & 1;  // 1
+    6 & 3;  // 2 (0110 & 0011 = 0010)
+    ```
+  </TabItem>
+  <TabItem label="OR (|)">
+    At least one bit is `1` → result is `1`:
+
+    ```
+    5 = 0101
+    1 = 0001
+    --------
+    | = 0101 → 5
+    ```
+
+    ```js
+    5 | 1;  // 5
+    6 | 3;  // 7 (0110 | 0011 = 0111)
+    ```
+  </TabItem>
+  <TabItem label="XOR (^)">
+    Bits are **different** → result is `1`:
+
+    ```
+    5 = 0101
+    1 = 0001
+    --------
+    ^ = 0100 → 4
+    ```
+
+    ```js
+    5 ^ 1;  // 4
+    // Use case: swap without a temp variable
+    let a = 5, b = 3;
+    a ^= b; b ^= a; a ^= b;
+    // a = 3, b = 5
+    ```
+  </TabItem>
+  <TabItem label="Shift (<<, >>)">
+    ```js
+    5 << 1;  // 10 (0101 → 1010) — multiply by 2
+    5 >> 1;  // 2  (0101 → 0010) — divide by 2 (drop remainder)
+
+    // Use case: fast multiply/divide by powers of 2
+    8 << 2;  // 32 (8 × 4)
+    32 >> 3; // 4  (32 ÷ 8)
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+### Practical Applications
+
+<CardGrid>
+  <Card title="Check even/odd" icon="approve-check">
+    ```js
+    // Faster than modulo
+    const isOdd = n => (n & 1) === 1;
+    isOdd(5); // true
+    isOdd(4); // false
+    ```
+  </Card>
+  <Card title="Flags / Permissions" icon="setting">
+    ```js
+    const READ  = 0b001; // 1
+    const WRITE = 0b010; // 2
+    const EXEC  = 0b100; // 4
+
+    let perms = READ | WRITE; // 3
+    perms & READ;  // 1 (truthy → has permission)
+    perms & EXEC;  // 0 (falsy → no permission)
+    ```
+  </Card>
+</CardGrid>
+
+---
+
+## Comma Operator
+
+Allows evaluating multiple expressions in a single statement, but **only the last expression's value is returned**.
+
+```js
+let a = (1 + 2, 3 + 4);
+console.log(a); // 7 (only the last result)
+```
+
+### Commonly Used in Loops
+
+```js
+for (let i = 0, j = 10; i < j; i++, j--) {
+  console.log(i, j);
+}
+// 0 10
+// 1 9
+// 2 8
+// 3 7
+// 4 6
+```
+
+<Aside type="note" title="When to use?">
+The comma operator is rarely needed outside `for` loops. In most cases, writing multiple lines of code is **clearer** than using comma.
+</Aside>
+
+---
+
+## BigInt Operators
+
+`BigInt` is used to represent very large integers that exceed the `Number` type limit ($2^{53} - 1$).
+
+Works similarly to arithmetic operators, but **both operands must be BigInt**.
+
+### Example
+
+```js
+const big = 9007199254740991n;
+console.log(big + 2n);  // 9007199254740993n
+console.log(big * 2n);  // 18014398509481982n
+```
+
+### Notes
+
+<Tabs>
+  <TabItem label="No mixing types">
+    ```js
+    // ❌ TypeError — cannot mix BigInt and Number
+    10n + 5;   // TypeError!
+
+    // ✅ Cast first
+    10n + BigInt(5);   // 15n
+    Number(10n) + 5;   // 15
+    ```
+  </TabItem>
+  <TabItem label="Division">
+    BigInt division **truncates the decimal** (integer division):
+
+    ```js
+    7n / 2n;   // 3n (not 3.5)
+    -7n / 2n;  // -3n
+    ```
+  </TabItem>
+  <TabItem label="Comparison">
+    ```js
+    // == allows cross-type comparison
+    10n == 10;   // true
+    10n === 10;  // false (different types)
+
+    // Greater/less than works normally
+    10n > 5;     // true
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## String Operators
+
+Used to concatenate or assign strings.
+
+| Operator | Example | Result |
+| -------- | ------- | ------ |
+| `+` | `'Hello ' + 'World'` | `'Hello World'` |
+| `+=` | `str += '!'` | Appends to existing string |
+
+### Example
+
+```js
+let msg = "Hello";
+msg += " JavaScript!";
+console.log(msg); // "Hello JavaScript!"
+```
+
+---
+
+### Template Literals (ES6)
+
+A modern way to concatenate strings:
+
+```js
+const name = "An";
+const age = 25;
+
+// ❌ Using +
+const s1 = "I am " + name + ", " + age + " years old.";
+
+// ✅ Using template literal
+const s2 = `I am ${name}, ${age} years old.`;
+```
+
+<Aside type="tip" title="Template literals can contain expressions">
+```js
+`Total: ${2 + 3}`;                // "Total: 5"
+`Status: ${isOk ? "✅" : "❌"}`;  // "Status: ✅" or "Status: ❌"
+```
+</Aside>
+
+---
+
+## Summary
+
+| Group | Operators | Remember |
+| ----- | --------- | -------- |
+| **Bitwise** | `&` `\|` `^` `~` `<<` `>>` `>>>` | Bit manipulation — used for flags, permissions |
+| **Comma** | `,` | Only returns last value — mainly used in `for` |
+| **BigInt** | `+` `-` `*` `/` `%` `**` (with `n`) | Cannot mix with Number |
+| **String** | `+` `+=` | Prefer template literals over `+` |
