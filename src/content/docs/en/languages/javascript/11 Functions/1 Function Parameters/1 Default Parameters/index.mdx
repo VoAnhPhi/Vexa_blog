@@ -1,0 +1,184 @@
+---
+title: Default Parameters
+sidebar:
+  order: 29
+description: Default values for function parameters in JavaScript — syntax, undefined vs null rules, complex expressions
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Concept
+
+Automatically use a **default value** when the argument is `undefined`. Default values are **evaluated at call time**, from **left → right**.
+
+---
+
+## Syntax
+
+```js
+function fn(param = defaultValue) { ... }
+```
+
+---
+
+## Examples
+
+<Tabs>
+  <TabItem label="Basic">
+    ```js
+    function greet(name = 'friend') {
+      return `Hi, ${name}!`;
+    }
+
+    greet();            // "Hi, friend!"   (no arg → undefined → uses default)
+    greet(undefined);   // "Hi, friend!"   (undefined → uses default)
+    greet(null);        // "Hi, null!"     (null ≠ undefined → does NOT use default)
+    greet('');          // "Hi, !"         ('' ≠ undefined → does NOT use default)
+    ```
+  </TabItem>
+  <TabItem label="Reference earlier params">
+    Later parameters can **reference earlier ones**:
+
+    ```js
+    function createUser(name, role = 'user', greeting = `Welcome, ${name}!`) {
+      return { name, role, greeting };
+    }
+
+    createUser('An');
+    // { name: 'An', role: 'user', greeting: 'Welcome, An!' }
+    ```
+  </TabItem>
+  <TabItem label="Complex expressions">
+    Defaults can be **any expression** — evaluated on each call:
+
+    ```js
+    function log(msg, time = Date.now()) {
+      console.log(`[${time}] ${msg}`);
+    }
+
+    log("start"); // [1709474400000] start
+    // each call → new Date.now()
+    ```
+  </TabItem>
+  <TabItem label="With destructuring">
+    ```js
+    function createUser({ name, age = 18, role = 'user' } = {}) {
+      return { name, age, role };
+    }
+
+    createUser({ name: 'An' });
+    // { name: 'An', age: 18, role: 'user' }
+
+    createUser(); // no error thanks to = {} at the end
+    // { name: undefined, age: 18, role: 'user' }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Trigger Rules
+
+<Aside type="note" title="When is the default used?">
+Defaults **only** trigger when the value is `undefined` — **not** for `null`, `0`, `""`, or `false`:
+
+| Argument | Uses default? | Reason |
+| -------- | ------------- | ------ |
+| Not passed | ✅ Yes | Equivalent to `undefined` |
+| `undefined` | ✅ Yes | Matches condition |
+| `null` | ❌ No | `null ≠ undefined` |
+| `0` | ❌ No | `0 ≠ undefined` |
+| `""` | ❌ No | `"" ≠ undefined` |
+| `false` | ❌ No | `false ≠ undefined` |
+</Aside>
+
+---
+
+## Old Way vs New Way
+
+<Tabs>
+  <TabItem label="❌ Old way">
+    ```js
+    // Fails with valid falsy values (0, "", false)
+    function old(x) {
+      x = x || 10;  // 0 also gets replaced with 10!
+    }
+
+    old(0);   // x = 10 ← wrong!
+    old("");  // x = 10 ← wrong!
+    ```
+  </TabItem>
+  <TabItem label="✅ Default parameter">
+    ```js
+    // Only when undefined
+    function modern(x = 10) {
+      return x;
+    }
+
+    modern(0);   // 0 ← correct!
+    modern("");  // "" ← correct!
+    modern();    // 10 ← default
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Temporal Dead Zone (TDZ)
+
+Default parameters live in their **own scope** and are subject to TDZ — you cannot reference a parameter **after** the current one:
+
+```js
+// ❌ ReferenceError — b is not yet declared when computing a
+function bad(a = b, b = 1) {}
+bad(); // ReferenceError
+
+// ✅ OK — a is declared before b
+function ok(a = 1, b = a) {}
+ok(); // a = 1, b = 1
+```
+
+---
+
+## Best Practices
+
+<CardGrid>
+  <Card title="Defaults at the end" icon="approve-check">
+    Place parameters with defaults **after** required ones:
+
+    ```js
+    // ✅ Clear
+    function api(url, method = 'GET') {}
+
+    // ❌ Hard to use — must pass undefined to skip
+    function bad(method = 'GET', url) {}
+    bad(undefined, '/users');
+    ```
+  </Card>
+  <Card title="Object for many options" icon="setting">
+    When you have > 2 defaults → use **object parameter**:
+
+    ```js
+    function fetch(url, {
+      method = 'GET',
+      headers = {},
+      body = null,
+      timeout = 5000,
+    } = {}) {
+      // ...
+    }
+    ```
+  </Card>
+</CardGrid>
+
+---
+
+## Summary
+
+| Feature | Details |
+| ------- | ------- |
+| Syntax | `param = defaultValue` |
+| Triggers | Only when `undefined` |
+| Evaluation order | Left → right |
+| TDZ | Cannot reference later parameters |
+| `fn.length` | Counts up to the first default, then stops |

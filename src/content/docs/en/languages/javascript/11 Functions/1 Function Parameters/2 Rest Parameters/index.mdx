@@ -1,0 +1,189 @@
+---
+title: Rest Parameters
+sidebar:
+  order: 30
+description: Using ...rest to gather arguments into an array in JavaScript — rest vs spread, rules and best practices
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Concept
+
+Use `...name` at the **end** of the parameter list to **gather all remaining arguments into a real Array**.
+
+---
+
+## Syntax
+
+```js
+function fn(first, second, ...rest) { ... }
+```
+
+---
+
+## Examples
+
+<Tabs>
+  <TabItem label="Gather all">
+    ```js
+    function sum(...nums) {
+      return nums.reduce((s, n) => s + n, 0);
+    }
+
+    sum(1, 2, 3);    // 6
+    sum(10, 20);     // 30
+    sum();           // 0 (empty array → initial value 0)
+    ```
+  </TabItem>
+  <TabItem label="Gather remaining">
+    ```js
+    function tagLog(tag, ...items) {
+      console.log(tag, items);
+    }
+
+    tagLog('DEBUG', 'a', 1, { x: 3 });
+    // 'DEBUG' ['a', 1, { x: 3 }]
+    // → tag = 'DEBUG', items = ['a', 1, { x: 3 }]
+    ```
+  </TabItem>
+  <TabItem label="Replace arguments">
+    ```js
+    // ❌ Old: using arguments (array-like, not in arrow functions)
+    function old() {
+      return Array.from(arguments).join(', ');
+    }
+
+    // ✅ New: rest parameters (real array, works in arrow functions)
+    const modern = (...args) => args.join(', ');
+
+    old(1, 2, 3);     // "1, 2, 3"
+    modern(1, 2, 3);   // "1, 2, 3"
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Rest vs Spread
+
+<Aside type="caution" title="Don't confuse them!">
+Same `...` syntax but **different contexts**:
+
+| Context | Name | Behavior | Example |
+| ------- | ---- | -------- | ------- |
+| Function **declaration** | **Rest** | Gather many args → **1 array** | `function f(...args) {}` |
+| Function **call** | **Spread** | Spread 1 array → **many args** | `f(...arr)` |
+</Aside>
+
+<Tabs>
+  <TabItem label="Rest (declaration)">
+    ```js
+    // ...nums GATHERS the arguments into an array
+    function sum(...nums) {
+      return nums.reduce((s, n) => s + n, 0);
+    }
+    ```
+  </TabItem>
+  <TabItem label="Spread (call)">
+    ```js
+    const arr = [1, 2, 3];
+    // ...arr SPREADS the array into individual arguments
+    sum(...arr); // equivalent to sum(1, 2, 3) → 6
+    ```
+  </TabItem>
+  <TabItem label="Spread in array/object">
+    ```js
+    // Spread in array
+    const a = [1, 2];
+    const b = [...a, 3, 4]; // [1, 2, 3, 4]
+
+    // Spread in object
+    const user = { name: 'An' };
+    const full = { ...user, age: 25 }; // { name: 'An', age: 25 }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Rules
+
+<CardGrid>
+  <Card title="Rest must be last" icon="warning">
+    `...rest` must be the **last parameter**:
+
+    ```js
+    // ✅
+    function ok(a, b, ...rest) {}
+
+    // ❌ SyntaxError
+    function bad(...rest, last) {}
+    ```
+  </Card>
+  <Card title="Only one rest per function" icon="close">
+    You cannot have 2 rest parameters:
+
+    ```js
+    // ❌ SyntaxError
+    function bad(...a, ...b) {}
+    ```
+  </Card>
+  <Card title="Default before rest" icon="approve-check">
+    Recommended order: required → default → rest:
+
+    ```js
+    function api(url, method = 'GET', ...headers) {
+      // url: required
+      // method: has default
+      // headers: gathers the rest
+    }
+    ```
+  </Card>
+  <Card title="rest ≠ arguments" icon="setting">
+    `rest` is a real array, `arguments` is array-like:
+
+    ```js
+    function demo(a, ...rest) {
+      rest.map(x => x);        // ✅ Array
+      // arguments.map(x => x) // ❌ TypeError
+    }
+    ```
+  </Card>
+</CardGrid>
+
+---
+
+## Rest in Destructuring
+
+`...` is also used in **destructuring** (not just function parameters):
+
+<Tabs>
+  <TabItem label="Array destructuring">
+    ```js
+    const [first, second, ...rest] = [1, 2, 3, 4, 5];
+    console.log(first); // 1
+    console.log(rest);  // [3, 4, 5]
+    ```
+  </TabItem>
+  <TabItem label="Object destructuring">
+    ```js
+    const { name, ...others } = { name: 'An', age: 25, role: 'dev' };
+    console.log(name);   // 'An'
+    console.log(others); // { age: 25, role: 'dev' }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Summary
+
+| Feature | Details |
+| ------- | ------- |
+| Syntax | `...name` at end of parameter list |
+| Type | **Real Array** (has `.map()`, `.filter()`) |
+| Position | Must be the **last** parameter |
+| Count | Maximum **1** rest parameter per function |
+| `fn.length` | Does **not** count rest |
+| vs `arguments` | Real array, works in arrow functions |
+| Spread (`...arr`) | Opposite: spreads array → individual values |
