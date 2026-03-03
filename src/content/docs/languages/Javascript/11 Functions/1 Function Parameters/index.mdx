@@ -1,0 +1,287 @@
+---
+title: Function Parameters (Tham Số Hàm)
+sidebar:
+  order: 28
+description: Tham số, đối số, default parameters và rest parameters trong JavaScript
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Parameters vs Arguments
+
+- **Parameters (tham số):** "ô trống" trong khai báo hàm — tên biến **đại diện cho đầu vào** mà hàm mong đợi.
+- **Arguments (đối số):** **giá trị thật** bạn truyền vào khi gọi hàm.
+
+```js
+function add(a, b) {          // a, b là parameters
+  return a + b;
+}
+add(2, 3);                    // 2, 3 là arguments
+```
+
+---
+
+### `fn.length`
+
+`fn.length` cho biết **số tham số vị trí "kỳ vọng"** — tính đến **tham số mặc định đầu tiên**, không tính `...rest`:
+
+```js
+function f(a, b, c) {}        // f.length === 3
+function g(a, b = 1, c) {}    // g.length === 1 (dừng tại b có default)
+function h(a, ...rest) {}     // h.length === 1
+```
+
+---
+
+### Số đối số không khớp
+
+<Tabs>
+  <TabItem label="Truyền thiếu">
+    Tham số không nhận giá trị → `undefined`:
+
+    ```js
+    function greet(name, greeting) {
+      console.log(greeting, name);
+    }
+    greet("An");       // undefined "An"
+    ```
+  </TabItem>
+  <TabItem label="Truyền thừa">
+    Đối số thừa bị **bỏ qua** (trừ khi dùng `arguments` hoặc `...rest`):
+
+    ```js
+    function add(a, b) {
+      return a + b;
+    }
+    add(1, 2, 3, 4);  // 3 (chỉ dùng 2 đối số đầu)
+    ```
+  </TabItem>
+  <TabItem label="Object arguments">
+    Đối tượng `arguments` chứa **tất cả** đối số (chỉ có trong non-arrow function):
+
+    ```js
+    function showAll() {
+      console.log(arguments);        // [Arguments] { '0': 1, '1': 2, '2': 3 }
+      console.log(arguments.length); // 3
+    }
+    showAll(1, 2, 3);
+    ```
+
+    <Aside type="caution" title="Lưu ý">
+    `arguments` là **array-like**, không phải Array thật → không có `.map()`, `.filter()`.
+    Dùng `Array.from(arguments)` hoặc `[...arguments]` để chuyển thành mảng, hoặc dùng **rest parameters** cho gọn.
+    </Aside>
+  </TabItem>
+</Tabs>
+
+---
+
+## Default Parameters (Tham số mặc định)
+
+Tự động dùng **giá trị mặc định** khi đối số là `undefined`. Giá trị mặc định được **tính lúc gọi hàm**, từ **trái → phải**.
+
+### Cú pháp
+
+```js
+function fn(param = defaultValue) { ... }
+```
+
+### Ví dụ
+
+<Tabs>
+  <TabItem label="Cơ bản">
+    ```js
+    function greet(name = 'friend') {
+      return `Hi, ${name}!`;
+    }
+
+    greet();            // "Hi, friend!"   (không truyền → undefined → dùng default)
+    greet(undefined);   // "Hi, friend!"   (undefined → dùng default)
+    greet(null);        // "Hi, null!"     (null ≠ undefined → KHÔNG dùng default)
+    greet('');          // "Hi, !"         ('' ≠ undefined → KHÔNG dùng default)
+    ```
+  </TabItem>
+  <TabItem label="Tham chiếu tham số trước">
+    Tham số bên phải có thể **dùng tham số bên trái**:
+
+    ```js
+    function createUser(name, role = 'user', greeting = `Welcome, ${name}!`) {
+      return { name, role, greeting };
+    }
+
+    createUser('An');
+    // { name: 'An', role: 'user', greeting: 'Welcome, An!' }
+    ```
+  </TabItem>
+  <TabItem label="Biểu thức phức tạp">
+    Default có thể là **bất kỳ biểu thức nào** — được tính mỗi lần gọi:
+
+    ```js
+    function log(msg, time = Date.now()) {
+      console.log(`[${time}] ${msg}`);
+    }
+
+    log("start"); // [1709474400000] start
+    // mỗi lần gọi → Date.now() mới
+    ```
+  </TabItem>
+</Tabs>
+
+<Aside type="tip" title="So sánh cách cũ">
+```js
+// ❌ Cách cũ (ES5) — lỗi khi truyền falsy hợp lệ (0, "", false)
+function old(x) {
+  x = x || 10;  // 0 cũng bị thay bằng 10!
+}
+
+// ✅ Default parameter — chỉ khi undefined
+function modern(x = 10) {
+  // x = 0 → giữ nguyên 0
+}
+```
+</Aside>
+
+---
+
+## Rest Parameters (Gom phần còn lại)
+
+Dùng `...tên` ở **cuối** danh sách tham số để **gom mọi đối số còn lại thành một mảng thật** (Array).
+
+### Cú pháp
+
+```js
+function fn(first, second, ...rest) { ... }
+```
+
+### Ví dụ
+
+<Tabs>
+  <TabItem label="Gom tất cả">
+    ```js
+    function sum(...nums) {
+      return nums.reduce((s, n) => s + n, 0);
+    }
+
+    sum(1, 2, 3);    // 6
+    sum(10, 20);     // 30
+    sum();           // 0
+    ```
+  </TabItem>
+  <TabItem label="Gom phần còn lại">
+    ```js
+    function tagLog(tag, ...items) {
+      console.log(tag, items);
+    }
+
+    tagLog('DEBUG', 'a', 1, { x: 3 });
+    // 'DEBUG' ['a', 1, { x: 3 }]
+    // → tag = 'DEBUG', items = ['a', 1, { x: 3 }]
+    ```
+  </TabItem>
+  <TabItem label="Thay thế arguments">
+    ```js
+    // ❌ Cũ: dùng arguments (array-like, không có trong arrow)
+    function old() {
+      return Array.from(arguments).join(', ');
+    }
+
+    // ✅ Mới: rest parameters (mảng thật, dùng được trong arrow)
+    const modern = (...args) => args.join(', ');
+
+    old(1, 2, 3);    // "1, 2, 3"
+    modern(1, 2, 3);  // "1, 2, 3"
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+### Rest vs Spread
+
+<Aside type="caution" title="Đừng nhầm lẫn!">
+Cùng cú pháp `...` nhưng **ngữ cảnh khác nhau**:
+
+| Ngữ cảnh | Tên | Hành vi | Ví dụ |
+| --------- | --- | ------- | ----- |
+| **Khai báo** hàm | **Rest** | Gom nhiều đối số → **1 mảng** | `function f(...args) {}` |
+| **Lời gọi** hàm | **Spread** | Trải 1 mảng → **nhiều đối số** | `f(...arr)` |
+</Aside>
+
+<Tabs>
+  <TabItem label="Rest (khai báo)">
+    ```js
+    // ...nums GOM các đối số lại thành mảng
+    function sum(...nums) {
+      return nums.reduce((s, n) => s + n, 0);
+    }
+    ```
+  </TabItem>
+  <TabItem label="Spread (lời gọi)">
+    ```js
+    const arr = [1, 2, 3];
+    // ...arr TRẢI mảng ra thành các đối số riêng lẻ
+    sum(...arr); // tương đương sum(1, 2, 3) → 6
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Quy tắc & Best Practices
+
+<CardGrid>
+  <Card title="Rest phải ở cuối" icon="warning">
+    `...rest` phải là **tham số cuối cùng**:
+
+    ```js
+    // ✅
+    function ok(a, b, ...rest) {}
+
+    // ❌ SyntaxError
+    function bad(...rest, last) {}
+    ```
+  </Card>
+  <Card title="Mỗi hàm chỉ 1 rest" icon="close">
+    Không thể có 2 rest parameters:
+
+    ```js
+    // ❌ SyntaxError
+    function bad(...a, ...b) {}
+    ```
+  </Card>
+  <Card title="Default trước rest" icon="approve-check">
+    Thứ tự khuyến nghị: bắt buộc → default → rest:
+
+    ```js
+    function api(url, method = 'GET', ...headers) {
+      // url: bắt buộc
+      // method: có default
+      // headers: gom phần còn lại
+    }
+    ```
+  </Card>
+  <Card title="Destructuring trong params" icon="setting">
+    Kết hợp destructuring cho API rõ ràng hơn:
+
+    ```js
+    function createUser({ name, age = 18, role = 'user' } = {}) {
+      return { name, age, role };
+    }
+
+    createUser({ name: 'An' });
+    // { name: 'An', age: 18, role: 'user' }
+    ```
+  </Card>
+</CardGrid>
+
+---
+
+## Tóm tắt
+
+| Khái niệm | Mô tả | Ghi nhớ |
+| ---------- | ------ | ------- |
+| **Parameters** | Biến trong khai báo hàm | `fn.length` đếm đến default đầu tiên |
+| **Arguments** | Giá trị khi gọi hàm | Thừa → bỏ qua, thiếu → `undefined` |
+| **Default** | `param = value` | Chỉ kích hoạt khi `undefined`, KHÔNG phải `null` |
+| **Rest** | `...rest` | Gom thành mảng thật, phải ở cuối |
+| **Spread** | `...arr` (lời gọi) | Trải mảng thành các đối số |

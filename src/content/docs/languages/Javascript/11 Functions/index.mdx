@@ -1,0 +1,178 @@
+---
+title: Functions (Hàm)
+sidebar:
+  order: 27
+description: Tổng quan về hàm trong JavaScript — first-class value, khai báo, gọi hàm và các khái niệm cốt lõi
+---
+
+import { Card, CardGrid, LinkCard, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+**Hiểu đơn giản:** Function là một khối mã có tên hoặc ẩn danh, có thể **gọi lại nhiều lần**. Function nhận giá trị **đầu vào** (parameters) và trả về kết quả ở **đầu ra** (`return`).
+
+Trong JS, function là **giá trị hạng nhất** (*first-class value*): bạn có thể gán cho biến, truyền làm tham số, hoặc trả về từ function khác. Đây là nền tảng để **tái sử dụng mã**, **trừu tượng hoá**, và **lập trình hàm**.
+
+---
+
+## Nội dung
+
+<CardGrid>
+  <LinkCard
+    title="Function Parameters"
+    description="Tham số, đối số, default parameters, rest parameters"
+    href="/languages/javascript/11-functions/1-function-parameters/"
+  />
+</CardGrid>
+
+---
+
+## Function là gì?
+
+<Tabs>
+  <TabItem label="Khai báo">
+    ```js
+    // Function Declaration — được hoisting
+    function greet(name) {
+      return `Hello, ${name}!`;
+    }
+
+    greet("An"); // "Hello, An!"
+    ```
+  </TabItem>
+  <TabItem label="Biểu thức">
+    ```js
+    // Function Expression — KHÔNG hoisting
+    const greet = function(name) {
+      return `Hello, ${name}!`;
+    };
+
+    greet("An"); // "Hello, An!"
+    ```
+  </TabItem>
+  <TabItem label="Arrow function">
+    ```js
+    // Arrow Function (ES6) — cú pháp ngắn gọn
+    const greet = (name) => `Hello, ${name}!`;
+
+    greet("An"); // "Hello, An!"
+
+    // Nhiều dòng → cần {}  và return
+    const add = (a, b) => {
+      const sum = a + b;
+      return sum;
+    };
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## First-class Value
+
+Function trong JS là **giá trị** — có thể dùng ở bất kỳ đâu mà một giá trị xuất hiện:
+
+<Tabs>
+  <TabItem label="Gán cho biến">
+    ```js
+    const sayHi = function() { return "Hi!"; };
+    console.log(sayHi()); // "Hi!"
+    ```
+  </TabItem>
+  <TabItem label="Truyền làm đối số">
+    ```js
+    function execute(fn) {
+      return fn();
+    }
+
+    execute(() => "Done!"); // "Done!"
+
+    // Callback pattern
+    [1, 2, 3].map(n => n * 2); // [2, 4, 6]
+    ```
+  </TabItem>
+  <TabItem label="Trả về từ hàm">
+    ```js
+    function multiplier(factor) {
+      return (n) => n * factor; // trả về function
+    }
+
+    const double = multiplier(2);
+    double(5);  // 10
+    double(10); // 20
+    ```
+  </TabItem>
+  <TabItem label="Lưu trong cấu trúc dữ liệu">
+    ```js
+    const actions = {
+      greet: (name) => `Hi ${name}`,
+      farewell: (name) => `Bye ${name}`,
+    };
+
+    actions.greet("An");    // "Hi An"
+    actions.farewell("An"); // "Bye An"
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Hoisting
+
+<Aside type="note" title="Function Declaration vs Expression">
+| Loại | Hoisting? | Gọi trước khai báo? |
+| ---- | --------- | -------------------- |
+| `function greet() {}` | ✅ Có | ✅ Được |
+| `const greet = function() {}` | ❌ Không | ❌ ReferenceError |
+| `const greet = () => {}` | ❌ Không | ❌ ReferenceError |
+</Aside>
+
+```js
+// ✅ Function Declaration — gọi trước được
+sayHello(); // "Hello!"
+function sayHello() { return "Hello!"; }
+
+// ❌ Function Expression — lỗi!
+sayBye(); // ReferenceError: Cannot access 'sayBye' before initialization
+const sayBye = () => "Bye!";
+```
+
+---
+
+## Sơ đồ hoạt động
+
+```
+┌─────────────┐
+│  Arguments   │  ← giá trị đầu vào (khi gọi)
+└──────┬───────┘
+       ▼
+┌─────────────┐
+│  Parameters  │  ← biến nhận giá trị (khi khai báo)
+└──────┬───────┘
+       ▼
+┌─────────────┐
+│  Function    │  ← thân hàm xử lý logic
+│  Body        │
+└──────┬───────┘
+       ▼
+┌─────────────┐
+│  return      │  ← giá trị đầu ra
+└─────────────┘
+```
+
+---
+
+## So sánh nhanh
+
+| Đặc điểm | Declaration | Expression | Arrow |
+| --------- | ----------- | ---------- | ----- |
+| Cú pháp | `function f() {}` | `const f = function() {}` | `const f = () => {}` |
+| Hoisting | ✅ | ❌ | ❌ |
+| `this` binding | Dynamic | Dynamic | Lexical (kế thừa) |
+| `arguments` | ✅ | ✅ | ❌ |
+| Dùng làm constructor | ✅ | ✅ | ❌ |
+| Ngắn gọn | Trung bình | Trung bình | ✅ Nhất |
+
+<Aside type="tip" title="Khi nào dùng gì?">
+- **Arrow function**: callback ngắn, giữ `this` từ scope bên ngoài
+- **Function declaration**: hàm chính, cần hoisting
+- **Function expression**: gán cho biến, IIFE, khi cần tên trong stack trace
+</Aside>

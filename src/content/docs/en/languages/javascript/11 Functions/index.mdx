@@ -1,0 +1,178 @@
+---
+title: Functions
+sidebar:
+  order: 27
+description: Overview of JavaScript functions — first-class values, declarations, invocation and core concepts
+---
+
+import { Card, CardGrid, LinkCard, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+**In simple terms:** A function is a named or anonymous block of code that can be **called multiple times**. A function receives **input** values (parameters) and returns an **output** (`return`).
+
+In JS, functions are **first-class values**: you can assign them to variables, pass them as arguments, or return them from other functions. This is the foundation for **code reuse**, **abstraction**, and **functional programming**.
+
+---
+
+## Contents
+
+<CardGrid>
+  <LinkCard
+    title="Function Parameters"
+    description="Parameters, arguments, default parameters, rest parameters"
+    href="/en/languages/javascript/11-functions/1-function-parameters/"
+  />
+</CardGrid>
+
+---
+
+## What is a Function?
+
+<Tabs>
+  <TabItem label="Declaration">
+    ```js
+    // Function Declaration — hoisted
+    function greet(name) {
+      return `Hello, ${name}!`;
+    }
+
+    greet("An"); // "Hello, An!"
+    ```
+  </TabItem>
+  <TabItem label="Expression">
+    ```js
+    // Function Expression — NOT hoisted
+    const greet = function(name) {
+      return `Hello, ${name}!`;
+    };
+
+    greet("An"); // "Hello, An!"
+    ```
+  </TabItem>
+  <TabItem label="Arrow function">
+    ```js
+    // Arrow Function (ES6) — concise syntax
+    const greet = (name) => `Hello, ${name}!`;
+
+    greet("An"); // "Hello, An!"
+
+    // Multiple lines → need {} and return
+    const add = (a, b) => {
+      const sum = a + b;
+      return sum;
+    };
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## First-class Value
+
+Functions in JS are **values** — they can be used anywhere a value is expected:
+
+<Tabs>
+  <TabItem label="Assign to variable">
+    ```js
+    const sayHi = function() { return "Hi!"; };
+    console.log(sayHi()); // "Hi!"
+    ```
+  </TabItem>
+  <TabItem label="Pass as argument">
+    ```js
+    function execute(fn) {
+      return fn();
+    }
+
+    execute(() => "Done!"); // "Done!"
+
+    // Callback pattern
+    [1, 2, 3].map(n => n * 2); // [2, 4, 6]
+    ```
+  </TabItem>
+  <TabItem label="Return from function">
+    ```js
+    function multiplier(factor) {
+      return (n) => n * factor; // returns a function
+    }
+
+    const double = multiplier(2);
+    double(5);  // 10
+    double(10); // 20
+    ```
+  </TabItem>
+  <TabItem label="Store in data structures">
+    ```js
+    const actions = {
+      greet: (name) => `Hi ${name}`,
+      farewell: (name) => `Bye ${name}`,
+    };
+
+    actions.greet("An");    // "Hi An"
+    actions.farewell("An"); // "Bye An"
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Hoisting
+
+<Aside type="note" title="Function Declaration vs Expression">
+| Type | Hoisted? | Call before declaration? |
+| ---- | -------- | ----------------------- |
+| `function greet() {}` | ✅ Yes | ✅ Works |
+| `const greet = function() {}` | ❌ No | ❌ ReferenceError |
+| `const greet = () => {}` | ❌ No | ❌ ReferenceError |
+</Aside>
+
+```js
+// ✅ Function Declaration — can call before
+sayHello(); // "Hello!"
+function sayHello() { return "Hello!"; }
+
+// ❌ Function Expression — error!
+sayBye(); // ReferenceError: Cannot access 'sayBye' before initialization
+const sayBye = () => "Bye!";
+```
+
+---
+
+## How Functions Work
+
+```
+┌─────────────┐
+│  Arguments   │  ← input values (when calling)
+└──────┬───────┘
+       ▼
+┌─────────────┐
+│  Parameters  │  ← variables receiving values (when declaring)
+└──────┬───────┘
+       ▼
+┌─────────────┐
+│  Function    │  ← function body processes logic
+│  Body        │
+└──────┬───────┘
+       ▼
+┌─────────────┐
+│  return      │  ← output value
+└─────────────┘
+```
+
+---
+
+## Quick Comparison
+
+| Feature | Declaration | Expression | Arrow |
+| ------- | ----------- | ---------- | ----- |
+| Syntax | `function f() {}` | `const f = function() {}` | `const f = () => {}` |
+| Hoisting | ✅ | ❌ | ❌ |
+| `this` binding | Dynamic | Dynamic | Lexical (inherited) |
+| `arguments` | ✅ | ✅ | ❌ |
+| Use as constructor | ✅ | ✅ | ❌ |
+| Conciseness | Medium | Medium | ✅ Best |
+
+<Aside type="tip" title="When to use what?">
+- **Arrow function**: short callbacks, preserve `this` from outer scope
+- **Function declaration**: main functions, when hoisting is needed
+- **Function expression**: assign to variable, IIFE, when you need a name in stack traces
+</Aside>
