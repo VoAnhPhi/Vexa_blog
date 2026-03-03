@@ -1,0 +1,189 @@
+---
+title: Rest Parameters (Gom Phần Còn Lại)
+sidebar:
+  order: 30
+description: Dùng ...rest để gom đối số thành mảng trong JavaScript — rest vs spread, quy tắc và best practices
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Khái niệm
+
+Dùng `...tên` ở **cuối** danh sách tham số để **gom mọi đối số còn lại thành một mảng thật** (Array).
+
+---
+
+## Cú pháp
+
+```js
+function fn(first, second, ...rest) { ... }
+```
+
+---
+
+## Ví dụ
+
+<Tabs>
+  <TabItem label="Gom tất cả">
+    ```js
+    function sum(...nums) {
+      return nums.reduce((s, n) => s + n, 0);
+    }
+
+    sum(1, 2, 3);    // 6
+    sum(10, 20);     // 30
+    sum();           // 0 (mảng rỗng → giá trị khởi tạo 0)
+    ```
+  </TabItem>
+  <TabItem label="Gom phần còn lại">
+    ```js
+    function tagLog(tag, ...items) {
+      console.log(tag, items);
+    }
+
+    tagLog('DEBUG', 'a', 1, { x: 3 });
+    // 'DEBUG' ['a', 1, { x: 3 }]
+    // → tag = 'DEBUG', items = ['a', 1, { x: 3 }]
+    ```
+  </TabItem>
+  <TabItem label="Thay thế arguments">
+    ```js
+    // ❌ Cũ: dùng arguments (array-like, không có trong arrow)
+    function old() {
+      return Array.from(arguments).join(', ');
+    }
+
+    // ✅ Mới: rest parameters (mảng thật, dùng được trong arrow)
+    const modern = (...args) => args.join(', ');
+
+    old(1, 2, 3);     // "1, 2, 3"
+    modern(1, 2, 3);   // "1, 2, 3"
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Rest vs Spread
+
+<Aside type="caution" title="Đừng nhầm lẫn!">
+Cùng cú pháp `...` nhưng **ngữ cảnh khác nhau**:
+
+| Ngữ cảnh | Tên | Hành vi | Ví dụ |
+| --------- | --- | ------- | ----- |
+| **Khai báo** hàm | **Rest** | Gom nhiều đối số → **1 mảng** | `function f(...args) {}` |
+| **Lời gọi** hàm | **Spread** | Trải 1 mảng → **nhiều đối số** | `f(...arr)` |
+</Aside>
+
+<Tabs>
+  <TabItem label="Rest (khai báo)">
+    ```js
+    // ...nums GOM các đối số lại thành mảng
+    function sum(...nums) {
+      return nums.reduce((s, n) => s + n, 0);
+    }
+    ```
+  </TabItem>
+  <TabItem label="Spread (lời gọi)">
+    ```js
+    const arr = [1, 2, 3];
+    // ...arr TRẢI mảng ra thành các đối số riêng lẻ
+    sum(...arr); // tương đương sum(1, 2, 3) → 6
+    ```
+  </TabItem>
+  <TabItem label="Spread trong array/object">
+    ```js
+    // Spread trong array
+    const a = [1, 2];
+    const b = [...a, 3, 4]; // [1, 2, 3, 4]
+
+    // Spread trong object
+    const user = { name: 'An' };
+    const full = { ...user, age: 25 }; // { name: 'An', age: 25 }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Quy tắc
+
+<CardGrid>
+  <Card title="Rest phải ở cuối" icon="warning">
+    `...rest` phải là **tham số cuối cùng**:
+
+    ```js
+    // ✅
+    function ok(a, b, ...rest) {}
+
+    // ❌ SyntaxError
+    function bad(...rest, last) {}
+    ```
+  </Card>
+  <Card title="Mỗi hàm chỉ 1 rest" icon="close">
+    Không thể có 2 rest parameters:
+
+    ```js
+    // ❌ SyntaxError
+    function bad(...a, ...b) {}
+    ```
+  </Card>
+  <Card title="Default trước rest" icon="approve-check">
+    Thứ tự khuyến nghị: bắt buộc → default → rest:
+
+    ```js
+    function api(url, method = 'GET', ...headers) {
+      // url: bắt buộc
+      // method: có default
+      // headers: gom phần còn lại
+    }
+    ```
+  </Card>
+  <Card title="rest ≠ arguments" icon="setting">
+    `rest` là mảng thật, `arguments` là array-like:
+
+    ```js
+    function demo(a, ...rest) {
+      rest.map(x => x);        // ✅ Array
+      // arguments.map(x => x) // ❌ TypeError
+    }
+    ```
+  </Card>
+</CardGrid>
+
+---
+
+## Rest trong destructuring
+
+`...` cũng dùng trong **destructuring** (không chỉ function parameters):
+
+<Tabs>
+  <TabItem label="Array destructuring">
+    ```js
+    const [first, second, ...rest] = [1, 2, 3, 4, 5];
+    console.log(first); // 1
+    console.log(rest);  // [3, 4, 5]
+    ```
+  </TabItem>
+  <TabItem label="Object destructuring">
+    ```js
+    const { name, ...others } = { name: 'An', age: 25, role: 'dev' };
+    console.log(name);   // 'An'
+    console.log(others); // { age: 25, role: 'dev' }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Tóm tắt
+
+| Đặc điểm | Chi tiết |
+| --------- | -------- |
+| Cú pháp | `...name` ở cuối danh sách tham số |
+| Kiểu dữ liệu | **Array thật** (có `.map()`, `.filter()`) |
+| Vị trí | Phải là tham số **cuối cùng** |
+| Số lượng | Tối đa **1** rest parameter mỗi hàm |
+| `fn.length` | **Không** tính rest |
+| Khác `arguments` | Mảng thật, có trong arrow function |
+| Spread (`...arr`) | Ngược lại: trải mảng → nhiều giá trị |

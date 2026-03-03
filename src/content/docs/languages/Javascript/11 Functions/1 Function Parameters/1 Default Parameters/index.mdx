@@ -1,0 +1,184 @@
+---
+title: Default Parameters (Tham Số Mặc Định)
+sidebar:
+  order: 29
+description: Giá trị mặc định cho tham số hàm trong JavaScript — cú pháp, quy tắc undefined vs null, biểu thức phức tạp
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Khái niệm
+
+Tự động dùng **giá trị mặc định** khi đối số là `undefined`. Giá trị mặc định được **tính lúc gọi hàm**, từ **trái → phải**.
+
+---
+
+## Cú pháp
+
+```js
+function fn(param = defaultValue) { ... }
+```
+
+---
+
+## Ví dụ
+
+<Tabs>
+  <TabItem label="Cơ bản">
+    ```js
+    function greet(name = 'friend') {
+      return `Hi, ${name}!`;
+    }
+
+    greet();            // "Hi, friend!"   (không truyền → undefined → dùng default)
+    greet(undefined);   // "Hi, friend!"   (undefined → dùng default)
+    greet(null);        // "Hi, null!"     (null ≠ undefined → KHÔNG dùng default)
+    greet('');          // "Hi, !"         ('' ≠ undefined → KHÔNG dùng default)
+    ```
+  </TabItem>
+  <TabItem label="Tham chiếu tham số trước">
+    Tham số bên phải có thể **dùng tham số bên trái**:
+
+    ```js
+    function createUser(name, role = 'user', greeting = `Welcome, ${name}!`) {
+      return { name, role, greeting };
+    }
+
+    createUser('An');
+    // { name: 'An', role: 'user', greeting: 'Welcome, An!' }
+    ```
+  </TabItem>
+  <TabItem label="Biểu thức phức tạp">
+    Default có thể là **bất kỳ biểu thức nào** — được tính mỗi lần gọi:
+
+    ```js
+    function log(msg, time = Date.now()) {
+      console.log(`[${time}] ${msg}`);
+    }
+
+    log("start"); // [1709474400000] start
+    // mỗi lần gọi → Date.now() mới
+    ```
+  </TabItem>
+  <TabItem label="Kết hợp destructuring">
+    ```js
+    function createUser({ name, age = 18, role = 'user' } = {}) {
+      return { name, age, role };
+    }
+
+    createUser({ name: 'An' });
+    // { name: 'An', age: 18, role: 'user' }
+
+    createUser(); // không lỗi nhờ = {} ở cuối
+    // { name: undefined, age: 18, role: 'user' }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Quy tắc kích hoạt
+
+<Aside type="note" title="Khi nào default được dùng?">
+Default **chỉ** kích hoạt khi giá trị là `undefined` — **không** phải khi `null`, `0`, `""`, hay `false`:
+
+| Đối số | Dùng default? | Lý do |
+| ------ | ------------- | ----- |
+| Không truyền | ✅ Có | Tương đương `undefined` |
+| `undefined` | ✅ Có | Đúng điều kiện |
+| `null` | ❌ Không | `null ≠ undefined` |
+| `0` | ❌ Không | `0 ≠ undefined` |
+| `""` | ❌ Không | `"" ≠ undefined` |
+| `false` | ❌ Không | `false ≠ undefined` |
+</Aside>
+
+---
+
+## So sánh cách cũ (ES5)
+
+<Tabs>
+  <TabItem label="❌ Cách cũ">
+    ```js
+    // Lỗi khi truyền falsy hợp lệ (0, "", false)
+    function old(x) {
+      x = x || 10;  // 0 cũng bị thay bằng 10!
+    }
+
+    old(0);   // x = 10 ← sai!
+    old("");  // x = 10 ← sai!
+    ```
+  </TabItem>
+  <TabItem label="✅ Default parameter">
+    ```js
+    // Chỉ khi undefined
+    function modern(x = 10) {
+      return x;
+    }
+
+    modern(0);   // 0 ← đúng!
+    modern("");  // "" ← đúng!
+    modern();    // 10 ← default
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Temporal Dead Zone (TDZ)
+
+Tham số default nằm trong **scope riêng** và bị TDZ — không thể tham chiếu tham số **phía sau** mình:
+
+```js
+// ❌ ReferenceError — b chưa khai báo tại thời điểm tính a
+function bad(a = b, b = 1) {}
+bad(); // ReferenceError
+
+// ✅ OK — a đã khai báo trước b
+function ok(a = 1, b = a) {}
+ok(); // a = 1, b = 1
+```
+
+---
+
+## Best Practices
+
+<CardGrid>
+  <Card title="Default ở cuối" icon="approve-check">
+    Đặt tham số có default **sau** tham số bắt buộc:
+
+    ```js
+    // ✅ Rõ ràng
+    function api(url, method = 'GET') {}
+
+    // ❌ Khó dùng — phải truyền undefined để skip
+    function bad(method = 'GET', url) {}
+    bad(undefined, '/users');
+    ```
+  </Card>
+  <Card title="Object cho nhiều tuỳ chọn" icon="setting">
+    Khi có > 2 default → dùng **object parameter**:
+
+    ```js
+    function fetch(url, {
+      method = 'GET',
+      headers = {},
+      body = null,
+      timeout = 5000,
+    } = {}) {
+      // ...
+    }
+    ```
+  </Card>
+</CardGrid>
+
+---
+
+## Tóm tắt
+
+| Đặc điểm | Chi tiết |
+| --------- | -------- |
+| Cú pháp | `param = defaultValue` |
+| Kích hoạt | Chỉ khi `undefined` |
+| Thứ tự tính | Trái → phải |
+| TDZ | Không thể tham chiếu tham số phía sau |
+| `fn.length` | Đếm đến default đầu tiên rồi dừng |
