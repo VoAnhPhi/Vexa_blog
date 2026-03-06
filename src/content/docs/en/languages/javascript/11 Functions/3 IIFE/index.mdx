@@ -1,0 +1,218 @@
+---
+title: IIFE (Immediately Invoked Function Expression)
+sidebar:
+  order: 32
+description: IIFE in JavaScript — self-invoking functions, private scope, closures and the module pattern
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+An **IIFE** (*Immediately Invoked Function Expression*) is a function expression that is **defined and called immediately** in place, without needing to be named and called on a separate line.
+
+```js
+(function () {
+  console.log("Runs immediately!");
+})();
+```
+
+---
+
+## Syntax
+
+<Tabs>
+  <TabItem label="Regular function">
+    ```js
+    (function () {
+      // runs immediately
+    })();
+    ```
+  </TabItem>
+  <TabItem label="Arrow function">
+    ```js
+    (() => {
+      // runs immediately
+    })();
+    ```
+  </TabItem>
+  <TabItem label="Async IIFE">
+    ```js
+    (async () => {
+      const data = await fetch('/api');
+      console.log(data);
+    })();
+    ```
+  </TabItem>
+  <TabItem label="With parameters">
+    ```js
+    (function (name) {
+      console.log(`Hello, ${name}!`);
+    })("An");
+    // "Hello, An!"
+    ```
+  </TabItem>
+</Tabs>
+
+<Aside type="note" title="Why the wrapping ()?" >
+Wrapping the function in `()` tells JS to treat it as an **expression**, not a **declaration**. Without `()`, JS throws a syntax error.
+
+```js
+// ❌ SyntaxError
+function () { ... }();
+
+// ✅ OK — wrapped in ()
+(function () { ... })();
+```
+</Aside>
+
+---
+
+## Main Purposes
+
+### 1. Create private scope — avoid global pollution
+
+<Tabs>
+  <TabItem label="With IIFE">
+    ```js
+    var x = 1;
+
+    (function () {
+      var x = 2; // x only exists inside the IIFE
+      console.log("Inside IIFE:", x); // 2
+    })();
+
+    console.log("Outside IIFE:", x); // 1 ← unaffected
+    ```
+  </TabItem>
+  <TabItem label="Without IIFE">
+    ```js
+    var x = 1;
+
+    // No IIFE → var x gets overwritten
+    var x = 2;
+
+    console.log(x); // 2 ← global variable changed!
+    ```
+  </TabItem>
+</Tabs>
+
+### 2. Create closures and "private" data
+
+```js
+const counter = (function () {
+  let count = 0; // "private" — not accessible from outside
+
+  return {
+    inc() {
+      count++;
+      return count;
+    },
+    get() {
+      return count;
+    },
+  };
+})();
+
+console.log(counter.inc()); // 1
+console.log(counter.inc()); // 2
+console.log(counter.get()); // 2
+console.log(counter.count); // undefined — not accessible!
+```
+
+<Aside type="tip">
+`count` is hidden inside the IIFE — it can only be interacted with through `inc()` and `get()`. This is the classic **Module Pattern**.
+</Aside>
+
+### 3. Avoid library conflicts
+
+```js
+// Each library wraps itself in an IIFE → no variable conflicts
+(function ($) {
+  // $ here is guaranteed to be jQuery
+  $(".btn").click(function () { ... });
+})(jQuery);
+```
+
+---
+
+## IIFE in the Modern Era
+
+<CardGrid>
+  <Card title="Before ES6" icon="warning">
+    - No `let`, `const` → `var` has no block scope
+    - No modules → IIFE was used to create private scope
+    - **IIFE was the only way** to encapsulate code
+  </Card>
+  <Card title="After ES6" icon="approve-check">
+    - `let`, `const` have **block scope** → `{}` is enough
+    - **ES Modules** (`import`/`export`) replace IIFE
+    - IIFE is still useful for **async top-level** and **legacy code**
+  </Card>
+</CardGrid>
+
+<Tabs>
+  <TabItem label="IIFE (old)">
+    ```js
+    (function () {
+      var secret = 42;
+      console.log(secret);
+    })();
+    // secret does not exist here
+    ```
+  </TabItem>
+  <TabItem label="Block scope (new)">
+    ```js
+    {
+      const secret = 42;
+      console.log(secret);
+    }
+    // secret does not exist here
+    ```
+  </TabItem>
+  <TabItem label="Module (new)">
+    ```js
+    // utils.js
+    const secret = 42;
+    export const getSecret = () => secret;
+
+    // main.js
+    import { getSecret } from './utils.js';
+    // secret is not directly accessible
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Syntax Variations
+
+Besides the most common form, there are a few other ways to write IIFEs (less common):
+
+```js
+// Style 1: most common
+(function () { ... })();
+
+// Style 2: call inside ()
+(function () { ... }());
+
+// Style 3: unary operators
+!function () { ... }();
+void function () { ... }();
++function () { ... }();
+```
+
+<Aside type="caution">
+Style 1 is the **standard and most common**. Other styles work but are less readable.
+</Aside>
+
+---
+
+## Summary
+
+| Feature | Details |
+| ------- | ------- |
+| Syntax | `(function () { ... })();` or `(() => { ... })();` |
+| Purpose | Create private scope, closures, private data |
+| Parameters | Passed via the trailing `()` |
+| Async | `(async () => { ... })();` |
+| Modern replacement | `let`/`const` block scope, ES Modules |
+| Still useful for | Async IIFE, legacy compatibility, quick encapsulation |

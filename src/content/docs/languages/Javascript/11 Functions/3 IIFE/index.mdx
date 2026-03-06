@@ -1,0 +1,218 @@
+---
+title: IIFE (Immediately Invoked Function Expression)
+sidebar:
+  order: 32
+description: IIFE trong JavaScript — hàm tự gọi ngay lập tức, tạo scope riêng, closure và dữ liệu private
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+**IIFE** (*Immediately Invoked Function Expression*) là một function expression được **định nghĩa và gọi ngay lập tức** tại chỗ, không cần đặt tên rồi gọi ở dòng khác.
+
+```js
+(function () {
+  console.log("Chạy ngay!");
+})();
+```
+
+---
+
+## Cú pháp
+
+<Tabs>
+  <TabItem label="Function thường">
+    ```js
+    (function () {
+      // code chạy ngay
+    })();
+    ```
+  </TabItem>
+  <TabItem label="Arrow function">
+    ```js
+    (() => {
+      // code chạy ngay
+    })();
+    ```
+  </TabItem>
+  <TabItem label="Async IIFE">
+    ```js
+    (async () => {
+      const data = await fetch('/api');
+      console.log(data);
+    })();
+    ```
+  </TabItem>
+  <TabItem label="Có tham số">
+    ```js
+    (function (name) {
+      console.log(`Hello, ${name}!`);
+    })("An");
+    // "Hello, An!"
+    ```
+  </TabItem>
+</Tabs>
+
+<Aside type="note" title="Tại sao cần dấu ()?" >
+Bọc function trong `()` để JS hiểu đây là **expression**, không phải **declaration**. Nếu không có `()`, JS sẽ báo lỗi cú pháp.
+
+```js
+// ❌ SyntaxError
+function () { ... }();
+
+// ✅ OK — bọc trong ()
+(function () { ... })();
+```
+</Aside>
+
+---
+
+## Mục đích chính
+
+### 1. Tạo scope riêng — tránh ô nhiễm global
+
+<Tabs>
+  <TabItem label="Có IIFE">
+    ```js
+    var x = 1;
+
+    (function () {
+      var x = 2; // x chỉ tồn tại trong IIFE
+      console.log("Trong IIFE:", x); // 2
+    })();
+
+    console.log("Ngoài IIFE:", x); // 1 ← không bị ảnh hưởng
+    ```
+  </TabItem>
+  <TabItem label="Không có IIFE">
+    ```js
+    var x = 1;
+
+    // Không có IIFE → var x bị ghi đè
+    var x = 2;
+
+    console.log(x); // 2 ← biến global bị thay đổi!
+    ```
+  </TabItem>
+</Tabs>
+
+### 2. Tạo closure và dữ liệu "private"
+
+```js
+const counter = (function () {
+  let count = 0; // "private" — không truy cập được từ bên ngoài
+
+  return {
+    inc() {
+      count++;
+      return count;
+    },
+    get() {
+      return count;
+    },
+  };
+})();
+
+console.log(counter.inc()); // 1
+console.log(counter.inc()); // 2
+console.log(counter.get()); // 2
+console.log(counter.count); // undefined — không truy cập được!
+```
+
+<Aside type="tip">
+`count` bị "giấu" bên trong IIFE — chỉ có thể tương tác qua `inc()` và `get()`. Đây là **Module Pattern** cổ điển.
+</Aside>
+
+### 3. Tránh xung đột thư viện
+
+```js
+// Mỗi thư viện tự bọc trong IIFE → không xung đột biến
+(function ($) {
+  // $ ở đây chắc chắn là jQuery
+  $(".btn").click(function () { ... });
+})(jQuery);
+```
+
+---
+
+## IIFE trong thời đại hiện đại
+
+<CardGrid>
+  <Card title="Trước ES6" icon="warning">
+    - Chưa có `let`, `const` → `var` không có block scope
+    - Chưa có module → dùng IIFE để tạo private scope
+    - **IIFE là cách duy nhất** để đóng gói code
+  </Card>
+  <Card title="Sau ES6" icon="approve-check">
+    - `let`, `const` có **block scope** → dùng `{}` là đủ
+    - **ES Modules** (`import`/`export`) thay thế IIFE
+    - IIFE vẫn hữu ích cho **async top-level** và **legacy code**
+  </Card>
+</CardGrid>
+
+<Tabs>
+  <TabItem label="IIFE (cũ)">
+    ```js
+    (function () {
+      var secret = 42;
+      console.log(secret);
+    })();
+    // secret không tồn tại ở đây
+    ```
+  </TabItem>
+  <TabItem label="Block scope (mới)">
+    ```js
+    {
+      const secret = 42;
+      console.log(secret);
+    }
+    // secret không tồn tại ở đây
+    ```
+  </TabItem>
+  <TabItem label="Module (mới)">
+    ```js
+    // utils.js
+    const secret = 42;
+    export const getSecret = () => secret;
+
+    // main.js
+    import { getSecret } from './utils.js';
+    // secret không truy cập trực tiếp được
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Các biến thể cú pháp
+
+Ngoài cách phổ biến nhất, còn có vài cách viết khác (ít dùng):
+
+```js
+// Cách 1: phổ biến nhất
+(function () { ... })();
+
+// Cách 2: gọi bên trong ()
+(function () { ... }());
+
+// Cách 3: dùng toán tử unary
+!function () { ... }();
+void function () { ... }();
++function () { ... }();
+```
+
+<Aside type="caution">
+Cách 1 là **chuẩn và phổ biến nhất**. Các cách khác hoạt động nhưng ít đọc được hơn.
+</Aside>
+
+---
+
+## Tóm tắt
+
+| Đặc điểm | Chi tiết |
+| --------- | -------- |
+| Cú pháp | `(function () { ... })();` hoặc `(() => { ... })();` |
+| Mục đích | Tạo scope riêng, closure, dữ liệu private |
+| Tham số | Truyền qua `()` cuối cùng |
+| Async | `(async () => { ... })();` |
+| Thay thế hiện đại | `let`/`const` block scope, ES Modules |
+| Vẫn hữu ích | Async IIFE, tương thích legacy, đóng gói nhanh |
