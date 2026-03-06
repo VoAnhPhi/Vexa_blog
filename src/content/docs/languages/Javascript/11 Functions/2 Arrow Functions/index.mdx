@@ -1,0 +1,200 @@
+---
+title: Arrow Functions
+sidebar:
+  order: 31
+description: Arrow function expression trong JavaScript — cú pháp ngắn gọn ES6, lexical this, so sánh với function thường
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Arrow function expression là cách viết hàm **ngắn gọn** trong JavaScript, giới thiệu từ **ES6**. Thay vì dùng `function`, bạn dùng ký hiệu `=>`. Thường được dùng cho các hàm ngắn, callback, hoặc khi muốn giữ nguyên ngữ cảnh `this`.
+
+```js
+const add = (a, b) => a + b;
+```
+
+---
+
+## Cú pháp
+
+<Tabs>
+  <TabItem label="1 tham số">
+    Có thể bỏ ngoặc `()`:
+
+    ```js
+    const square = x => x * x;
+
+    square(5); // 25
+    ```
+  </TabItem>
+  <TabItem label="Nhiều tham số">
+    Bắt buộc có `()`:
+
+    ```js
+    const sum = (a, b) => a + b;
+
+    sum(3, 7); // 10
+    ```
+  </TabItem>
+  <TabItem label="Không tham số">
+    Bắt buộc có `()`:
+
+    ```js
+    const getTime = () => Date.now();
+
+    getTime(); // 1709474400000
+    ```
+  </TabItem>
+  <TabItem label="Khối lệnh {}">
+    Nếu thân hàm gồm **nhiều câu lệnh**, bạn phải dùng `{}` và viết `return` rõ ràng:
+
+    ```js
+    const add = (a, b) => {
+      const result = a + b;
+      return result;
+    };
+
+    add(2, 3); // 5
+    ```
+  </TabItem>
+  <TabItem label="Trả về object">
+    Bọc object literal trong `()` để tránh nhầm với block `{}`:
+
+    ```js
+    const getUser = () => ({ name: "Giang", role: "PO" });
+
+    getUser(); // { name: "Giang", role: "PO" }
+    ```
+
+    <Aside type="caution">
+    Không có `()` → JS hiểu `{}` là block, không phải object:
+    ```js
+    const bad = () => { name: "Giang" }; // undefined!
+    ```
+    </Aside>
+  </TabItem>
+</Tabs>
+
+---
+
+## Những đặc điểm quan trọng
+
+### 1. Không có `this` riêng
+
+Arrow function **không tự bind `this`**. Nó lấy `this` từ **scope bao quanh** (lexical `this`).
+
+<Tabs>
+  <TabItem label="✅ Arrow function">
+    ```js
+    function Counter() {
+      this.count = 0;
+
+      setInterval(() => {
+        this.count++;           // ✅ `this` trỏ về instance Counter
+        console.log(this.count);
+      }, 1000);
+    }
+
+    new Counter(); // 1, 2, 3, ...
+    ```
+  </TabItem>
+  <TabItem label="❌ Function thường">
+    ```js
+    function Counter() {
+      this.count = 0;
+
+      setInterval(function() {
+        this.count++;           // ❌ `this` là global/undefined
+        console.log(this.count);
+      }, 1000);
+    }
+
+    new Counter(); // NaN, NaN, ...
+    ```
+  </TabItem>
+</Tabs>
+
+### 2. Không có `arguments`
+
+Arrow function không có object `arguments`. Dùng **rest parameter** thay thế:
+
+```js
+// ❌ arguments không tồn tại trong arrow function
+const bad = () => console.log(arguments); // ReferenceError
+
+// ✅ Dùng rest parameter
+const sum = (...args) => args.reduce((a, b) => a + b, 0);
+
+sum(1, 2, 3); // 6
+```
+
+### 3. Không dùng làm constructor
+
+Không thể dùng arrow function với `new`. Nó không có `[[Construct]]` và `prototype`:
+
+```js
+const Person = (name) => { this.name = name; };
+
+new Person("An"); // ❌ TypeError: Person is not a constructor
+```
+
+### 4. Không có `super` và `new.target` riêng
+
+Chúng cũng được lấy theo **ngữ cảnh lexical** bên ngoài — giống cách `this` hoạt động.
+
+---
+
+## Khi nào nên / không nên dùng?
+
+<CardGrid>
+  <Card title="✅ Nên dùng" icon="approve-check">
+    - **Callback ngắn:** `map`, `filter`, `reduce`
+    - **Hàm không cần `this`** hoặc `arguments`
+    - **Logic gọn** một dòng:
+
+    ```js
+    const names = ["a", "b", "c"];
+    const upper = names.map(n => n.toUpperCase());
+    // ["A", "B", "C"]
+    ```
+  </Card>
+  <Card title="❌ Không nên dùng" icon="close">
+    - **Method trong object** nếu cần `this`:
+
+    ```js
+    const obj = {
+      name: "An",
+      greet: () => console.log(this.name),
+      // ❌ this không trỏ về obj
+    };
+    ```
+
+    - **Constructor** (không dùng được `new`)
+    - **Nơi cần `arguments`** object
+  </Card>
+</CardGrid>
+
+---
+
+## So sánh Arrow Function vs Function thường
+
+| Điểm khác | Arrow function | Function thường |
+| ---------- | -------------- | --------------- |
+| `this` | Lấy từ scope cha (lexical) | Bind theo cách gọi |
+| `arguments` | ❌ Không có | ✅ Có |
+| `new` | ❌ Không dùng được | ✅ Dùng được |
+| `prototype` | ❌ Không có | ✅ Có |
+| `super` / `new.target` | Lexical (từ scope cha) | Riêng của hàm |
+| Cú pháp | Rất gọn (`=>`) | Dài hơn (`function`) |
+| Hoisting | ❌ Không (khi gán cho biến) | ✅ Có (function declaration) |
+
+---
+
+## Tóm tắt
+
+<Aside type="tip" title="Ghi nhớ">
+- Arrow function = **cú pháp ngắn gọn** + **lexical `this`**
+- **Không có:** `this` riêng, `arguments`, `prototype`, `[[Construct]]`
+- **Dùng khi:** callback, hàm đơn giản, cần giữ `this` từ scope cha
+- **Tránh khi:** method cần `this`, constructor, cần `arguments`
+</Aside>

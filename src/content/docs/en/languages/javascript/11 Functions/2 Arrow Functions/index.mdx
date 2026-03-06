@@ -1,0 +1,200 @@
+---
+title: Arrow Functions
+sidebar:
+  order: 31
+description: Arrow function expressions in JavaScript — concise ES6 syntax, lexical this, comparison with regular functions
+---
+
+import { Card, CardGrid, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Arrow function expressions are a **concise** way to write functions in JavaScript, introduced in **ES6**. Instead of using `function`, you use the `=>` symbol. They are commonly used for short functions, callbacks, or when you want to preserve the surrounding `this` context.
+
+```js
+const add = (a, b) => a + b;
+```
+
+---
+
+## Syntax
+
+<Tabs>
+  <TabItem label="One parameter">
+    Parentheses `()` are optional:
+
+    ```js
+    const square = x => x * x;
+
+    square(5); // 25
+    ```
+  </TabItem>
+  <TabItem label="Multiple parameters">
+    Parentheses `()` are required:
+
+    ```js
+    const sum = (a, b) => a + b;
+
+    sum(3, 7); // 10
+    ```
+  </TabItem>
+  <TabItem label="No parameters">
+    Parentheses `()` are required:
+
+    ```js
+    const getTime = () => Date.now();
+
+    getTime(); // 1709474400000
+    ```
+  </TabItem>
+  <TabItem label="Block body {}">
+    If the body has **multiple statements**, you must use `{}` and write `return` explicitly:
+
+    ```js
+    const add = (a, b) => {
+      const result = a + b;
+      return result;
+    };
+
+    add(2, 3); // 5
+    ```
+  </TabItem>
+  <TabItem label="Return object">
+    Wrap an object literal in `()` to avoid confusion with a block `{}`:
+
+    ```js
+    const getUser = () => ({ name: "Giang", role: "PO" });
+
+    getUser(); // { name: "Giang", role: "PO" }
+    ```
+
+    <Aside type="caution">
+    Without `()` → JS interprets `{}` as a block, not an object:
+    ```js
+    const bad = () => { name: "Giang" }; // undefined!
+    ```
+    </Aside>
+  </TabItem>
+</Tabs>
+
+---
+
+## Key Characteristics
+
+### 1. No own `this`
+
+Arrow functions **do not bind their own `this`**. They inherit `this` from the **enclosing scope** (lexical `this`).
+
+<Tabs>
+  <TabItem label="✅ Arrow function">
+    ```js
+    function Counter() {
+      this.count = 0;
+
+      setInterval(() => {
+        this.count++;           // ✅ `this` refers to Counter instance
+        console.log(this.count);
+      }, 1000);
+    }
+
+    new Counter(); // 1, 2, 3, ...
+    ```
+  </TabItem>
+  <TabItem label="❌ Regular function">
+    ```js
+    function Counter() {
+      this.count = 0;
+
+      setInterval(function() {
+        this.count++;           // ❌ `this` is global/undefined
+        console.log(this.count);
+      }, 1000);
+    }
+
+    new Counter(); // NaN, NaN, ...
+    ```
+  </TabItem>
+</Tabs>
+
+### 2. No `arguments`
+
+Arrow functions do not have the `arguments` object. Use **rest parameters** instead:
+
+```js
+// ❌ arguments does not exist in arrow functions
+const bad = () => console.log(arguments); // ReferenceError
+
+// ✅ Use rest parameters
+const sum = (...args) => args.reduce((a, b) => a + b, 0);
+
+sum(1, 2, 3); // 6
+```
+
+### 3. Cannot be used as constructors
+
+Arrow functions cannot be used with `new`. They have no `[[Construct]]` and no `prototype`:
+
+```js
+const Person = (name) => { this.name = name; };
+
+new Person("An"); // ❌ TypeError: Person is not a constructor
+```
+
+### 4. No own `super` or `new.target`
+
+These are also inherited from the **outer lexical context** — just like `this`.
+
+---
+
+## When to use / not use?
+
+<CardGrid>
+  <Card title="✅ Use when" icon="approve-check">
+    - **Short callbacks:** `map`, `filter`, `reduce`
+    - **Functions that don't need `this`** or `arguments`
+    - **Concise one-liner** logic:
+
+    ```js
+    const names = ["a", "b", "c"];
+    const upper = names.map(n => n.toUpperCase());
+    // ["A", "B", "C"]
+    ```
+  </Card>
+  <Card title="❌ Avoid when" icon="close">
+    - **Object methods** that need `this`:
+
+    ```js
+    const obj = {
+      name: "An",
+      greet: () => console.log(this.name),
+      // ❌ this does not refer to obj
+    };
+    ```
+
+    - **Constructors** (cannot use `new`)
+    - **Where you need the `arguments`** object
+  </Card>
+</CardGrid>
+
+---
+
+## Arrow Function vs Regular Function
+
+| Difference | Arrow function | Regular function |
+| ---------- | -------------- | ---------------- |
+| `this` | Inherited from parent scope (lexical) | Bound by how it's called |
+| `arguments` | ❌ None | ✅ Available |
+| `new` | ❌ Cannot use | ✅ Can use |
+| `prototype` | ❌ None | ✅ Has one |
+| `super` / `new.target` | Lexical (from parent scope) | Own binding |
+| Syntax | Very concise (`=>`) | Longer (`function`) |
+| Hoisting | ❌ No (when assigned to variable) | ✅ Yes (function declaration) |
+
+---
+
+## Summary
+
+<Aside type="tip" title="Remember">
+- Arrow function = **concise syntax** + **lexical `this`**
+- **Does not have:** own `this`, `arguments`, `prototype`, `[[Construct]]`
+- **Use when:** callbacks, simple functions, need to preserve parent `this`
+- **Avoid when:** methods needing `this`, constructors, needing `arguments`
+</Aside>
